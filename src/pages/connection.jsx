@@ -3,8 +3,45 @@ import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "..
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
 import { Button3 } from "../components/button3"
+import DeviceInfo from "react-native-device-info"
+import { useEffect, useState } from "react"
 
 export const Connection = () => {
+  const [systemVersion, setSystemVersion] = useState('');
+  const [pingResult, setPingTime] = useState(null);
+
+
+  const fetchPingTime = async () => {
+    const startTime = Date.now();
+    try {
+      await fetch('https://www.google.com', { method: 'HEAD' });
+      const endTime = Date.now();
+      const timeTaken = endTime - startTime;
+      setPingTime(timeTaken);
+    } catch (error) {
+      console.error('Error fetching ping:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    const fetchSystemVersion = () => {
+      const version = DeviceInfo.getSystemVersion();
+      setSystemVersion(version);
+    };
+    fetchSystemVersion();
+    fetchPingTime()
+  }, []);
+
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchPingTime()
+    }, 7000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <StatusBar
       animated={true}
@@ -20,8 +57,8 @@ export const Connection = () => {
           <Image style={{ width: 100, height: 100 }} source={require('../../assets/image/radio.png')} />
           <View style={{ marginTop: 20, alignItems: 'center', gap: 7 }}>
             <Text style={{ color: '#2f508e', fontSize: 20, fontFamily: 'RobotoCondensed-Regular', }}>Устройство подключено</Text>
-            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Пинг: 1112 мс</Text>
-            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Версия: Release 1.8.7</Text>
+            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Пинг: {pingResult} мс</Text>
+            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Версия: Release {systemVersion}</Text>
           </View>
         </View>
         <View style={{ gap: 10, marginTop: 100 }}>
