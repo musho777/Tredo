@@ -34,14 +34,6 @@ export const Connection = () => {
   }, []);
 
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchPingTime()
-    }, 7000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <StatusBar
       animated={true}

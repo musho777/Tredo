@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
-export const Button = ({ svg, text }) => {
-  return <TouchableOpacity style={[styles.button]}>
+export const Button = ({ svg, text, onPress = () => { } }) => {
+  return <TouchableOpacity onPress={() => onPress()} style={[styles.button]}>
     <View>
       {svg}
     </View>
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#3282f1",
     paddingVertical: 8,
-    paddingHorizontal: 30,
+    paddingHorizontal: 35,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: "center",

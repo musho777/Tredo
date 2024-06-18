@@ -4,7 +4,10 @@ import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
 import { Switch } from "../components/switch";
 
+
 export const Permission = ({ navigation }) => {
+
+
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
     <StatusBar
       animated={true}
