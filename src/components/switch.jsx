@@ -15,6 +15,7 @@ export const Switch = ({ text }) => {
           width: '70%',
           color: '#6488d0',
           fontWeight: '700',
+          fontFamily: 'RobotoCondensed-Bold',
           fontSize: 15
         }}>
         {text}

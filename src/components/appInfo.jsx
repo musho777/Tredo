@@ -1,15 +1,32 @@
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native"
+import DeviceInfo from "react-native-device-info";
 
 export const AppInfo = ({ light, version = true }) => {
+  const [appVersion, setAppVersion] = useState('');
+  const [deviceFingerprint, setDeviceFingerprint] = useState('');
+
+
+  useEffect(() => {
+    const fetchAppVersion = () => {
+      const version = DeviceInfo.getVersion();
+      const uniqueId = DeviceInfo.getUniqueId();
+      setAppVersion(version);
+      setDeviceFingerprint(uniqueId);
+    };
+
+    fetchAppVersion();
+  }, []);
+
   return <View style={styles.appInfo}>
     <Text style={[styles.appName, light && { color: '#0068fa' }]}>Name</Text>
     <View style={styles.fingerprint}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Fingerprint:</Text>
-      <Text style={styles.id}>1fb06850e0bb0b1c269ac1fd2cb6b1be</Text>
+      <Text style={styles.id}>{deviceFingerprint}</Text>
     </View>
     {version && <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Версия:</Text>
-      <Text style={styles.id}>1.8.7</Text>
+      <Text style={styles.id}>{appVersion}</Text>
     </View>}
   </View>
 }
@@ -21,7 +38,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 30,
     color: 'white',
-    fontWeight: '600'
+    fontFamily: 'RobotoCondensed-Bold'
   },
   fingerprint: {
     flexDirection: 'column',
@@ -30,9 +47,11 @@ const styles = StyleSheet.create({
     gap: 4
   },
   fingerprintText: {
-    color: "white"
+    color: "white",
+    fontFamily: 'RobotoCondensed-Regular'
   },
   id: {
-    color: '#98b4e9'
+    color: '#98b4e9',
+    fontFamily: 'RobotoCondensed-Regular'
   },
 });

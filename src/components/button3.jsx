@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 13,
-    fontWeight: '500',
+    fontFamily: 'RobotoCondensed-Medium',
     color: 'white'
   }
 });

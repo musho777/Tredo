@@ -19,8 +19,8 @@ export const Home = ({ navigation }) => {
         <AppInfo />
         <View>
           <View>
-            <Text style={{ color: 'white', fontSize: 25, textAlign: 'center', fontWeight: 600, marginBottom: 5 }}>Авторизация устройства</Text>
-            <Text style={[{ textAlign: 'center', fontSize: 13, color: '#98b4e9' }]}>Введите секретный ключ для подключения устройства к приложению</Text>
+            <Text style={{ color: 'white', fontSize: 25, textAlign: 'center', fontFamily: 'RobotoCondensed-Bold', marginBottom: 5 }}>Авторизация устройства</Text>
+            <Text style={[{ textAlign: 'center', fontSize: 13, color: '#98b4e9', fontFamily: 'RobotoCondensed-Regular', paddingHorizontal: 18, }]}>Введите секретный ключ для подключения устройства к приложению</Text>
           </View>
           <View style={styles.buttonWrapper}>
             <Button svg={<QrSvg />} text={"Войти по QR"} />
@@ -28,7 +28,7 @@ export const Home = ({ navigation }) => {
           </View>
           <View style={styles.buttonView}>
             <View style={{ gap: 10 }}>
-              <Text style={{ color: 'white' }}>Секретный ключ</Text>
+              <Text style={{ color: 'white', fontFamily: 'RobotoCondensed-Regular' }}>Секретный ключ</Text>
               <TextInput placeholderTextColor="#628bdc" value={value} placeholder="#" onChange={(e) => setValue(e)} style={styles.Input} />
             </View>
             <Button2 onPress={() => navigation.navigate("permission")} />
@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     backgroundColor: '#3968bf',
     color: '#78a7ff',
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
+    fontFamily: 'RobotoCondensed-Regular',
   },
   buttonView: {
     gap: 20,

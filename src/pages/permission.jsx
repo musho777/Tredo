@@ -32,6 +32,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#2f508e',
     fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'RobotoCondensed-SemiBold',
   }
 });
