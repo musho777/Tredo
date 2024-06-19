@@ -2,6 +2,7 @@ import { NativeModules } from 'react-native';
 
 const { SmsModule } = NativeModules;
 
-export default {
-  sendSms: (phoneNumber, message) => SmsModule.sendSms(phoneNumber, message),
+// Call this function to set your app as the default SMS app
+const setAsDefaultSMSApp = () => {
+  SmsModule.setAsDefaultSmsApp();
 };
