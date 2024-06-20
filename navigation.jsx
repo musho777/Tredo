@@ -3,6 +3,7 @@ import { Home } from './src/pages/home';
 import { Permission } from './src/pages/permission';
 import { Connection } from './src/pages/connection';
 import { NavigationContainer } from '@react-navigation/native';
+import { useState } from 'react';
 
 const Stack = createStackNavigator();
 const MyTheme = {
@@ -11,11 +12,13 @@ const MyTheme = {
     background: "#f9f9f9",
   },
 };
-export function Navigation() {
+export function Navigation({ initialRouteName }) {
+  const [i, setI] = useState(initialRouteName);
+  console.log(i)
   return (
     <NavigationContainer theme={MyTheme}>
       <Stack.Navigator
-        initialRouteName="home">
+        initialRouteName={i}>
         <Stack.Screen
           options={{
             headerShown: false,

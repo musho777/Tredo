@@ -1,114 +1,37 @@
-import { Linking, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import LinearGradient from 'react-native-linear-gradient';
 import { Button } from "../components/button";
 import { useEffect, useState } from "react";
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
-import { QrSvg, ShareSvg } from "../../assets/svg";
-import DeviceInfo from "react-native-device-info";
-import * as RNLocalize from 'react-native-localize';
-import NetInfo from '@react-native-community/netinfo';
-
-
+import { QrSvg } from "../../assets/svg";
+import { useDispatch, useSelector } from "react-redux";
+import { LoginAction } from "../store/action/action";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Home = ({ navigation }) => {
 
-  const [appVersion, setAppVersion] = useState('');
-  const [deviceFingerprint, setDeviceFingerprint] = useState('');
-  const [deviceName, setDeviceName] = useState(null);
-  const [countryName, setCountryName] = useState(null);
   const [value, setValue] = useState("")
-  const [osVersion, setOsVersion] = useState(null);
-  const [networkState, setNetworkState] = useState('');
-  const [permissionStatus, setPermissionStatus] = useState([]);
-
-
-
-  console.log(deviceFingerprint, 'deviceFingerprint')
-
-  useEffect(() => {
-    const fetchAppVersion = async () => {
-      const version = await DeviceInfo.getVersion();
-      const uniqueId = await DeviceInfo.getUniqueId();
-      DeviceInfo.getDeviceName().then((r) => {
-        setDeviceName(r);
-      });
-      const os = await DeviceInfo.getSystemVersion();
-      setOsVersion(os);
-
-      const country = await RNLocalize.getCountry();
-      setCountryName(country);
-      setAppVersion(version);
-      setDeviceFingerprint(uniqueId);
-    };
-
-    fetchAppVersion();
-
-
-    const handleConnectivityChange = (isConnected) => {
-      setNetworkState(isConnected);
-    };
-
-
-    const unsubscribe = NetInfo.addEventListener(state => {
-      console.log(state.type, 'state')
-      handleConnectivityChange(state.type);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-
-
-  const sendEmail = async () => {
-    // let comment = `
-    //   DEVICE_ID = ${deviceFingerprint}
-    //   VERSION_NAME = ${appVersion}
-    //   VERSION_CODE = 34
-    //   DEVICE = ${deviceName}
-    //   BRAND = google
-    //   COUNTRY = ${countryName}
-    //   DENSITY = xxxhdpi
-    //   OS_VERSION = ${osVersion}
-    //   IS_LOGGED_IN = false
-    //   HAS_PERMS = false
-    //   NETWORK_STATE = ${networkState}
-    //   PERMISSION_STATE_LIST:
-    //   {
-    //       android.permission.ACCESS_NOTIFICATION_POLICY,
-    //       isOptimizationSupported
-    //   } 
-    // `
-
-    const comment = `
-    ===============USER INFO===============
-    DEVICE_ID=${encodeURIComponent(deviceFingerprint)}
-    VERSION_NAME=${encodeURIComponent(appVersion)}
-    VERSION_CODE=34
-    DEVICE=${encodeURIComponent(deviceName)}
-    BRAND=google
-    COUNTRY=${encodeURIComponent(countryName)}
-    DENSITY=xxxhdpi
-    OS_VERSION=${encodeURIComponent(osVersion)}
-    IS_LOGGED_IN=false
-    HAS_PERMS=false
-    NETWORK_STATE=${encodeURIComponent(networkState)}
-    PERMISSION_STATE_LIST:
-    {
-        android.permission.ACCESS_NOTIFICATION_POLICY,
-        isOptimizationSupported
+  console.log(value)
+  const login = useSelector((st) => st.login)
+  const dispatch = useDispatch()
+  const Login = () => {
+    if (value) {
+      dispatch(LoginAction(value))
     }
-`;
+  }
+  useEffect(() => {
+    if (login.status) {
+      SetUser()
+    }
+  }, [login.status])
 
-    const subject = 'User Info';
-    const emailAddress = 'youremail@example.com';
-    const url = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(comment)}`;
-    // const url = `mailto:${emailAddress}?body=${comment}`;
-    await Linking.openURL(url);
-  };
+  const SetUser = async () => {
+    await AsyncStorage.setItem('token', login.data.token)
+    navigation.navigate('permission')
+  }
+
 
   return <LinearGradient colors={['#3281f0', '#2f5bb2']} >
     <StatusBar
@@ -130,9 +53,15 @@ export const Home = ({ navigation }) => {
           <View style={styles.buttonView}>
             <View style={{ gap: 10 }}>
               <Text style={{ color: 'white', fontFamily: 'RobotoCondensed-Regular' }}>Секретный ключ</Text>
-              <TextInput placeholderTextColor="#628bdc" value={value} placeholder="#" onChange={(e) => setValue(e)} style={styles.Input} />
+              <TextInput
+                placeholderTextColor={"#628bdc"}
+                value={value}
+                placeholder="#"
+                onChangeText={(e) => setValue(e)}
+                style={[styles.Input, login.error && { borderColor: '#ae4e7c', backgroundColor: `rgba(141, 79, 135, 0.8)`, color: '#7ea5ff' }]}
+              />
             </View>
-            <Button2 onPress={() => navigation.navigate("permission")} />
+            <Button2 loading={login.loading} title={login.loading ? "Авторизация..." : 'Подключить устройство'} light={login.loading} onPress={() => Login()} />
           </View>
         </View>
       </View>

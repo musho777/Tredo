@@ -1,8 +1,9 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native"
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from "react-native"
 
-export const Button2 = ({ light, onPress = () => { } }) => {
-  return <TouchableOpacity onPress={() => onPress()} style={[styles.button, light && { backgroundColor: "#006bf7" }]}>
-    <Text style={[styles.buttonText, light && { color: "white" }]}>Подключить устройство</Text>
+export const Button2 = ({ loading, title, light, onPress = () => { } }) => {
+  return <TouchableOpacity disabled={loading} onPress={() => onPress()} style={[styles.button, light && { backgroundColor: "#006bf7" }]}>
+    {loading && <ActivityIndicator size={'small'} color={'white'} />}
+    <Text style={[styles.buttonText, light && { color: "white" }]}>{title}</Text>
   </TouchableOpacity>
 }
 const styles = StyleSheet.create({
@@ -12,6 +13,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     borderRadius: 10,
+    flexDirection: 'row',
+    gap: 30
   },
   buttonText: {
     color: '#305bb1',

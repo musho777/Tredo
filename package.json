@@ -11,12 +11,17 @@
   },
   "dependencies": {
     "@config-plugins/react-native-callkeep": "^8.0.0",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/netinfo": "^11.3.2",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
+    "axios": "^1.7.2",
     "googleapis": "^140.0.0",
+    "i": "^0.3.7",
+    "npm": "^10.8.1",
     "react": "18.2.0",
     "react-native": "0.74.2",
+    "react-native-async-storage": "^0.0.1",
     "react-native-callkeep": "^4.3.13",
     "react-native-default-preference": "^1.4.4",
     "react-native-device-info": "^11.1.0",
@@ -34,6 +39,10 @@
     "react-native-sms": "^1.11.0",
     "react-native-svg": "^15.3.0",
     "react-native-switch": "^1.5.1",
+    "react-redux": "^9.1.2",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "thunk": "^0.0.1",
     "toggle-switch-react-native": "^3.3.0"
   },
   "devDependencies": {
