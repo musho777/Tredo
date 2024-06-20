@@ -3,9 +3,13 @@ import ToggleSwitch from "toggle-switch-react-native"
 import { MsgSvg } from "../../assets/svg"
 import { useState } from "react"
 
-export const Switch = ({ text }) => {
+export const Switch = ({ text, onSwitch }) => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch = () => {
+    onSwitch()
+    setIsEnabled(previousState => !previousState);
+  }
+
 
   return <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
