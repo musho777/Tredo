@@ -23,6 +23,7 @@
     "react-native": "0.74.2",
     "react-native-async-storage": "^0.0.1",
     "react-native-callkeep": "^4.3.13",
+    "react-native-communications": "^2.2.1",
     "react-native-default-preference": "^1.4.4",
     "react-native-device-info": "^11.1.0",
     "react-native-email": "^2.1.0",

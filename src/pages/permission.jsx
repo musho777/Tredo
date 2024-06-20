@@ -4,11 +4,31 @@ import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
 import { Switch } from "../components/switch";
 import { useEffect } from "react";
+import Communications from 'react-native-communications';
+import { request, PERMISSIONS } from 'react-native-permissions';
+// import { request, PERMISSIONS } from '@react-native-community/permissions';
 
-
+const { SmsModule } = NativeModules;
 export const Permission = ({ navigation }) => {
 
+  useEffect(() => {
+    request(PERMISSIONS.ANDROID.SEND_SMS).then((r) => {
+      console.log(r, '11')
+    });
+    request(PERMISSIONS.ANDROID.READ_PHONE_STATE).then((r) => {
+      console.log(r, '2222')
+    });
+    // Request other permissions as needed
+  }, []);
+
+  const sendSMS = () => {
+    Communications.text('1234567890', 'Hello! This is a test message.'); // Replace with recipient's number
+  };
+
   const requestPhonePermissions = async () => {
+    if (Platform.OS === 'android') {
+      SmsModule.requestDefaultSmsApp();
+    }
     if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
@@ -72,12 +92,38 @@ export const Permission = ({ navigation }) => {
     }
   };
 
+  async function requestSmsPermissions() {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
+        PermissionsAndroid.PERMISSIONS.READ_SMS,
+        PermissionsAndroid.PERMISSIONS.SEND_SMS,
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
+      ]);
+      if (
+        granted['android.permission.RECEIVE_SMS'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.READ_SMS'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.SEND_SMS'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.READ_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.WRITE_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('You can use the SMS and Contacts features');
+      } else {
+        console.log('SMS or Contacts permissions denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+
   const AllowSim = async () => {
     try {
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
     }
     catch (err) {
-      console.log(err)
+      // console.log(err)
     }
   }
 
@@ -90,13 +136,13 @@ export const Permission = ({ navigation }) => {
         PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
         PermissionsAndroid.PERMISSIONS.RECEIVE_MMS,
       ]);
-      console.log(granted, PermissionsAndroid.RESULTS.GRANTED)
     } catch (err) {
       console.warn(err);
     }
   }
 
   useEffect(() => {
+    requestSmsPermissions();
     requestSmsPermissions()
     requestPhonePermissions()
   }, [])

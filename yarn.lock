@@ -3412,6 +3412,7 @@ __metadata:
     react-native: 0.74.2
     react-native-async-storage: ^0.0.1
     react-native-callkeep: ^4.3.13
+    react-native-communications: ^2.2.1
     react-native-default-preference: ^1.4.4
     react-native-device-info: ^11.1.0
     react-native-email: ^2.1.0
@@ -9445,6 +9446,13 @@ __metadata:
   peerDependencies:
     react-native: ">=0.40.0"
   checksum: 87b23fd3f80c4f6cb6bca9565ce9038441d80bfe2799f5522c3a55c99fee69843ecabc35d12a13542bc3b1ae5ed6f3e6be4aee389040549574be88211ef0822b
+  languageName: node
+  linkType: hard
+
+"react-native-communications@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "react-native-communications@npm:2.2.1"
+  checksum: 0b1a63a116a34866d06790b0dd1153ff622aba148a8ad7d87e18e0ba6c2cfa545210be0d04f3428341a72fbcbd09ac95ea38b92197856cb0fda67bca2321e07b
   languageName: node
   linkType: hard
 
