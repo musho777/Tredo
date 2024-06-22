@@ -148,3 +148,43 @@ export const ShareSvg = () => {
     />
   </Svg>
 }
+
+export const SearchSvg = () => {
+  return <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0,0,256,256"
+    width="20px"
+    height="20px"
+  >
+    <Path
+      d="M13 3C7.489 3 3 7.489 3 13s4.489 10 10 10a9.947 9.947 0 006.322-2.264l5.971 5.971a1 1 0 101.414-1.414l-5.97-5.97A9.947 9.947 0 0023 13c0-5.511-4.489-10-10-10zm0 2c4.43 0 8 3.57 8 8s-3.57 8-8 8-8-3.57-8-8 3.57-8 8-8z"
+      transform="scale(8.53333)"
+      fill="#226cff"
+      strokeMiterlimit={10}
+      fontFamily="none"
+      fontWeight="none"
+      fontSize="none"
+      textAnchor="none"
+    />
+  </Svg>
+}
+
+export const ClearSvg = () => {
+  return <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0,0,256,256"
+    width="20px"
+    height="20px"
+  >
+    <Path
+      d="M24 4C12.972 4 4 12.972 4 24s8.972 20 20 20 20-8.972 20-20S35.028 4 24 4zm0 3c9.407 0 17 7.593 17 17s-7.593 17-17 17S7 33.407 7 24 14.593 7 24 7zm6.486 8.979a1.5 1.5 0 00-1.047.46L24 21.88l-5.44-5.44a1.5 1.5 0 10-2.12 2.122L21.878 24l-5.44 5.44a1.5 1.5 0 102.122 2.12L24 26.122l5.44 5.44a1.5 1.5 0 102.12-2.122L26.122 24l5.44-5.44a1.5 1.5 0 00-1.075-2.581z"
+      transform="scale(5.33333)"
+      fill="#226cff"
+      strokeMiterlimit={10}
+      fontFamily="none"
+      fontWeight="none"
+      fontSize="none"
+      textAnchor="none"
+    />
+  </Svg>
+}

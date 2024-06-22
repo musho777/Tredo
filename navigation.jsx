@@ -5,6 +5,7 @@ import { Connection } from './src/pages/connection';
 import { NavigationContainer } from '@react-navigation/native';
 import { useState } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
+import { AllMsg } from './src/pages/allMsg';
 
 const Stack = createStackNavigator();
 const MyTheme = {
@@ -39,8 +40,14 @@ export function Navigation({ initialRouteName }) {
             headerShown: false,
           }}
           name="SmsPage" component={SmsPage} />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="AllMsg" component={AllMsg} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 // SmsPage
+// AllMsg

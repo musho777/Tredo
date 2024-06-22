@@ -48,7 +48,7 @@ export const SmsPage = () => {
     </View>
     <ScrollView style={styles.body} >
       {sms.map((elm, i) => {
-        return <MsgBody data={elm} key={i} />
+        return <MsgBody last={i == sms.length - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>

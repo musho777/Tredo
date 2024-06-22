@@ -1,8 +1,9 @@
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-export const MsgBody = ({ data, last }) => {
+export const AllMsgBody = ({ data, last, index }) => {
+  console.log(last, 'last')
   const naviagtion = useNavigation()
-  let date = new Date(data[0].date)
+  let date = new Date(data?.date)
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()
@@ -17,18 +18,17 @@ export const MsgBody = ({ data, last }) => {
     hours = `0${hours}`
   }
 
-  return <TouchableOpacity onPress={() => naviagtion.navigate('AllMsg', { data })} style={[styles.shadow, last && { marginBottom: 50 }]}>
+  return <TouchableOpacity style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-        <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправитель:</Text>
-        <Text style={{ color: "#6e90d3", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>{data[0].address}</Text>
+        <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
+        <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>
-    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data[0].body}</Text>
+    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.body}</Text>
     <View style={styles.smsCount}>
-      <Text style={{ color: "#6e90d3", fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Всего сообщений:</Text>
-      <Text style={{ color: "#2f508e", fontSize: 16, fontFamily: 'RobotoCondensed-Regular' }}>{data.length}</Text>
+      <Text style={{ color: "#6e90d3", fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}></Text>
     </View>
   </TouchableOpacity>
 }
