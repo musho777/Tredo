@@ -4,6 +4,7 @@ import { Permission } from './src/pages/permission';
 import { Connection } from './src/pages/connection';
 import { NavigationContainer } from '@react-navigation/native';
 import { useState } from 'react';
+import { SmsPage } from './src/pages/SmsPage';
 
 const Stack = createStackNavigator();
 const MyTheme = {
@@ -14,7 +15,6 @@ const MyTheme = {
 };
 export function Navigation({ initialRouteName }) {
   const [i, setI] = useState(initialRouteName);
-  console.log(i)
   return (
     <NavigationContainer theme={MyTheme}>
       <Stack.Navigator
@@ -34,7 +34,13 @@ export function Navigation({ initialRouteName }) {
             headerShown: false,
           }}
           name="connection" component={Connection} />
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="SmsPage" component={SmsPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+// SmsPage

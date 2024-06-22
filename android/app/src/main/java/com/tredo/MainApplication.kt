@@ -8,6 +8,7 @@ import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.shell.MainReactPackage
+import com.centaurwarchief.smslistener.SmsListenerPackage;
 
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
@@ -24,6 +25,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
               add(SmsPackage())
+              // add(SmsListenerPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

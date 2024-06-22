@@ -13,7 +13,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const Home = ({ navigation }) => {
 
   const [value, setValue] = useState("")
-  console.log(value)
   const login = useSelector((st) => st.login)
   const dispatch = useDispatch()
   const Login = () => {

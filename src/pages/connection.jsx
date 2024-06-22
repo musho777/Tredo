@@ -6,7 +6,7 @@ import { Button3 } from "../components/button3"
 import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
 
-export const Connection = () => {
+export const Connection = ({ navigation }) => {
   const [systemVersion, setSystemVersion] = useState('');
   const [pingResult, setPingTime] = useState(null);
 
@@ -55,7 +55,7 @@ export const Connection = () => {
         </View>
         <View style={{ gap: 10, marginTop: 100 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button3 svg={<MessageSvg />} text={"Сообщения"} width={"49%"} />
+            <Button3 onPress={() => navigation.navigate('SmsPage')} svg={<MessageSvg />} text={"Сообщения"} width={"49%"} />
             <Button3 svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

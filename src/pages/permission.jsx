@@ -4,26 +4,52 @@ import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
 import { Switch } from "../components/switch";
 import { useEffect } from "react";
-import Communications from 'react-native-communications';
 import { request, PERMISSIONS } from 'react-native-permissions';
-// import { request, PERMISSIONS } from '@react-native-community/permissions';
+import SmsAndroid from 'react-native-get-sms-android';
+
 
 const { SmsModule } = NativeModules;
 export const Permission = ({ navigation }) => {
 
+
+
+
+
   useEffect(() => {
     request(PERMISSIONS.ANDROID.SEND_SMS).then((r) => {
-      console.log(r, '11')
     });
     request(PERMISSIONS.ANDROID.READ_PHONE_STATE).then((r) => {
-      console.log(r, '2222')
     });
     // Request other permissions as needed
   }, []);
 
-  const sendSMS = () => {
-    Communications.text('1234567890', 'Hello! This is a test message.'); // Replace with recipient's number
+
+
+
+  var filter = {
+    box: 'inbox',
   };
+
+  const Readsms_list = async () => {
+    SmsAndroid.list(
+      JSON.stringify(filter),
+      (fail) => {
+        console.log('Failed with this error: ' + fail);
+      },
+      (count, smsList) => {
+        // console.log('Count: ', count);
+        // console.log('List: ', smsList);
+        var arr = JSON.parse(smsList);
+        arr.forEach(function (object) {
+          // 'Object: ' +
+          // console.log(object);
+          // console.log('-->' + object.date);
+          // console.log('-->' + object.body);
+        });
+      }
+    )
+  }
+
 
   const requestPhonePermissions = async () => {
     if (Platform.OS === 'android') {
@@ -82,9 +108,7 @@ export const Permission = ({ navigation }) => {
         //   }
         // );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log("You can use the phone state");
         } else {
-          console.log("Phone state permission denied");
         }
       } catch (err) {
         console.warn(err);
@@ -108,9 +132,7 @@ export const Permission = ({ navigation }) => {
         granted['android.permission.READ_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED &&
         granted['android.permission.WRITE_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED
       ) {
-        console.log('You can use the SMS and Contacts features');
       } else {
-        console.log('SMS or Contacts permissions denied');
       }
     } catch (err) {
       console.warn(err);
@@ -123,7 +145,6 @@ export const Permission = ({ navigation }) => {
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
     }
     catch (err) {
-      // console.log(err)
     }
   }
 

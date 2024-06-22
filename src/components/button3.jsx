@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
-export const Button3 = ({ svg, text, width, bg = "#3282f1" }) => {
-  return <TouchableOpacity style={[styles.button, { width: width, backgroundColor: bg }]}>
+export const Button3 = ({ svg, text, width, bg = "#3282f1", onPress = () => { } }) => {
+  return <TouchableOpacity onPress={() => onPress()} style={[styles.button, { width: width, backgroundColor: bg }]}>
     <View>
       {svg}
     </View>
