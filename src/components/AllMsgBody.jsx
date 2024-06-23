@@ -1,9 +1,6 @@
-import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 export const AllMsgBody = ({ data, last, index }) => {
-  console.log(last, 'last')
-  const naviagtion = useNavigation()
-  let date = new Date(data?.date)
+  let date = new Date(data?.timestamp)
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()
