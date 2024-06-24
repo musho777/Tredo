@@ -1,4 +1,4 @@
-import { StatusBar, TouchableOpacity, View, Image, Text } from "react-native"
+import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid } from "react-native"
 import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
@@ -17,6 +17,29 @@ export const Connection = ({ navigation }) => {
   const [lastSms, setLastSms] = useState("")
   const dispatch = useDispatch()
   const sendSms = useSelector((st) => st.sendSms)
+
+
+  const GoNextPage = async () => {
+    try {
+      const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECEIVE_SMS)
+      const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
+      const g3 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.SEND_SMS)
+      const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
+      const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
+      const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
+      if (!g2 || !g4 || !g5) {
+        await AsyncStorage.setItem('permition', 'no')
+        if (defaultSms) {
+          navigation.navigate("permission")
+        }
+      }
+      else {
+        setLoading(false)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const fetchPingTime = async () => {
     const startTime = Date.now();
@@ -38,7 +61,9 @@ export const Connection = ({ navigation }) => {
     };
     fetchSystemVersion();
     fetchPingTime()
+    GoNextPage()
   }, []);
+
 
   const setItem = async (message) => {
     let token = await AsyncStorage.getItem('token')

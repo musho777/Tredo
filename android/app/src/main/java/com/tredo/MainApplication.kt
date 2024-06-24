@@ -16,6 +16,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import com.tredo.sms.SmsPackage;
 import java.util.Arrays
+import com.tredo.SmsDefaultHandlerPackage
 // import com.tredo.SmsPackageModule;
 
 class MainApplication : Application(), ReactApplication {
@@ -25,8 +26,9 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
               SmsPackage()
+              add(SmsDefaultHandlerPackage())
+              // SmsDefaultHandlerPackage()
               SmsListenerPackage()
-              // add(SmsListenerPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

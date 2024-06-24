@@ -1,12 +1,32 @@
-import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform } from "react-native"
+import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform, Alert } from "react-native"
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
 import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
+import { addSmsPermissionListener, requestDefaultSmsPermission } from "../components/SmsDefaultHandler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const Permission = ({ navigation }) => {
-  const [loading, setLoading] = useState(true)
+  const [defaultSms, setDefaultSms] = useState(false)
+
+  const handlePermissionRequest = () => {
+    requestDefaultSmsPermission();
+  };
+
+  const SetAsincDefault = async () => {
+    await AsyncStorage.setItem("defaultapp", 'yes')
+  }
+
+  useEffect(() => {
+    const listener = addSmsPermissionListener((message) => {
+      SetAsincDefault()
+      setDefaultSms(true)
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   const requestPhonePermissions = async () => {
     try {
@@ -45,12 +65,6 @@ export const Permission = ({ navigation }) => {
     requestSmsPermissions()
   }, [])
 
-  function setDefaultSmsApp() {
-    if (Platform.OS === 'android') {
-      const { SmsPackage } = NativeModules;
-      SmsPackage.requestDefaultSmsApp();
-    }
-  }
 
   const GoNextPage = async () => {
     try {
@@ -60,9 +74,12 @@ export const Permission = ({ navigation }) => {
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
-      console.log(g1, g2, g3, g4, g5, g6)
+      console.log(g2, g4, g5)
       if (g2 && g4 && g5) {
-        navigation.navigate("connection")
+        await AsyncStorage.setItem('permition', 'yes')
+        if (defaultSms) {
+          navigation.navigate("connection")
+        }
       }
       else {
         setLoading(false)
@@ -72,33 +89,28 @@ export const Permission = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    GoNextPage()
-  }, [])
-
-  if (!loading)
-    return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
-      <StatusBar
-        animated={true}
-        barStyle="dark-content"
-        backgroundColor='#f9f9f9' />
-      <AppInfo light />
-      <View >
-        <Text style={styles.text}>Предоставьте приложению</Text>
-        <Text style={[styles.text, { marginTop: -3 }]}>необходимые разрешения:</Text>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ gap: 20 }}>
-          <Switch onSwitch={() => setDefaultSmsApp()} text="Сделать приложением SMS по-умолчанию" />
-          <Switch onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
-          <Switch onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
-          <Switch onSwitch={() => { }} text="Активировать чтение пуш-уведомлений" />
-        </View>
-      </ScrollView>
-      <View>
-        <Button2 onPress={() => GoNextPage()} title={"Далее"} light />
-      </View>
+  return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
+    <StatusBar
+      animated={true}
+      barStyle="dark-content"
+      backgroundColor='#f9f9f9' />
+    <AppInfo light />
+    <View >
+      <Text style={styles.text}>Предоставьте приложению</Text>
+      <Text style={[styles.text, { marginTop: -3 }]}>необходимые разрешения:</Text>
     </View>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={{ gap: 20 }}>
+        <Switch onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
+        <Switch onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
+        <Switch onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
+        <Switch onSwitch={() => { }} text="Активировать чтение пуш-уведомлений" />
+      </View>
+    </ScrollView>
+    <View>
+      <Button2 onPress={() => GoNextPage()} title={"Далее"} light />
+    </View>
+  </View>
 }
 const styles = StyleSheet.create({
   text: {
