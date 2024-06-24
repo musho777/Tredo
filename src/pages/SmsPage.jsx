@@ -4,29 +4,14 @@ import SmsAndroid from 'react-native-get-sms-android';
 import { MsgBody } from "../components/msgBody";
 import SmsListener from 'react-native-android-sms-listener'
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from "react-redux";
+import { SendSmgAction } from "../store/action/action";
 
 
 
 export const SmsPage = () => {
 
   const [sms, setSms] = useState([])
-
-  const setItem = async (message) => {
-    let sms = await AsyncStorage.getItem('sms')
-    if (sms) {
-      let item = JSON.parse(await AsyncStorage.getItem('sms'))
-      item.unshift(message)
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    }
-    else {
-      let item = []
-      item.unshift(message)
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    }
-  }
-  SmsListener.addListener(message => {
-    setItem(message)
-  })
 
   const Readsms_list = async () => {
     let arr = await AsyncStorage.getItem('sms')
@@ -56,7 +41,6 @@ export const SmsPage = () => {
     </View>
     <ScrollView style={styles.body} >
       {sms.map((elm, i) => {
-        console.log(elm)
         return <MsgBody last={i == sms.length - 1} data={elm} key={i} />
       })}
     </ScrollView>

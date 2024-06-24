@@ -4,3 +4,10 @@ export const SuccessLogin = (data) => {
     data
   }
 }
+
+export const SuccesSendSmg = (data) => {
+  return {
+    type: "SuccesSendSmg",
+    data
+  }
+}

@@ -56,6 +56,9 @@ export const AllMsg = ({ route }) => {
     </View>
     <ScrollView style={styles.body} >
       {sms?.map((elm, i) => {
+        if (i == 0) {
+          console.log(elm)
+        }
         return <AllMsgBody index={i} last={i == route.params.data.length - 1} data={elm} key={i} />
       })}
     </ScrollView>

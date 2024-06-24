@@ -3,3 +3,10 @@ export const ErrorLogin = () => {
     type: "ErrorLogin"
   }
 }
+
+export const ErrorSendSMg = (error) => {
+  return {
+    type: "ErrorSendSMg",
+    error
+  }
+}

@@ -3,3 +3,9 @@ export const StartLogin = () => {
     type: "StartLogin"
   }
 }
+
+export const StartSendSmg = () => {
+  return {
+    type: "StartSendSmg"
+  }
+}

@@ -1,34 +1,39 @@
 const initialState = {
   error: false,
-  status: false,
   loading: false,
   data: null,
+  status: false,
 };
-const LoginReducer = (state = initialState, action) => {
+const SendSmsReducer = (state = initialState, action) => {
   let item = { ...state };
   switch (action.type) {
-    case 'StartLogin':
-      item.status = false;
+    case 'StartSendSmg':
       item.error = false;
       item.loading = true;
       item.data = null
+      item.status = false
       break;
-    case 'SuccessLogin':
-      item.status = true;
+    case 'SuccesSendSmg':
       item.error = false;
       item.loading = false;
       item.data = action.data
-
+      item.status = true
       break;
-    case 'ErrorLogin':
+    case 'ErrorSendSMg':
       item.error = true;
       item.loading = false;
-      item.status = false;
       item.data = null
+      item.status = false
       break;
+    case 'ClearSendSms':
+      item.error = ''
+      item.loading = false
+      item.data = null
+      item.status = false
+      break
     default:
       break;
   }
   return item;
 };
-export default LoginReducer;
+export default SendSmsReducer;
