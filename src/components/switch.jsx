@@ -1,14 +1,19 @@
 import { Text, View } from "react-native"
 import ToggleSwitch from "toggle-switch-react-native"
 import { MsgSvg } from "../../assets/svg"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export const Switch = ({ text, onSwitch }) => {
-  const [isEnabled, setIsEnabled] = useState(false);
+export const Switch = ({ text, onSwitch, value = false }) => {
+  const [isEnabled, setIsEnabled] = useState(value);
   const toggleSwitch = () => {
     onSwitch()
-    setIsEnabled(previousState => !previousState);
+    if (!isEnabled)
+      setIsEnabled(previousState => !previousState);
   }
+
+  useEffect(() => {
+    setIsEnabled(value)
+  }, [value])
 
 
   return <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

@@ -50,6 +50,24 @@ class SmsDefaultHandlerModule(private val reactContext: ReactApplicationContext)
         }
     }
 
+     @ReactMethod
+    fun isDefaultSmsApp(promise: Promise) {
+        val currentActivity = currentActivity ?: run {
+            promise.reject("NO_ACTIVITY", "No current activity")
+            return
+        }
+
+        val isDefault = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = currentActivity.getSystemService(RoleManager::class.java)
+            roleManager?.isRoleHeld(ROLE_SMS) ?: false
+        } else {
+            val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(currentActivity)
+            defaultSmsPackage == reactContext.packageName
+        }
+
+        promise.resolve(isDefault)
+    }
+
     private fun sendEvent(eventName: String, message: String) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit(eventName, message)

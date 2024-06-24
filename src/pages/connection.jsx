@@ -33,9 +33,6 @@ export const Connection = ({ navigation }) => {
           navigation.navigate("permission")
         }
       }
-      else {
-        setLoading(false)
-      }
     } catch (err) {
       console.log(err)
     }
@@ -87,6 +84,7 @@ export const Connection = ({ navigation }) => {
     }
   }
   SmsListener.addListener(message => {
+    console.log("---102")
     setItem(message)
   })
 

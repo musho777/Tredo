@@ -1,4 +1,4 @@
-import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform, Alert } from "react-native"
+import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform, Alert, NativeEventEmitter } from "react-native"
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
@@ -8,20 +8,23 @@ import { addSmsPermissionListener, requestDefaultSmsPermission } from "../compon
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const Permission = ({ navigation }) => {
-  const [defaultSms, setDefaultSms] = useState(false)
+
+  const { SmsDefaultHandler } = NativeModules;
+  const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
 
   const handlePermissionRequest = () => {
     requestDefaultSmsPermission();
   };
 
   const SetAsincDefault = async () => {
+    setIsDefaultSmsApp(true);
     await AsyncStorage.setItem("defaultapp", 'yes')
   }
 
   useEffect(() => {
     const listener = addSmsPermissionListener((message) => {
       SetAsincDefault()
-      setDefaultSms(true)
+      setIsDefaultSmsApp(true)
     });
     return () => {
       listener.remove();
@@ -62,6 +65,16 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
+    console.log(SmsDefaultHandler, '000')
+    SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
+      console.log(result, 'result')
+      if (result) {
+        SetAsincDefault()
+      }
+      setIsDefaultSmsApp(result);
+    }).catch((error) => {
+      console.error(error);
+    });
     requestSmsPermissions()
   }, [])
 
@@ -77,17 +90,16 @@ export const Permission = ({ navigation }) => {
       console.log(g2, g4, g5)
       if (g2 && g4 && g5) {
         await AsyncStorage.setItem('permition', 'yes')
-        if (defaultSms) {
+        if (isDefaultSmsApp) {
           navigation.navigate("connection")
         }
-      }
-      else {
-        setLoading(false)
       }
     } catch (err) {
       console.log(err)
     }
   }
+
+  console.log(isDefaultSmsApp)
 
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
     <StatusBar
@@ -101,7 +113,7 @@ export const Permission = ({ navigation }) => {
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
-        <Switch onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
+        <Switch value={isDefaultSmsApp} onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
         <Switch onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
         <Switch onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch onSwitch={() => { }} text="Активировать чтение пуш-уведомлений" />
