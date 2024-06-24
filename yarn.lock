@@ -3420,6 +3420,7 @@ __metadata:
     react-native-gesture-handler: ^2.16.2
     react-native-get-sms-android: ^2.1.0
     react-native-intent: ^1.0.1
+    react-native-intent-launcher: ^0.2.1
     react-native-linear-gradient: ^2.8.3
     react-native-localize: ^3.2.0
     react-native-modal: ^13.0.1
@@ -9513,6 +9514,13 @@ __metadata:
   peerDependencies:
     react-native: "*"
   checksum: d74653e0ecac1f391d84305e1f4f56140e2042f7f3a5bb19a5cbf0ba2c77fee605c1b7b8636755390fb53b5c0ca8d50c41c8a7dd643d689e4a08540673608141
+  languageName: node
+  linkType: hard
+
+"react-native-intent-launcher@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "react-native-intent-launcher@npm:0.2.1"
+  checksum: 551387da9f13ca5204cefe164e6264fd94640c7c47c01528cbede5580b7a80b2c0d2c7479e210c79b8e38fe820c9b088bc374288dedb758225425f23f8a67d93
   languageName: node
   linkType: hard
 
