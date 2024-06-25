@@ -5,7 +5,6 @@ import { Styles } from "../ui/style"
 import { Button3 } from "../components/button3"
 import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
-import { ClearSendSms, SendSmgAction } from "../store/action/action"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch, useSelector } from "react-redux"
@@ -14,9 +13,6 @@ import { useDispatch, useSelector } from "react-redux"
 export const Connection = ({ navigation }) => {
   const [systemVersion, setSystemVersion] = useState('');
   const [pingResult, setPingTime] = useState(null);
-  const [lastSms, setLastSms] = useState("")
-  const dispatch = useDispatch()
-  const sendSms = useSelector((st) => st.sendSms)
 
 
   const GoNextPage = async () => {
@@ -64,17 +60,46 @@ export const Connection = ({ navigation }) => {
 
   const setItem = async (message) => {
     let token = await AsyncStorage.getItem('token')
-    dispatch(ClearSendSms())
-    dispatch(SendSmgAction(token, {
-      title: message.originatingAddress,
-      unix: message.timestamp,
-      message: message.body
-    }))
+
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+    myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
     let sms = await AsyncStorage.getItem('sms')
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        title: message.originatingAddress,
+        unix: message.timestamp,
+        message: message.body
+      }),
+      redirect: 'follow'
+    };
+    message.confirm = 2
+    await fetch(`https://projectx.digiluys.com/api/send_message`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status) {
+          message.confirm = true
+        }
+        else {
+          message.confirm = false
+        }
+      })
+      .catch(error => {
+        message.confirm = false
+      });
+
+
     if (sms) {
       let item = JSON.parse(await AsyncStorage.getItem('sms'))
-      item.unshift(message)
-      setLastSms(message)
+      if (message.confirm != 2) {
+        message.confirm = 2
+        if (item.findIndex((e) => e.timestamp == message.timestamp) == -1)
+          item.unshift(message)
+      }
       await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
     else {
@@ -83,25 +108,12 @@ export const Connection = ({ navigation }) => {
       await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
   }
+
+
+
   SmsListener.addListener(message => {
-    console.log("---102")
     setItem(message)
   })
-
-
-  const confirmSms = async () => {
-    let item = JSON.parse(await AsyncStorage.getItem('sms'))
-    let index = item.findIndex(item => item.timestamp === lastSms.timestamp);
-    item[index].confirm = true
-    await AsyncStorage.setItem('sms', JSON.stringify(item))
-  }
-
-
-  useEffect(() => {
-    if (sendSms.status) {
-      confirmSms()
-    }
-  }, [sendSms.status])
 
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>

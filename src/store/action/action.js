@@ -31,7 +31,6 @@ export const LoginAction = (token) => {
 }
 
 export const SendSmgAction = (token, data) => {
-  console.log(data, '00000')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('Authorization', `Bearer ${token}`);

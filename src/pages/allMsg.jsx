@@ -30,6 +30,8 @@ export const AllMsg = ({ route }) => {
     }
   }
 
+
+
   return <View>
     <View style={styles.header}>
       <Text style={styles.AllSms}>Отправитель: 6505551212</Text>
@@ -56,9 +58,6 @@ export const AllMsg = ({ route }) => {
     </View>
     <ScrollView style={styles.body} >
       {sms?.map((elm, i) => {
-        if (i == 0) {
-          console.log(elm)
-        }
         return <AllMsgBody index={i} last={i == route.params.data.length - 1} data={elm} key={i} />
       })}
     </ScrollView>

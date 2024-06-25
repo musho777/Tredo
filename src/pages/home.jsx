@@ -32,7 +32,7 @@ export const Home = ({ navigation }) => {
   }
 
 
-  return <LinearGradient colors={['#3281f0', '#2f5bb2']} >
+  return <LinearGradient style={{ height: '100%' }} colors={['#3281f0', '#2f5bb2']} >
     <StatusBar
       animated={true}
       barStyle="dark-content"

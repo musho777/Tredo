@@ -3421,6 +3421,7 @@ __metadata:
     react-native-get-sms-android: ^2.1.0
     react-native-intent: ^1.0.1
     react-native-intent-launcher: ^0.2.1
+    react-native-keyboard-aware-scroll-view: ^0.9.5
     react-native-linear-gradient: ^2.8.3
     react-native-localize: ^3.2.0
     react-native-modal: ^13.0.1
@@ -9530,6 +9531,27 @@ __metadata:
   peerDependencies:
     react-native: ">=0.13"
   checksum: 2373375707d2ccf04d22a2fc9ac39c82b6f03ec3dc26bd70333046100a59d02887708dbf560a3bb83f20cf3d09e72f79909ce3ea72fb53172948ecdff2a3480b
+  languageName: node
+  linkType: hard
+
+"react-native-iphone-x-helper@npm:^1.0.3":
+  version: 1.3.1
+  resolution: "react-native-iphone-x-helper@npm:1.3.1"
+  peerDependencies:
+    react-native: ">=0.42.0"
+  checksum: 024376646009a966e33e12fc2358751830818b0fb73b1c601a64eb5e490d2dc43eec23668991b985a8c412a84d087f20eb45bb9b593567c08b66e741b7bddda5
+  languageName: node
+  linkType: hard
+
+"react-native-keyboard-aware-scroll-view@npm:^0.9.5":
+  version: 0.9.5
+  resolution: "react-native-keyboard-aware-scroll-view@npm:0.9.5"
+  dependencies:
+    prop-types: ^15.6.2
+    react-native-iphone-x-helper: ^1.0.3
+  peerDependencies:
+    react-native: ">=0.48.4"
+  checksum: 5eec2aedb886213dfed4c8428a443b565dce80ba9fcf5897171e4c8829d4dd64c5011ac004d93f29adfc83ad6f88c2838d1a5b45255dc4a49bd1c0a169245800
   languageName: node
   linkType: hard
 

@@ -65,9 +65,7 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
-    console.log(SmsDefaultHandler, '000')
     SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
-      console.log(result, 'result')
       if (result) {
         SetAsincDefault()
       }
@@ -98,8 +96,6 @@ export const Permission = ({ navigation }) => {
       console.log(err)
     }
   }
-
-  console.log(isDefaultSmsApp)
 
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
     <StatusBar
