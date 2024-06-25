@@ -4,7 +4,22 @@ import { useDispatch } from "react-redux"
 import { SendSmgAction } from "../store/action/action"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import Clipboard from '@react-native-clipboard/clipboard';
+
+
 export const AllMsgBody = ({ data, last, index }) => {
+
+  const copyToClipboard = () => {
+    let date = new Date(data.timestamp)
+    let day = date.getDate()
+    let mount = date.getMonth()
+    let year = date.getFullYear()
+    // console.log(day mount year)
+    console.log(data)
+    Clipboard.setString(`${day}.${mount}.${year}   ${data.originatingAddress}: ${data.body}`);
+    // Clipboard.setString(text);
+  };
+
 
   const [setData, setNewData] = useState()
 
@@ -46,7 +61,7 @@ export const AllMsgBody = ({ data, last, index }) => {
     await AsyncStorage.setItem('sms', JSON.stringify(item))
   }
 
-  return <TouchableOpacity style={[styles.shadow, last && { marginBottom: 150 }]}>
+  return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>

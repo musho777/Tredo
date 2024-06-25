@@ -31,12 +31,11 @@ export const AllMsg = ({ route }) => {
   }
 
 
-
   return <View>
     <View style={styles.header}>
-      <Text style={styles.AllSms}>Отправитель: 6505551212</Text>
+      <Text style={styles.AllSms}>Отправитель: </Text>
       <View style={styles.smsCount}>
-        <Text style={styles.AllSms1}>Сообщений от отправителя:</Text>
+        <Text style={styles.AllSms1}>Сообщений от отправителя: {sms?.length && sms[0]?.originatingAddress}</Text>
         <Text style={styles.AllSms1}>{route.params.data?.length}</Text>
       </View>
     </View>

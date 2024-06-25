@@ -21,7 +21,7 @@ export const MsgBody = ({ data, last }) => {
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправитель:</Text>
-        <Text style={{ color: "#6e90d3", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>{data[0].address}</Text>
+        <Text style={{ color: "#6e90d3", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>{data[0].originatingAddress}</Text>
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>

@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     fontSize: 20,
     backgroundColor: '#3968bf',
-    color: '#78a7ff',
+    color: 'white',
     paddingHorizontal: 20,
     fontFamily: 'RobotoCondensed-Regular',
   },
