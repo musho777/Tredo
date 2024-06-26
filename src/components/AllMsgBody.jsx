@@ -15,7 +15,6 @@ export const AllMsgBody = ({ data, last, index }) => {
     let mount = date.getMonth()
     let year = date.getFullYear()
     // console.log(day mount year)
-    console.log(data)
     Clipboard.setString(`${day}.${mount}.${year}   ${data.originatingAddress}: ${data.body}`);
     // Clipboard.setString(text);
   };

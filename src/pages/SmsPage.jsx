@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native"
-import SmsAndroid from 'react-native-get-sms-android';
 import { MsgBody } from "../components/msgBody";
-import SmsListener from 'react-native-android-sms-listener'
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import { SendSmgAction } from "../store/action/action";
+import { useDispatch, useSelector } from "react-redux";
+import { ReadSms } from "../store/action/action";
 
 
 
 export const SmsPage = () => {
 
   const [sms, setSms] = useState([])
+  const readSms = useSelector((st) => st.readSms)
+  const dispatch = useDispatch()
 
   const Readsms_list = async () => {
     let arr = await AsyncStorage.getItem('sms')
@@ -23,13 +23,19 @@ export const SmsPage = () => {
       acc[address].push(message);
       return acc;
     }, {}));
-    setSms(a)
+    dispatch(ReadSms(a))
   }
 
 
   useEffect(() => {
     Readsms_list()
   }, [])
+
+  useEffect(() => {
+    if (readSms?.data) {
+      setSms(readSms?.data)
+    }
+  }, [readSms])
 
   return <View>
     <View style={styles.header}>

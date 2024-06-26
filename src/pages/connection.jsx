@@ -6,8 +6,6 @@ import { Button3 } from "../components/button3"
 import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import SmsListener from 'react-native-android-sms-listener'
-import { useDispatch, useSelector } from "react-redux"
 
 
 export const Connection = ({ navigation }) => {
@@ -58,72 +56,12 @@ export const Connection = ({ navigation }) => {
   }, []);
 
 
-  const setItem = async (message) => {
-    let token = await AsyncStorage.getItem('token')
-
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('Authorization', `Bearer ${token}`);
-    myHeaders.append('X-App-Client', `MyReactNativeApp`);
-
-    let sms = await AsyncStorage.getItem('sms')
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify({
-        title: message.originatingAddress,
-        unix: message.timestamp,
-        message: message.body
-      }),
-      redirect: 'follow'
-    };
-    message.confirm = 2
-    await fetch(`https://projectx.digiluys.com/api/send_message`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.status) {
-          message.confirm = true
-        }
-        else {
-          message.confirm = false
-        }
-      })
-      .catch(error => {
-        message.confirm = false
-      });
-
-
-    if (sms) {
-      let item = JSON.parse(await AsyncStorage.getItem('sms'))
-      if (message.confirm != 2) {
-        message.confirm = 2
-        if (item.findIndex((e) => e.timestamp == message.timestamp) == -1)
-          item.unshift(message)
-      }
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    }
-    else {
-      let item = []
-      item.unshift(message)
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    }
-  }
-
-
-
-  SmsListener.addListener(message => {
-    setItem(message)
-  })
-
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <StatusBar
       animated={true}
       barStyle="dark-content"
       backgroundColor='#f9f9f9' />
-    <TouchableOpacity style={{ position: 'absolute', top: 25, left: 15 }}>
-      <SettingIcon />
-    </TouchableOpacity>
     <AppInfo version={false} light />
     <View>
       <View>

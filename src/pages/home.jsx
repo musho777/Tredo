@@ -1,4 +1,4 @@
-import { ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import LinearGradient from 'react-native-linear-gradient';
 import { Button } from "../components/button";
 import { useEffect, useState } from "react";
@@ -11,7 +11,6 @@ import { LoginAction } from "../store/action/action";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const Home = ({ navigation }) => {
-
   const [value, setValue] = useState("")
   const login = useSelector((st) => st.login)
   const dispatch = useDispatch()
@@ -31,14 +30,15 @@ export const Home = ({ navigation }) => {
     navigation.navigate('permission')
   }
 
+  const windowHeight = Dimensions.get('window').height;
 
   return <LinearGradient style={{ height: '100%' }} colors={['#3281f0', '#2f5bb2']} >
     <StatusBar
       animated={true}
       barStyle="dark-content"
       backgroundColor="white" />
-    <ScrollView>
-      <View style={Styles.home}>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={[Styles.home, { height: windowHeight - 140 }]}>
         <AppInfo />
         <View>
           <View>
@@ -60,11 +60,13 @@ export const Home = ({ navigation }) => {
                 style={[styles.Input, login.error && { borderColor: '#ae4e7c', backgroundColor: `rgba(141, 79, 135, 0.8)`, color: '#7ea5ff' }]}
               />
             </View>
-            <Button2 loading={login.loading} title={login.loading ? "Авторизация..." : 'Подключить устройство'} light={login.loading} onPress={() => Login()} />
           </View>
         </View>
       </View>
     </ScrollView>
+    <View style={{ marginTop: 20, paddingHorizontal: 30, paddingBottom: 30, }}>
+      <Button2 loading={login.loading} title={login.loading ? "Авторизация..." : 'Подключить устройство'} light={login.loading} onPress={() => Login()} />
+    </View>
   </LinearGradient >
 
 }

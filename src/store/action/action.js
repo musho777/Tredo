@@ -66,3 +66,17 @@ export const ClearSendSms = () => {
     type: "ClearSendSmS"
   }
 }
+
+export const ReadSms = (data) => {
+  return {
+    type: "ReadSms",
+    data
+  }
+}
+
+export const AddSms = (data) => {
+  return {
+    type: 'AddSms',
+    data
+  }
+}
