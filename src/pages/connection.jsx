@@ -1,4 +1,4 @@
-import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid } from "react-native"
+import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid, NativeModules } from "react-native"
 import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
@@ -6,11 +6,22 @@ import { Button3 } from "../components/button3"
 import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { requestDefaultSmsPermission } from "../components/SmsDefaultHandler"
 
 
 export const Connection = ({ navigation }) => {
-  const [systemVersion, setSystemVersion] = useState('');
+  const [systemVersion, setSystemVersion] = useState('')
+  const { SmsDefaultHandler } = NativeModules;
   const [pingResult, setPingTime] = useState(null);
+  const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
+  const [check, setCheck] = useState(0)
+
+  const handlePermissionRequest = async () => {
+    requestDefaultSmsPermission();
+    setTimeout(() => {
+      setCheck(true)
+    }, 1000)
+  };
 
 
   const GoNextPage = async () => {
@@ -55,6 +66,22 @@ export const Connection = ({ navigation }) => {
     GoNextPage()
   }, []);
 
+  useEffect(() => {
+    console.log("---===---")
+    SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
+      if (result) {
+        setIsDefaultSmsApp(false)
+        console.log(result, 'result')
+      }
+      else {
+        setCheck(false)
+        setIsDefaultSmsApp(true)
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }, [check])
+
 
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
@@ -83,6 +110,9 @@ export const Connection = ({ navigation }) => {
             <Button3 svg={<KeySvg />} text={"Разрешения"} width={"49%"} bg={"#e8f1ff"} />
           </View>
         </View>
+        {isDefaultSmsApp && <TouchableOpacity onPress={() => handlePermissionRequest()} style={{ backgroundColor: "#c2c2c2", justifyContent: 'center', alignItems: 'center', paddingVertical: 20, marginTop: 20, borderRadius: 10 }}>
+          <Text style={{ textAlign: 'center', color: "black", fontFamily: 'RobotoCondensed-Regular', }}>СДЕЛАТЬ ДЕФОЛТНЫМ</Text>
+        </TouchableOpacity>}
         <Text style={{ textAlign: 'center', marginTop: 25, color: "#7091d3", fontFamily: 'RobotoCondensed-Regular', }}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
       </View>
     </View>

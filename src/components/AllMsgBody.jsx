@@ -14,9 +14,10 @@ export const AllMsgBody = ({ data, last, index }) => {
     let day = date.getDate()
     let mount = date.getMonth()
     let year = date.getFullYear()
-    // console.log(day mount year)
-    Clipboard.setString(`${day}.${mount}.${year}   ${data.originatingAddress}: ${data.body}`);
-    // Clipboard.setString(text);
+    let hour = date.getHours()
+    let min = date.getMinutes()
+    let sec = date.getSeconds()
+    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${data.originatingAddress}: ${data.body}`);
   };
 
 
