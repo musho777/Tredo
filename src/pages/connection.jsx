@@ -67,11 +67,9 @@ export const Connection = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    console.log("---===---")
     SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
       if (result) {
         setIsDefaultSmsApp(false)
-        console.log(result, 'result')
       }
       else {
         setCheck(false)

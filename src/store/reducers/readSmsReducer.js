@@ -9,10 +9,13 @@ const ReadSmsReducer = (state = initialState, action) => {
       break;
     case 'AddSms':
       let index = item.data.findIndex((elm) => elm.originatingAddress == item.originatingAddress)
-      if (index > -1) {
-        item.data[index].unshift(action.data)
+      console.log(index, 'index')
+      if (index != -1) {
+        if (item.data[index].findIndex((elm) => elm.timestamp == item.timestamp))
+          item.data[index].unshift(action.data)
       }
       else {
+        console.log("1111qaa")
         item.data.unshift(action.data)
       }
       break

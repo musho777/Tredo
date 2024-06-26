@@ -22,12 +22,6 @@ const MyTheme = {
 };
 
 
-
-
-
-
-
-
 export function Navigation({ initialRouteName }) {
 
   const YourTask = async (taskDataArguments) => {
@@ -35,7 +29,6 @@ export function Navigation({ initialRouteName }) {
     try {
       SmsListener.addListener(message => {
         setItem(message)
-        console.log('====')
       });
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -59,7 +52,7 @@ export function Navigation({ initialRouteName }) {
           },
           color: '#ff00ff',
           parameters: {
-            delay: 1000, // Adjust delay as needed
+            delay: 1000,
           },
         });
       } catch (e) {
@@ -72,11 +65,6 @@ export function Navigation({ initialRouteName }) {
       BackgroundService.stop();
     };
   }, []);
-
-
-  const [data, setData] = useState()
-
-  const [i, setI] = useState(initialRouteName);
 
   const dispatch = useDispatch()
 
@@ -113,15 +101,13 @@ export function Navigation({ initialRouteName }) {
       .catch(error => {
         message.confirm = false
       });
-
     if (sms) {
       let item = JSON.parse(await AsyncStorage.getItem('sms'))
       if (message.confirm != 2) {
-        dispatch(AddSms(message))
         message.confirm = 2
         if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-          setData(item)
           item.unshift(message)
+          dispatch(AddSms(message))
           await AsyncStorage.setItem('sms', JSON.stringify(item))
         }
       }
@@ -138,7 +124,7 @@ export function Navigation({ initialRouteName }) {
   return (
     <NavigationContainer theme={MyTheme}>
       <Stack.Navigator
-        initialRouteName={i}>
+        initialRouteName={initialRouteName}>
         <Stack.Screen
           options={{
             headerShown: false,

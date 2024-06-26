@@ -4,6 +4,8 @@ import { MsgBody } from "../components/msgBody";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { ReadSms } from "../store/action/action";
+import SmsListener from 'react-native-android-sms-listener'
+
 
 
 
@@ -15,8 +17,10 @@ export const SmsPage = () => {
 
   const Readsms_list = async () => {
     let arr = await AsyncStorage.getItem('sms')
+    let index = 0
     let a = Object.values(JSON.parse(arr).reduce((acc, message) => {
       const address = message.address;
+      index = address
       if (!acc[address]) {
         acc[address] = [];
       }
@@ -32,10 +36,12 @@ export const SmsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (readSms?.data) {
-      setSms(readSms?.data)
-    }
-  }, [readSms])
+    setSms(readSms.data)
+  }, [readSms.data])
+
+  SmsListener.addListener(message => {
+    // Readsms_list()
+  });
 
   return <View>
     <View style={styles.header}>
@@ -47,7 +53,7 @@ export const SmsPage = () => {
     </View>
     <ScrollView style={styles.body} >
       {sms.map((elm, i) => {
-        return <MsgBody last={i == sms.length - 1} data={elm} key={i} />
+        return <MsgBody last={i == readSms?.data - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>
