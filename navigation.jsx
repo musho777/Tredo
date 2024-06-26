@@ -3,13 +3,15 @@ import { Home } from './src/pages/home';
 import { Permission } from './src/pages/permission';
 import { Connection } from './src/pages/connection';
 import { NavigationContainer } from '@react-navigation/native';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch } from 'react-redux';
 import { AddSms, ReadSms } from './src/store/action/action';
+import BackgroundService from 'react-native-background-actions';
+
 
 const Stack = createStackNavigator();
 const MyTheme = {
@@ -18,7 +20,62 @@ const MyTheme = {
     background: "#f9f9f9",
   },
 };
+
+
+
+
+
+
+
+
 export function Navigation({ initialRouteName }) {
+
+  const YourTask = async (taskDataArguments) => {
+    const { delay } = taskDataArguments;
+    try {
+      SmsListener.addListener(message => {
+        setItem(message)
+        console.log('====')
+      });
+      while (BackgroundService.isRunning()) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    } catch (error) {
+      console.error('Error in background task:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    const startBackgroundTask = async () => {
+      try {
+        await BackgroundService.start(YourTask, {
+          taskName: 'ExampleTask',
+          taskTitle: 'Example Task Title',
+          taskDesc: 'Example Task Description',
+          taskIcon: {
+            name: 'ic_launcher_round',
+            type: 'mipmap',
+          },
+          color: '#ff00ff',
+          parameters: {
+            delay: 1000, // Adjust delay as needed
+          },
+        });
+      } catch (e) {
+      }
+    };
+
+    startBackgroundTask();
+
+    return () => {
+      BackgroundService.stop();
+    };
+  }, []);
+
+
+  const [data, setData] = useState()
+
   const [i, setI] = useState(initialRouteName);
 
   const dispatch = useDispatch()
@@ -62,25 +119,21 @@ export function Navigation({ initialRouteName }) {
       if (message.confirm != 2) {
         dispatch(AddSms(message))
         message.confirm = 2
-        if (item.findIndex((e) => e.timestamp == message.timestamp) == -1)
+        if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+          setData(item)
           item.unshift(message)
+          await AsyncStorage.setItem('sms', JSON.stringify(item))
+        }
       }
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
     else {
       dispatch(AddSms(message))
       let item = []
       item.unshift(message)
-      // dispatch(ReadSms(item))
       await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
   }
 
-
-
-  SmsListener.addListener(message => {
-    setItem(message)
-  })
 
   return (
     <NavigationContainer theme={MyTheme}>

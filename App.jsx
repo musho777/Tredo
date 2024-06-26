@@ -1,10 +1,30 @@
 import { Navigation } from './navigation';
 import { Provider } from 'react-redux';
 import { store } from './src/store/configStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PermissionsAndroid } from 'react-native';
+import { AppState, PermissionsAndroid } from 'react-native';
 const App = () => {
+
+
+
+  // const appState = useRef(AppState.currentState)
+
+  // useEffect(() => {
+  //   AppState.addEventListener("change", _handleAppStateChnage)
+  //   return () => {
+  //     AppState.addEventListener("change", _handleAppStateChnage)
+  //   }
+  // }, [])
+
+  // const _handleAppStateChnage = (nextAppState) => {
+  //   if (appState.current.match(/inactive|backgraund/) && nextAppState === 'active') {
+  //     console.log("App has come to the foregarund")
+  //   }
+  //   appState.current = nextAppState
+  //   console.log("appState", appState.current)
+  // }
+
 
   async function requestSmsPermissions() {
     try {
