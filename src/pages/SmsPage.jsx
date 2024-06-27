@@ -16,11 +16,10 @@ export const SmsPage = () => {
   const dispatch = useDispatch()
 
   const Readsms_list = async () => {
+    // await AsyncStorage.removeItem('sms')
     let arr = await AsyncStorage.getItem('sms')
-    let index = 0
-    let a = Object.values(JSON.parse(arr).reduce((acc, message) => {
+    let a = Object.values(JSON.parse(arr)?.reduce((acc, message) => {
       const address = message.address;
-      index = address
       if (!acc[address]) {
         acc[address] = [];
       }
@@ -39,9 +38,6 @@ export const SmsPage = () => {
     setSms(readSms.data)
   }, [readSms.data])
 
-  SmsListener.addListener(message => {
-    // Readsms_list()
-  });
 
   return <View>
     <View style={styles.header}>
