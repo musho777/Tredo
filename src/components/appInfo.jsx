@@ -19,7 +19,7 @@ export const AppInfo = ({ light, version = true }) => {
   }, []);
 
   return <View style={styles.appInfo}>
-    <Text style={[styles.appName, light && { color: '#0068fa' }]}>Name</Text>
+    <Text style={[styles.appName, light && { color: '#0068fa' }]}>LightPay</Text>
     <View style={styles.fingerprint}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Fingerprint:</Text>
       <Text style={styles.id}>{deviceFingerprint}</Text>

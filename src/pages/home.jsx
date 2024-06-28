@@ -46,7 +46,7 @@ export const Home = ({ navigation }) => {
             <Text style={[{ textAlign: 'center', fontSize: 13, color: '#98b4e9', fontFamily: 'RobotoCondensed-Regular', paddingHorizontal: 18, }]}>Введите секретный ключ для подключения устройства к приложению</Text>
           </View>
           <View style={styles.buttonWrapper}>
-            <Button svg={<QrSvg />} text={"Войти по QR"} />
+            <Button onPress={() => navigation.navigate('ScanScreen')} svg={<QrSvg />} text={"Войти по QR"} />
             {/* <Button onPress={() => sendEmail()} svg={<ShareSvg />} text={"Отправить логи"} /> */}
           </View>
           <View style={styles.buttonView}>

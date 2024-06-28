@@ -3,6 +3,7 @@ import { Home } from './src/pages/home';
 import { Permission } from './src/pages/permission';
 import { NavigationContainer } from '@react-navigation/native';
 import { LoginNavigation } from './loginNavigation';
+import ScanScreen from './src/pages/qrScaner';
 
 
 const Stack = createStackNavigator();
@@ -35,6 +36,12 @@ export function Navigation({ initialRouteName }) {
             headerShown: false,
           }}
           name="connection" component={LoginNavigation} />
+
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="ScanScreen" component={ScanScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
