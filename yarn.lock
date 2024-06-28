@@ -2587,6 +2587,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/push-notification-ios@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@react-native-community/push-notification-ios@npm:1.11.0"
+  dependencies:
+    invariant: ^2.2.4
+  peerDependencies:
+    react: ">=16.6.3"
+    react-native: ">=0.58.4"
+  checksum: d8c8cdd0d4e8112752a13bf2c426618ec8edd91eacadf03f05375648b5f12ffa761e8676e9d6ac9e5bc5ded73c991ab2219c67fe02e110dfaf38f4cb59695868
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.74.84":
   version: 0.74.84
   resolution: "@react-native/assets-registry@npm:0.74.84"
@@ -3434,6 +3446,7 @@ __metadata:
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-clipboard/clipboard": ^1.14.1
     "@react-native-community/netinfo": ^11.3.2
+    "@react-native-community/push-notification-ios": ^1.11.0
     "@react-native/babel-preset": 0.74.84
     "@react-native/eslint-config": 0.74.84
     "@react-native/metro-config": 0.74.84
@@ -3457,6 +3470,7 @@ __metadata:
     react-native-async-storage: ^0.0.1
     react-native-background-actions: ^4.0.0
     react-native-background-fetch: ^4.2.5
+    react-native-badge: ^1.0.0
     react-native-callkeep: ^4.3.13
     react-native-camera: ^4.2.1
     react-native-communications: ^2.2.1
@@ -3472,6 +3486,7 @@ __metadata:
     react-native-modal: ^13.0.1
     react-native-permissions: ^4.1.5
     react-native-ping: ^1.2.8
+    react-native-push-notification: ^8.1.1
     react-native-qrcode-scanner: ^1.5.5
     react-native-safe-area-context: ^4.10.5
     react-native-screens: ^3.32.0
@@ -9538,6 +9553,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-badge@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-native-badge@npm:1.0.0"
+  checksum: 0cea889a6577d368241cf45bd430b3656d79c63b4daacae80e9ad8e854f6eda30a665cc217daba62aeb78856229cea42a408c0cdd8d83a4a6477e2648aa0220e
+  languageName: node
+  linkType: hard
+
 "react-native-callkeep@npm:^4.3.13":
   version: 4.3.13
   resolution: "react-native-callkeep@npm:4.3.13"
@@ -9712,6 +9734,16 @@ __metadata:
   peerDependencies:
     react-native: ^0.41.2 || ^0.57.0 || ^0.68.0 || ^0.70.0
   checksum: 8fe0b4f74f8bdf536dfe54aab4a3553db75153c4e5eae59045b53e006f1d7e46ba26c7ddb01074de6654f3467daff632151a3425f44af2ff664841015088c463
+  languageName: node
+  linkType: hard
+
+"react-native-push-notification@npm:^8.1.1":
+  version: 8.1.1
+  resolution: "react-native-push-notification@npm:8.1.1"
+  peerDependencies:
+    "@react-native-community/push-notification-ios": ^1.10.1
+    react-native: ">=0.33"
+  checksum: 64d500c1163eaa4eee549e6e2f8204cac643f91ae918a227e9d93f8261afdebbdaa7ba5d12da0039155cbf6a599032dd15be4ebe53737cbeeadec4469893f00d
   languageName: node
   linkType: hard
 

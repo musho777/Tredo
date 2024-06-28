@@ -8,6 +8,7 @@ import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch } from 'react-redux';
 import { AddSms } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
+import PushNotification from 'react-native-push-notification';
 
 
 const Tab = createBottomTabNavigator();
@@ -15,10 +16,20 @@ const Tab = createBottomTabNavigator();
 
 export function LoginNavigation() {
 
+  const handleButtonClick = (message) => {
+    PushNotification.localNotification({
+      channelId: "sms-channel",
+      title: message.originatingAddress,
+      message: message.body,
+    });
+  };
+
+
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
+        handleButtonClick(message)
         setItem(message)
       });
       while (BackgroundService.isRunning()) {

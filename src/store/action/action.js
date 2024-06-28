@@ -114,3 +114,9 @@ export const LogoutAction = (token) => {
       });
   }
 }
+
+export const ClearLoginAction = () => {
+  return {
+    type: 'ClearLoginAction'
+  }
+}

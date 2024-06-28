@@ -26,6 +26,12 @@ const LoginReducer = (state = initialState, action) => {
       item.status = false;
       item.data = null
       break;
+    case 'ClearLoginAction':
+      item.error = false
+      item.status = false
+      item.loading = false
+      item.data = null
+      break
     default:
       break;
   }

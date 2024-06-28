@@ -5,6 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { ReadSms } from "../store/action/action";
 import SmsListener from 'react-native-android-sms-listener'
+import PushNotification from 'react-native-push-notification';
+
 
 
 
@@ -18,14 +20,15 @@ export const SmsPage = () => {
   const Readsms_list = async () => {
     // await AsyncStorage.removeItem('sms')
     let arr = await AsyncStorage.getItem('sms')
-    let a = Object.values(JSON.parse(arr)?.reduce((acc, message) => {
+    console.log(arr)
+    let a = arr ? Object.values(JSON.parse(arr)?.reduce((acc, message) => {
       const address = message.address;
       if (!acc[address]) {
         acc[address] = [];
       }
       acc[address].push(message);
       return acc;
-    }, {}));
+    }, {})) : [];
     dispatch(ReadSms(a))
   }
 
@@ -44,7 +47,7 @@ export const SmsPage = () => {
       <Text style={styles.AllSms}>Все сообщения</Text>
       <View style={styles.smsCount}>
         <Text style={styles.AllSms1}>Всего сообщений:</Text>
-        <Text style={styles.AllSms1}>{sms.length}</Text>
+        <Text style={styles.AllSms1}>{sms?.length}</Text>
       </View>
     </View>
     <ScrollView style={styles.body} >

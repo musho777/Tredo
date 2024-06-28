@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { requestDefaultSmsPermission } from "../components/SmsDefaultHandler"
 import { useDispatch, useSelector } from "react-redux"
-import { LogoutAction } from "../store/action/action"
+import { ClearLoginAction, LogoutAction } from "../store/action/action"
 
 
 export const Connection = ({ navigation }) => {
@@ -93,8 +93,9 @@ export const Connection = ({ navigation }) => {
 
   const Logout = async () => {
     dispatch(LogoutAction(token))
+    dispatch(ClearLoginAction())
     await AsyncStorage.clear()
-    navigation.navigate('home')
+    navigation.replace('home')
   }
 
 

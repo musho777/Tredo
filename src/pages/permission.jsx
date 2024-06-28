@@ -116,7 +116,7 @@ export const Permission = ({ navigation }) => {
       if (g2 && g4 && g5 && per) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {
-          navigation.navigate("connection")
+          navigation.replace("connection")
         }
       }
     } catch (err) {

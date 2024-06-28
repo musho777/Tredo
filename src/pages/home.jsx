@@ -27,7 +27,7 @@ export const Home = ({ navigation }) => {
 
   const SetUser = async () => {
     await AsyncStorage.setItem('token', login.data.token)
-    navigation.navigate('permission')
+    navigation.replace('permission')
   }
 
   const windowHeight = Dimensions.get('window').height;
