@@ -102,7 +102,6 @@ export const LogoutAction = (token) => {
       .then(response => response.json())
       .then(result => {
         if (result.status) {
-          console.log(result, 'result')
           dispatch(SuccessLogOut())
         }
         else {

@@ -26,7 +26,6 @@ export const Permission = ({ navigation }) => {
         message: 'Allow the app to run background tasks after device reboots.',
         buttonPositive: 'OK',
       });
-      console.log(granted, PermissionsAndroid.RESULTS.GRANTED)
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Background task permission granted');
         setPer(true)

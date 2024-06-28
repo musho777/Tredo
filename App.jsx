@@ -28,6 +28,9 @@ const App = () => {
   });
 
 
+  useEffect(() => {
+    PushNotification.removeAllDeliveredNotifications();
+  }, [])
 
   const [initialRouteName, setInitialRouteName] = useState('')
   const GetUser = async () => {

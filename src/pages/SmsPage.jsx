@@ -20,7 +20,6 @@ export const SmsPage = () => {
   const Readsms_list = async () => {
     // await AsyncStorage.removeItem('sms')
     let arr = await AsyncStorage.getItem('sms')
-    console.log(arr)
     let a = arr ? Object.values(JSON.parse(arr)?.reduce((acc, message) => {
       const address = message.address;
       if (!acc[address]) {

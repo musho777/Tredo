@@ -29,7 +29,6 @@ export function LoginNavigation() {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
-        handleButtonClick(message)
         setItem(message)
       });
       while (BackgroundService.isRunning()) {
@@ -45,14 +44,14 @@ export function LoginNavigation() {
     const startBackgroundTask = async () => {
       try {
         await BackgroundService.start(YourTask, {
-          taskName: 'ExampleTask',
-          taskTitle: 'Example Task Title',
-          taskDesc: 'Example Task Description',
+          taskName: 'LightPay',
+          taskTitle: 'LightPay',
+          taskDesc: '',
           taskIcon: {
             name: 'ic_launcher',
             type: 'mipmap',
           },
-          color: '#ff00ff',
+          color: '#0073ff',
           parameters: {
             delay: 1000,
           },
@@ -109,6 +108,7 @@ export function LoginNavigation() {
         message.confirm = 2
         if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
           item.unshift(message)
+          handleButtonClick(message)
           dispatch(AddSms(message))
           await AsyncStorage.setItem('sms', JSON.stringify(item))
         }
@@ -117,6 +117,7 @@ export function LoginNavigation() {
     else {
       dispatch(AddSms(message))
       let item = []
+      handleButtonClick(message)
       item.unshift(message)
       await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
