@@ -10,7 +10,6 @@ import { AddSms } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 
 
-// const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 

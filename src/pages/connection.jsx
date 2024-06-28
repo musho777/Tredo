@@ -1,5 +1,5 @@
 import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid, NativeModules } from "react-native"
-import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "../../assets/svg"
+import { KeySvg, LogOut, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
 import { Button3 } from "../components/button3"
@@ -7,6 +7,8 @@ import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { requestDefaultSmsPermission } from "../components/SmsDefaultHandler"
+import { useDispatch, useSelector } from "react-redux"
+import { LogoutAction } from "../store/action/action"
 
 
 export const Connection = ({ navigation }) => {
@@ -15,6 +17,14 @@ export const Connection = ({ navigation }) => {
   const [pingResult, setPingTime] = useState(null);
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
   const [check, setCheck] = useState(0)
+  const dispatch = useDispatch()
+  const [token, setToken] = useState()
+  const logout = useSelector((st) => st.logout)
+
+  const getToken = async () => {
+    let token = await AsyncStorage.getItem('token')
+    setToken(token)
+  }
 
   const handlePermissionRequest = async () => {
     requestDefaultSmsPermission();
@@ -64,6 +74,7 @@ export const Connection = ({ navigation }) => {
     fetchSystemVersion();
     fetchPingTime()
     GoNextPage()
+    getToken()
   }, []);
 
   useEffect(() => {
@@ -80,6 +91,11 @@ export const Connection = ({ navigation }) => {
     });
   }, [check])
 
+  const Logout = async () => {
+    dispatch(LogoutAction(token))
+    await AsyncStorage.clear()
+    navigation.navigate('home')
+  }
 
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
@@ -88,7 +104,11 @@ export const Connection = ({ navigation }) => {
       barStyle="dark-content"
       backgroundColor='#f9f9f9' />
     <AppInfo version={false} light />
+    <TouchableOpacity onPress={() => Logout()} style={{ position: "absolute", top: 30, left: 10 }}>
+      <LogOut />
+    </TouchableOpacity>
     <View>
+
       <View>
         <View style={{ alignItems: 'center' }}>
           <Image style={{ width: 100, height: 100 }} source={require('../../assets/image/radio.png')} />

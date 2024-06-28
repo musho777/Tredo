@@ -9,3 +9,9 @@ export const StartSendSmg = () => {
     type: "StartSendSmg"
   }
 }
+
+export const StartLogOut = () => {
+  return {
+    type: 'StartLogOut'
+  }
+}

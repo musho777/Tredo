@@ -5,7 +5,6 @@ import {
   Text,
   View,
   PermissionsAndroid,
-  Alert,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 

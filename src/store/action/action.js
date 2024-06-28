@@ -1,6 +1,6 @@
-import { ErrorLogin, ErrorSendSMg } from './errorAction';
-import { StartLogin, StartSendSmg } from './startAction';
-import { SuccesSendSmg, SuccessLogin } from './successAction';
+import { ErrorLogOut, ErrorLogin, ErrorSendSMg } from './errorAction';
+import { StartLogOut, StartLogin, StartSendSmg } from './startAction';
+import { SuccesSendSmg, SuccessLogOut, SuccessLogin } from './successAction';
 export const LoginAction = (token) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -78,5 +78,39 @@ export const AddSms = (data) => {
   return {
     type: 'AddSms',
     data
+  }
+}
+
+
+export const LogoutAction = (token) => {
+
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', `Bearer ${token}`);
+  myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    // body: JSON.stringify(data),
+    redirect: 'follow'
+  };
+
+  return (dispatch) => {
+    dispatch(StartLogOut())
+    fetch(`https://iron-pay.com/api/logout`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status) {
+          console.log(result, 'result')
+          dispatch(SuccessLogOut())
+        }
+        else {
+          dispatch(ErrorLogOut())
+        }
+      })
+      .catch(error => {
+        dispatch(ErrorLogOut())
+      });
   }
 }

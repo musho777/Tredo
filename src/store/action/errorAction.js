@@ -10,3 +10,9 @@ export const ErrorSendSMg = (error) => {
     error
   }
 }
+
+export const ErrorLogOut = () => {
+  return {
+    type: 'ErrorLogOut'
+  }
+}

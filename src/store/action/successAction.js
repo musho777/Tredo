@@ -11,3 +11,9 @@ export const SuccesSendSmg = (data) => {
     data
   }
 }
+export const SuccessLogOut = (data) => {
+  return {
+    type: 'SuccessLogOut',
+    data
+  }
+}
