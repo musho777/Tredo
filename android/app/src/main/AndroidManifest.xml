@@ -22,6 +22,14 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+
+<!-- .ACCESS_FINE_LOCATION -->
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
       android:name=".MainApplication"
@@ -40,6 +48,13 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
+
+        <intent-filter android:label="filter_react_native">
+                      <action android:name="android.intent.action.VIEW" />
+                      <category android:name="android.intent.category.DEFAULT" />
+                      <category android:name="android.intent.category.BROWSABLE" />
+                      <data android:scheme="yourSchemeHere" />
+                  </intent-filter>
 
 
 
@@ -106,7 +121,7 @@
     </intent-filter>
 </activity>
 
-<service
+    <service
             android:name=".HeadlessSmsSendService"
             android:exported="true"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE">
@@ -119,5 +134,12 @@
                 <data android:scheme="mmsto" />
             </intent-filter>
         </service>
+
+        <service
+    android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask"
+    android:foregroundServiceType="location"
+    android:exported="false">
+    <!-- Other attributes and configurations -->
+</service>
         </application>
 </manifest>

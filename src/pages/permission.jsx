@@ -11,10 +11,33 @@ export const Permission = ({ navigation }) => {
 
   const { SmsDefaultHandler } = NativeModules;
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
+  const [per, setPer] = useState(false)
 
   const handlePermissionRequest = () => {
     requestDefaultSmsPermission();
   };
+
+
+  async function requestBackgroundPermissions() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
+        title: 'Background Task Permission',
+        message: 'Allow the app to run background tasks after device reboots.',
+        buttonPositive: 'OK',
+      });
+      console.log(granted, PermissionsAndroid.RESULTS.GRANTED)
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Background task permission granted');
+        setPer(true)
+      } else {
+        console.log('Background task permission denied');
+      }
+
+    } catch (err) {
+      console.warn('Error while requesting permission:', err);
+    }
+  }
 
   const SetAsincDefault = async () => {
     setIsDefaultSmsApp(true);
@@ -73,8 +96,13 @@ export const Permission = ({ navigation }) => {
     }).catch((error) => {
       console.error(error);
     });
-    requestSmsPermissions()
+    // requestSmsPermissions()
+    requestBackgroundPermissions()
   }, [])
+
+  // useEffect(() => {
+  //   requestBackgroundPermissions()
+  // }, [])
 
 
   const GoNextPage = async () => {
@@ -85,7 +113,7 @@ export const Permission = ({ navigation }) => {
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
-      if (g2 && g4 && g5) {
+      if (g2 && g4 && g5 && per) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {
           navigation.navigate("connection")

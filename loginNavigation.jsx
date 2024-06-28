@@ -39,7 +39,7 @@ export function LoginNavigation() {
           taskTitle: 'Example Task Title',
           taskDesc: 'Example Task Description',
           taskIcon: {
-            name: 'ic_launcher_round',
+            name: 'ic_launcher',
             type: 'mipmap',
           },
           color: '#ff00ff',

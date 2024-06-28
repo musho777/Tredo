@@ -14,7 +14,7 @@ export const LoginAction = (token) => {
 
   return (dispatch) => {
     dispatch(StartLogin())
-    fetch(`https://projectx.digiluys.com/api/login?token=${token}`, requestOptions)
+    fetch(`https://iron-pay.com/api/login_app?token=${token}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if (result.status) {
@@ -45,7 +45,7 @@ export const SendSmgAction = (token, data) => {
 
   return (dispatch) => {
     dispatch(StartSendSmg())
-    fetch(`https://projectx.digiluys.com/api/send_message`, requestOptions)
+    fetch(`https://iron-pay.com/api/send_message`, requestOptions)
       .then(response => response.json())
       .then(result => {
         if (result.status) {
