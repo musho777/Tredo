@@ -9,12 +9,50 @@ import { useDispatch } from 'react-redux';
 import { AddSms } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
+import { useNavigation } from '@react-navigation/native';
 
 
 const Tab = createBottomTabNavigator();
 
 
 export function LoginNavigation() {
+  const navigation = useNavigation()
+
+  PushNotification.createChannel(
+    {
+      channelId: "sms-channel",
+      channelName: "SmS",
+      channelDescription: "A channel to categorise your notifications",
+      soundName: "default",
+      importance: 4,
+      vibrate: true,
+    },
+    (created) => console.log(`createChannel returned '${created}'`)
+  );
+  useEffect(() => {
+    PushNotification.configure({
+      onNotification: function (notification) {
+        const data = notification;
+        console.log(data)
+        navigation.navigate("SmsPage")
+      },
+      popInitialNotification: true,
+      requestPermissions: Platform.OS === 'ios',
+    });
+    PushNotification.popInitialNotification((notification) => {
+      if (notification) {
+        console.log('Initial notification opened:', notification);
+        navigation.navigate('SmsPage')
+      }
+    });
+    return () => {
+      PushNotification.unregister();
+    };
+  }, [])
+
+  useEffect(() => {
+    PushNotification.removeAllDeliveredNotifications();
+  }, [])
 
   const handleButtonClick = (message) => {
     PushNotification.localNotification({

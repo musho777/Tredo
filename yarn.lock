@@ -3466,6 +3466,7 @@ __metadata:
     prettier: 2.8.8
     react: 18.2.0
     react-native: 0.74.2
+    react-native-android-notification-listener: ^5.0.1
     react-native-android-sms-listener: ^0.8.0
     react-native-async-storage: ^0.0.1
     react-native-background-actions: ^4.0.0
@@ -9507,6 +9508,16 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react-native-android-notification-listener@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "react-native-android-notification-listener@npm:5.0.1"
+  peerDependencies:
+    react: ^18.0.0
+    react-native: ">=0.69.0"
+  checksum: 47d0f5fb753cd993c0649728b3860c36dc7d91bccd42f0a6f1cb63c1a4af5853685491dce4251a15281046dbc59ef5620902adae998109e3b1aa3e5af81507a8
   languageName: node
   linkType: hard
 

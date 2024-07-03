@@ -4,12 +4,6 @@ import { MsgBody } from "../components/msgBody";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { ReadSms } from "../store/action/action";
-import SmsListener from 'react-native-android-sms-listener'
-import PushNotification from 'react-native-push-notification';
-
-
-
-
 
 export const SmsPage = () => {
 
@@ -18,7 +12,6 @@ export const SmsPage = () => {
   const dispatch = useDispatch()
 
   const Readsms_list = async () => {
-    // await AsyncStorage.removeItem('sms')
     let arr = await AsyncStorage.getItem('sms')
     let a = arr ? Object.values(JSON.parse(arr)?.reduce((acc, message) => {
       const address = message.address;
