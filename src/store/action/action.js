@@ -119,3 +119,17 @@ export const ClearLoginAction = () => {
     type: 'ClearLoginAction'
   }
 }
+
+export const GetAllNotification = (data) => {
+  return {
+    type: 'GetAllNotification'
+  }
+}
+
+export const SetNotificationData = (data) => {
+  console.log(data, 'data')
+  return {
+    type: 'SetNotificationData',
+    data: data,
+  }
+};

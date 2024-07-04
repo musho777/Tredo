@@ -7,7 +7,7 @@ import DeviceInfo from "react-native-device-info"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { requestDefaultSmsPermission } from "../components/SmsDefaultHandler"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { ClearLoginAction, LogoutAction } from "../store/action/action"
 
 
@@ -19,7 +19,6 @@ export const Connection = ({ navigation }) => {
   const [check, setCheck] = useState(0)
   const dispatch = useDispatch()
   const [token, setToken] = useState()
-  const logout = useSelector((st) => st.logout)
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('token')

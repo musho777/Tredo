@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import Clipboard from '@react-native-clipboard/clipboard';
 
 
-export const AllMsgBody = ({ data, last, index }) => {
+export const AllMsgBody = ({ time, data, last, index }) => {
 
   const copyToClipboard = () => {
     let date = new Date(data.timestamp)
@@ -27,7 +27,7 @@ export const AllMsgBody = ({ data, last, index }) => {
     setNewData(data)
   }, [])
 
-  let date = new Date(data?.timestamp)
+  let date = new Date(time)
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()

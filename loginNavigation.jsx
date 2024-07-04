@@ -1,23 +1,43 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Connection } from './src/pages/connection';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
-import { useDispatch } from 'react-redux';
-import { AddSms } from './src/store/action/action';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddSms, SetNotificationData } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { useNavigation } from '@react-navigation/native';
+import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
+import { AppRegistry } from 'react-native';
+import { store } from './src/store/configStore';
 
 
 const Tab = createBottomTabNavigator();
+
+export const headlessNotificationListener = async ({ notification }) => {
+  if (notification) {
+    let item = JSON.parse(notification);
+    item.icon = '';
+    if (item.app != 'com.tredo') {
+      const message = {
+        body: item.text,
+        timestamp: item.time,
+        originatingAddress: item.title,
+      };
+      store.dispatch(SetNotificationData(message));
+    }
+  }
+};
+
 
 
 export function LoginNavigation() {
   const navigation = useNavigation()
 
+  const setNotificationData = useSelector((st) => st.setNotificationData)
   PushNotification.createChannel(
     {
       channelId: "sms-channel",
@@ -32,8 +52,6 @@ export function LoginNavigation() {
   useEffect(() => {
     PushNotification.configure({
       onNotification: function (notification) {
-        const data = notification;
-        console.log(data)
         navigation.navigate("SmsPage")
       },
       popInitialNotification: true,
@@ -41,7 +59,6 @@ export function LoginNavigation() {
     });
     PushNotification.popInitialNotification((notification) => {
       if (notification) {
-        console.log('Initial notification opened:', notification);
         navigation.navigate('SmsPage')
       }
     });
@@ -62,11 +79,17 @@ export function LoginNavigation() {
     });
   };
 
+  useEffect(() => {
+    if (setNotificationData.data) {
+      setItem(setNotificationData.data)
+    }
+  }, [setNotificationData])
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
+        console.log(message, 'message')
         setItem(message)
       });
       while (BackgroundService.isRunning()) {
@@ -162,9 +185,10 @@ export function LoginNavigation() {
   }
 
 
+
+
   return (
     <Tab.Navigator
-
       initialRouteName={'connectionPage'}
       screenOptions={({ route }) => ({
         tabBarStyle: {
@@ -189,4 +213,6 @@ export function LoginNavigation() {
         name="AllMsg" component={AllMsg} />
     </Tab.Navigator>
   );
+
 }
+AppRegistry.registerHeadlessTask(RNAndroidNotificationListenerHeadlessJsName, () => headlessNotificationListener);
