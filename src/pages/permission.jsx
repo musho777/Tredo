@@ -16,9 +16,6 @@ export const Permission = ({ navigation }) => {
   const [per, setPer] = useState(false)
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
 
-  const [appState, setAppState] = useState(AppState.currentState);
-
-
   const handlePermissionRequest = () => {
     requestDefaultSmsPermission();
   };
@@ -33,12 +30,8 @@ export const Permission = ({ navigation }) => {
         buttonPositive: 'OK',
       });
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Background task permission granted');
         setPer(true)
-      } else {
-        console.log('Background task permission denied');
       }
-
     } catch (err) {
       console.warn('Error while requesting permission:', err);
     }
@@ -61,7 +54,7 @@ export const Permission = ({ navigation }) => {
 
   const requestPhonePermissions = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
+      await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         {
           title: "Phone State Permission",
@@ -72,9 +65,6 @@ export const Permission = ({ navigation }) => {
           buttonPositive: "OK"
         }
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      } else {
-      }
     } catch (err) {
       console.warn(err);
     }
@@ -86,7 +76,6 @@ export const Permission = ({ navigation }) => {
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
         PermissionsAndroid.PERMISSIONS.READ_SMS,
       ]
-        // PermissionsAndroid.PERMISSIONS.SEND_SMS,
       );
     } catch (err) {
     }
@@ -101,7 +90,6 @@ export const Permission = ({ navigation }) => {
     }).catch((error) => {
       console.error(error);
     });
-    // requestSmsPermissions()
     requestBackgroundPermissions()
   }, [])
 
@@ -138,12 +126,9 @@ export const Permission = ({ navigation }) => {
 
   const GoNextPage = async () => {
     try {
-      const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECEIVE_SMS)
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
-      const g3 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.SEND_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
-      const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
       if (g2 && g4 && g5 && per && permitionforNotifcation) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {

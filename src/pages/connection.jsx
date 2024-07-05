@@ -1,5 +1,5 @@
 import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid, NativeModules } from "react-native"
-import { KeySvg, LogOut, MessageSvg, NotificationSvg, RefreshSvg, SettingIcon } from "../../assets/svg"
+import { KeySvg, LogOut, MessageSvg, NotificationSvg, RefreshSvg } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
 import { Button3 } from "../components/button3"
@@ -35,12 +35,9 @@ export const Connection = ({ navigation }) => {
 
   const GoNextPage = async () => {
     try {
-      const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECEIVE_SMS)
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
-      const g3 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.SEND_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
-      const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
       if (!g2 || !g4 || !g5) {
         await AsyncStorage.setItem('permition', 'no')
         if (defaultSms) {
@@ -108,31 +105,28 @@ export const Connection = ({ navigation }) => {
       <LogOut />
     </TouchableOpacity>
     <View>
-
-      <View>
-        <View style={{ alignItems: 'center' }}>
-          <Image style={{ width: 100, height: 100 }} source={require('../../assets/image/radio.png')} />
-          <View style={{ marginTop: 20, alignItems: 'center', gap: 7 }}>
-            <Text style={{ color: '#2f508e', fontSize: 20, fontFamily: 'RobotoCondensed-Regular', }}>Устройство подключено</Text>
-            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Пинг: {pingResult} мс</Text>
-            <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Версия: Release {systemVersion}</Text>
-          </View>
+      <View style={{ alignItems: 'center' }}>
+        <Image style={{ width: 100, height: 100 }} source={require('../../assets/image/radio.png')} />
+        <View style={{ marginTop: 20, alignItems: 'center', gap: 7 }}>
+          <Text style={{ color: '#2f508e', fontSize: 20, fontFamily: 'RobotoCondensed-Regular', }}>Устройство подключено</Text>
+          <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Пинг: {pingResult} мс</Text>
+          <Text style={{ color: '#5e86cf', fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Версия: Release {systemVersion}</Text>
         </View>
-        <View style={{ gap: 10, marginTop: 100 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button3 onPress={() => navigation.navigate('SmsPage')} svg={<MessageSvg />} text={"Сообщения"} width={"49%"} />
-            <Button3 svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
-          </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button3 svg={<RefreshSvg />} text={"Обновления"} width={"49%"} bg={"#e8f1ff"} />
-            <Button3 svg={<KeySvg />} text={"Разрешения"} width={"49%"} bg={"#e8f1ff"} />
-          </View>
-        </View>
-        {isDefaultSmsApp && <TouchableOpacity onPress={() => handlePermissionRequest()} style={{ backgroundColor: "#c2c2c2", justifyContent: 'center', alignItems: 'center', paddingVertical: 20, marginTop: 20, borderRadius: 10 }}>
-          <Text style={{ textAlign: 'center', color: "black", fontFamily: 'RobotoCondensed-Regular', }}>СДЕЛАТЬ ДЕФОЛТНЫМ</Text>
-        </TouchableOpacity>}
-        <Text style={{ textAlign: 'center', marginTop: 25, color: "#7091d3", fontFamily: 'RobotoCondensed-Regular', }}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
       </View>
+      <View style={{ gap: 10, marginTop: 100 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button3 onPress={() => navigation.navigate('SmsPage')} svg={<MessageSvg />} text={"Сообщения"} width={"49%"} />
+          <Button3 svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button3 svg={<RefreshSvg />} text={"Обновления"} width={"49%"} bg={"#e8f1ff"} />
+          <Button3 svg={<KeySvg />} text={"Разрешения"} width={"49%"} bg={"#e8f1ff"} />
+        </View>
+      </View>
+      {isDefaultSmsApp && <TouchableOpacity onPress={() => handlePermissionRequest()} style={{ backgroundColor: "#c2c2c2", justifyContent: 'center', alignItems: 'center', paddingVertical: 20, marginTop: 20, borderRadius: 10 }}>
+        <Text style={{ textAlign: 'center', color: "black", fontFamily: 'RobotoCondensed-Regular', }}>СДЕЛАТЬ ДЕФОЛТНЫМ</Text>
+      </TouchableOpacity>}
+      <Text style={{ textAlign: 'center', marginTop: 25, color: "#7091d3", fontFamily: 'RobotoCondensed-Regular', }}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
     </View>
   </View>
 }
