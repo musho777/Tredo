@@ -6,7 +6,7 @@ import { AllMsg } from './src/pages/allMsg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch, useSelector } from 'react-redux';
-import { AddSms, SetNotificationData } from './src/store/action/action';
+import { AddSms, ClearSetNotificationdata, SetNotificationData } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +19,7 @@ const Tab = createBottomTabNavigator();
 
 export const headlessNotificationListener = async ({ notification }) => {
   if (notification) {
+    store.dispatch(ClearSetNotificationdata())
     let item = JSON.parse(notification);
     item.icon = '';
     if (item.app != 'com.tredo') {
@@ -27,7 +28,15 @@ export const headlessNotificationListener = async ({ notification }) => {
         timestamp: item.time,
         originatingAddress: item.title,
       };
-      store.dispatch(SetNotificationData(message));
+      let temp = JSON.parse(await AsyncStorage.getItem('sms'))
+      if (temp) {
+        if (temp?.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+          store.dispatch(SetNotificationData(message));
+        }
+      }
+      else {
+        store.dispatch(SetNotificationData(message));
+      }
     }
   }
 };
@@ -49,7 +58,22 @@ export function LoginNavigation() {
     },
     (created) => console.log(`createChannel returned '${created}'`)
   );
+
+
+
+  const AllNotificationGetPermitiopn = async () => {
+    const status = await RNAndroidNotificationListener.getPermissionStatus()
+    console.log(status)
+    if (status != 'authorized') {
+      RNAndroidNotificationListener.requestPermission()
+    }
+  }
+
   useEffect(() => {
+
+
+    AllNotificationGetPermitiopn()
+
     PushNotification.configure({
       onNotification: function (notification) {
         navigation.navigate("SmsPage")
@@ -89,7 +113,6 @@ export function LoginNavigation() {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
-        console.log(message, 'message')
         setItem(message)
       });
       while (BackgroundService.isRunning()) {

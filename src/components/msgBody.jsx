@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 export const MsgBody = ({ data, last }) => {
   const naviagtion = useNavigation()
-  let date = new Date(data[0]?.timestamp)
+  let date = new Date(JSON.parse(data[0]?.timestamp))
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()

@@ -127,9 +127,14 @@ export const GetAllNotification = (data) => {
 }
 
 export const SetNotificationData = (data) => {
-  console.log(data, 'data')
   return {
     type: 'SetNotificationData',
     data: data,
   }
 };
+
+export const ClearSetNotificationdata = () => {
+  return {
+    type: 'ClearSetNotificationdata',
+  }
+}

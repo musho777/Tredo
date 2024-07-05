@@ -13,6 +13,12 @@ const SetNotificationDataReducer = (state = initialState, action) => {
       item.data = action.data
       item.status = false
       break;
+    case 'ClearSetNotificationdata':
+      item.error = false;
+      item.loading = true;
+      item.data = null
+      item.status = false
+      break
     default:
       break;
   }

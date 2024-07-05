@@ -1,4 +1,4 @@
-import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform, Alert, NativeEventEmitter } from "react-native"
+import { PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, View, Linking, NativeModules, Platform, Alert, NativeEventEmitter, AppState } from "react-native"
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
@@ -6,12 +6,18 @@ import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
 import { addSmsPermissionListener, requestDefaultSmsPermission } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
+
 
 export const Permission = ({ navigation }) => {
 
   const { SmsDefaultHandler } = NativeModules;
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
   const [per, setPer] = useState(false)
+  const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
+
+  const [appState, setAppState] = useState(AppState.currentState);
+
 
   const handlePermissionRequest = () => {
     requestDefaultSmsPermission();
@@ -99,9 +105,42 @@ export const Permission = ({ navigation }) => {
     requestBackgroundPermissions()
   }, [])
 
-  // useEffect(() => {
-  //   requestBackgroundPermissions()
-  // }, [])
+
+  const CheckAllNotificationGetPermitiopn = async () => {
+    console.log('1112')
+    const status = await RNAndroidNotificationListener.getPermissionStatus()
+    if (status != 'authorized') {
+      setPermitionForNotifcation(false)
+    }
+    else {
+      setPermitionForNotifcation(true)
+    }
+  }
+
+  const getNotficiactionPermition = async () => {
+    const status = await RNAndroidNotificationListener.getPermissionStatus()
+    if (status != 'authorized') {
+      setPermitionForNotifcation(false)
+      RNAndroidNotificationListener.requestPermission()
+    }
+    else {
+      setPermitionForNotifcation(true)
+    }
+  }
+
+  const handleAppStateChange = (nextAppState) => {
+    console.log('AppState changed to:', nextAppState);
+    setAppState(nextAppState);
+  };
+
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', CheckAllNotificationGetPermitiopn);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
 
   const GoNextPage = async () => {
@@ -112,7 +151,7 @@ export const Permission = ({ navigation }) => {
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       const g6 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS)
-      if (g2 && g4 && g5 && per) {
+      if (g2 && g4 && g5 && per && permitionforNotifcation) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {
           navigation.replace("connection")
@@ -138,7 +177,7 @@ export const Permission = ({ navigation }) => {
         <Switch value={isDefaultSmsApp} onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
         <Switch onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
         <Switch onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
-        <Switch onSwitch={() => { }} text="Активировать чтение пуш-уведомлений" />
+        <Switch onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
       </View>
     </ScrollView>
     <View>
