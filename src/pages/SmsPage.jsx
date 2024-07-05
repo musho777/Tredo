@@ -12,15 +12,15 @@ export const SmsPage = () => {
   const dispatch = useDispatch()
 
   const Readsms_list = async () => {
+    const map = new Map();
     let arr = await AsyncStorage.getItem('sms')
-    let a = arr ? Object.values(JSON.parse(arr)?.reduce((acc, message) => {
-      const address = message.address;
-      if (!acc[address]) {
-        acc[address] = [];
+    JSON.parse(arr).forEach(item => {
+      if (!map.has(item.originatingAddress)) {
+        map.set(item.originatingAddress, []);
       }
-      acc[address].push(message);
-      return acc;
-    }, {})) : [];
+      map.get(item.originatingAddress).push(item);
+    });
+    let a = Array.from(map.values());
     dispatch(ReadSms(a))
   }
 
@@ -44,7 +44,7 @@ export const SmsPage = () => {
     </View>
     <ScrollView style={styles.body} >
       {sms.map((elm, i) => {
-        return <MsgBody last={i == readSms?.data - 1} data={elm} key={i} />
+        return <MsgBody last={i == readSms?.data?.length - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>

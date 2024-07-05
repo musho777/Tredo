@@ -107,7 +107,6 @@ export const Permission = ({ navigation }) => {
 
 
   const CheckAllNotificationGetPermitiopn = async () => {
-    console.log('1112')
     const status = await RNAndroidNotificationListener.getPermissionStatus()
     if (status != 'authorized') {
       setPermitionForNotifcation(false)
@@ -127,12 +126,6 @@ export const Permission = ({ navigation }) => {
       setPermitionForNotifcation(true)
     }
   }
-
-  const handleAppStateChange = (nextAppState) => {
-    console.log('AppState changed to:', nextAppState);
-    setAppState(nextAppState);
-  };
-
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', CheckAllNotificationGetPermitiopn);

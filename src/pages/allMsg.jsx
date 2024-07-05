@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { AllMsgBody } from "../components/AllMsgBody";
 import { ClearSvg, SearchSvg } from "../../assets/svg";
+import { useSelector } from "react-redux";
 
 
 export const AllMsg = ({ route }) => {
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
+
+  const smsSinglPage = useSelector((st) => st.smsSinglPage)
+
   useEffect(() => {
-    setSms(route.params.data)
-  }, [])
+    if (smsSinglPage.data) {
+      setSms(smsSinglPage.data)
+    }
+  }, [smsSinglPage.data])
+
 
   const SearchMsg = (search) => {
     let item = [...sms]
@@ -36,7 +43,7 @@ export const AllMsg = ({ route }) => {
       <Text style={styles.AllSms}>Отправитель: </Text>
       <View style={styles.smsCount}>
         <Text style={styles.AllSms1}>Сообщений от отправителя: {sms?.length && sms[0]?.originatingAddress}</Text>
-        <Text style={styles.AllSms1}>{route.params.data?.length}</Text>
+        <Text style={styles.AllSms1}>{sms?.length}</Text>
       </View>
     </View>
     <View style={{ paddingHorizontal: 30, backgroundColor: "#eef4ff", }}>
@@ -57,7 +64,7 @@ export const AllMsg = ({ route }) => {
     </View>
     <ScrollView style={styles.body} >
       {sms?.map((elm, i) => {
-        return <AllMsgBody time={JSON.parse(elm.timestamp)} index={i} last={i == route.params.data.length - 1} data={elm} key={i} />
+        return <AllMsgBody time={JSON.parse(elm.timestamp)} index={i} last={i == sms?.length - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>

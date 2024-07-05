@@ -1,6 +1,9 @@
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useDispatch } from "react-redux"
+import { SmsSingPage } from "../store/action/action"
 export const MsgBody = ({ data, last }) => {
+  const dispatch = useDispatch()
   const naviagtion = useNavigation()
   let date = new Date(JSON.parse(data[0]?.timestamp))
   let minut = date.getMinutes()
@@ -15,9 +18,14 @@ export const MsgBody = ({ data, last }) => {
   }
   if (hours < 10) {
     hours = `0${hours}`
+
   }
 
-  return <TouchableOpacity onPress={() => naviagtion.navigate('AllMsg', { data })} style={[styles.shadow, last && { marginBottom: 50 }]}>
+  const OpenAllSms = () => {
+    dispatch(SmsSingPage(data))
+    naviagtion.navigate('AllMsg')
+  }
+  return <TouchableOpacity onPress={() => OpenAllSms()} style={[styles.shadow, last && { marginBottom: 50 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправитель:</Text>

@@ -138,3 +138,10 @@ export const ClearSetNotificationdata = () => {
     type: 'ClearSetNotificationdata',
   }
 }
+
+export const SmsSingPage = (data) => {
+  return {
+    type: 'SmsSingPage',
+    data
+  }
+}

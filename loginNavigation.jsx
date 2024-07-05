@@ -63,7 +63,6 @@ export function LoginNavigation() {
 
   const AllNotificationGetPermitiopn = async () => {
     const status = await RNAndroidNotificationListener.getPermissionStatus()
-    console.log(status)
     if (status != 'authorized') {
       RNAndroidNotificationListener.requestPermission()
     }
