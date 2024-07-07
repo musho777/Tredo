@@ -14,7 +14,7 @@ export const Notification = ({ navigation }) => {
   const Readsms_list = async () => {
     const map = new Map();
     let arr = await AsyncStorage.getItem('notification')
-    JSON.parse(arr).forEach(item => {
+    JSON.parse(arr)?.forEach(item => {
       if (!map.has(item.originatingAddress)) {
         map.set(item.originatingAddress, []);
       }

@@ -14,7 +14,7 @@ export const SmsPage = () => {
   const Readsms_list = async () => {
     const map = new Map();
     let arr = await AsyncStorage.getItem('sms')
-    JSON.parse(arr).forEach(item => {
+    JSON.parse(arr)?.forEach(item => {
       if (!map.has(item.originatingAddress)) {
         map.set(item.originatingAddress, []);
       }

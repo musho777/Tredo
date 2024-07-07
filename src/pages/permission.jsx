@@ -47,13 +47,44 @@ export const Permission = ({ navigation }) => {
 
   useEffect(() => {
     const listener = addSmsPermissionListener((message) => {
-      SetAsincDefault()
-      setIsDefaultSmsApp(true)
+      console.log(message, 'message')
+      if (message == 'Success requesting ROLE_SMS!') {
+        SetAsincDefault()
+      }
+      else {
+        setIsDefaultSmsApp(false);
+      }
     });
     return () => {
       listener.remove();
     };
   }, []);
+
+  const checkPermition = async () => {
+    const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
+    const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
+    const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
+    CheckAllNotificationGetPermitiopn()
+    if (g5) {
+      setPermitionSim(true)
+    }
+    else {
+      setPermitionSim(false)
+    }
+    if (g4 && g2) {
+      setSmsPermitionAllow(true)
+    }
+    else {
+      setSmsPermitionAllow(false)
+    }
+  }
+
+
+  useEffect(() => {
+    checkPermition()
+  }, [])
+
+
 
   const requestPhonePermissions = async () => {
     try {
@@ -71,7 +102,6 @@ export const Permission = ({ navigation }) => {
       setPermitionSim(true)
     } catch (err) {
       setPermitionSim(false)
-      console.warn(err);
     }
   };
 
