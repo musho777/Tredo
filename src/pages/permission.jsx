@@ -47,7 +47,6 @@ export const Permission = ({ navigation }) => {
 
   useEffect(() => {
     const listener = addSmsPermissionListener((message) => {
-      console.log(message, 'message')
       if (message == 'Success requesting ROLE_SMS!') {
         SetAsincDefault()
       }

@@ -1,4 +1,4 @@
-import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid, NativeModules } from "react-native"
+import { StatusBar, TouchableOpacity, View, Image, Text, PermissionsAndroid, NativeModules, ActivityIndicator } from "react-native"
 import { KeySvg, LogOut, MessageSvg, NotificationSvg, RefreshSvg } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
@@ -19,6 +19,15 @@ export const Connection = ({ navigation }) => {
   const [check, setCheck] = useState(0)
   const dispatch = useDispatch()
   const [token, setToken] = useState()
+  const [refresh, setRefresh] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setRefresh(false)
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [refresh]);
+
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('token')
@@ -27,9 +36,10 @@ export const Connection = ({ navigation }) => {
 
   const handlePermissionRequest = async () => {
     requestDefaultSmsPermission();
-    setTimeout(() => {
+    let time = setTimeout(() => {
       setCheck(true)
-    }, 1000)
+    }, 1500)
+    clearTimeout(time)
   };
 
 
@@ -104,6 +114,9 @@ export const Connection = ({ navigation }) => {
     <TouchableOpacity onPress={() => Logout()} style={{ position: "absolute", top: 30, left: 10 }}>
       <LogOut />
     </TouchableOpacity>
+    {refresh && <View style={{ position: 'absolute', justifyContent: 'center', width: '100%', alignItems: 'center', top: 10, left: 20 }}>
+      <ActivityIndicator size="large" color="#3282f1" />
+    </View>}
     <View>
       <View style={{ alignItems: 'center' }}>
         <Image style={{ width: 100, height: 100 }} source={require('../../assets/image/radio.png')} />
@@ -119,7 +132,7 @@ export const Connection = ({ navigation }) => {
           <Button3 onPress={() => navigation.navigate('Notification')} svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button3 svg={<RefreshSvg />} text={"Обновления"} width={"49%"} bg={"#e8f1ff"} />
+          <Button3 onPress={() => setRefresh(true)} svg={<RefreshSvg />} text={"Обновления"} width={"49%"} bg={"#e8f1ff"} />
           <Button3 svg={<KeySvg />} text={"Разрешения"} width={"49%"} bg={"#e8f1ff"} />
         </View>
       </View>
