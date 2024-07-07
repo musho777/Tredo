@@ -29,8 +29,8 @@ const handleNotification = (message) => {
 };
 
 const setNotification = async (message) => {
+  console.log(message.sortKey)
   let token = await AsyncStorage.getItem('token')
-
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('Authorization', `Bearer ${token}`);
@@ -48,37 +48,39 @@ const setNotification = async (message) => {
     redirect: 'follow'
   };
   message.confirm = 2
-  await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      store.dispatch(ClearNotification())
-      if (result.status) {
-        message.confirm = true
-      }
-      else {
+  if (message.sortKey) {
+    await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        // store.dispatch(ClearNotification())
+        if (result.status) {
+          message.confirm = true
+        }
+        else {
+          message.confirm = false
+        }
+      })
+      .catch(error => {
         message.confirm = false
+      });
+    if (sms) {
+      let data = await AsyncStorage.getItem('notification')
+      let item = JSON.parse(data)
+      if (message.confirm != 2) {
+        message.confirm = 2
+        item.unshift(message)
+        handleNotification(message)
+        store.dispatch(AddNotification(message))
+        await AsyncStorage.setItem('notification', JSON.stringify(item))
       }
-    })
-    .catch(error => {
-      message.confirm = false
-    });
-  if (sms) {
-    let data = await AsyncStorage.getItem('notification')
-    let item = JSON.parse(data)
-    if (message.confirm != 2) {
-      message.confirm = 2
-      item.unshift(message)
-      handleNotification(message)
+    }
+    else {
       store.dispatch(AddNotification(message))
+      let item = []
+      handleNotification(message)
+      item.unshift(message)
       await AsyncStorage.setItem('notification', JSON.stringify(item))
     }
-  }
-  else {
-    store.dispatch(AddNotification(message))
-    let item = []
-    handleNotification(message)
-    item.unshift(message)
-    await AsyncStorage.setItem('notification', JSON.stringify(item))
   }
 }
 
@@ -94,13 +96,13 @@ export const headlessNotificationListener = async ({ notification }) => {
     };
     let temp = JSON.parse(await AsyncStorage.getItem('notification'))
     if (temp) {
-      if (temp?.findIndex((e) => e.sortKey == message.sortKey) == -1) {
-        console.log("---1")
-        setNotification(message)
-      }
+      if (message.sortKey)
+        if (temp.findIndex((e) => e.sortKey == message.sortKey) < 0) {
+          await setNotification(message)
+        }
     }
     else {
-      setNotification(message)
+      await setNotification(message)
     }
   }
 };
@@ -145,6 +147,7 @@ export function LoginNavigation() {
     AllNotificationGetPermitiopn()
     PushNotification.configure({
       onNotification: function (notification) {
+        console.log(notification, 'notification')
         if (notification.channelId == 'sms-channel') {
           navigation.navigate("SmsPage")
         }
@@ -157,6 +160,12 @@ export function LoginNavigation() {
     });
     PushNotification.popInitialNotification((notification) => {
       if (notification) {
+        if (notification.channelId == 'sms-channel') {
+          navigation.navigate("SmsPage")
+        }
+        else {
+          navigation.navigate('Notification')
+        }
       }
     });
     return () => {
@@ -180,7 +189,6 @@ export function LoginNavigation() {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
-        console.log(message, 'message')
         setItem(message)
       });
       while (BackgroundService.isRunning()) {
@@ -231,7 +239,6 @@ export function LoginNavigation() {
 
     let sms = await AsyncStorage.getItem('sms')
     let item = JSON.parse(await AsyncStorage.getItem('sms'))
-    console.log(message.timestamp, 'message.timestamp')
     if (item) {
       if (item?.findIndex((e) => e.timestamp == message.timestamp) == -1) {
         var requestOptions = {
@@ -250,6 +257,7 @@ export function LoginNavigation() {
           .then(result => {
             dispatch()
             if (result.status) {
+              console.log(result, 'result')
               message.confirm = true
             }
             else {
@@ -260,15 +268,16 @@ export function LoginNavigation() {
             message.confirm = false
           });
         if (sms) {
-          let item = JSON.parse(await AsyncStorage.getItem('sms'))
+          // let item = JSON.parse(await AsyncStorage.getItem('sms'))
           if (message.confirm != 2) {
             message.confirm = 2
             if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+              console.log("--1022")
               item.unshift(message)
               handleButtonClick(message)
               dispatch(AddSms(message))
-              await AsyncStorage.setItem('sms', JSON.stringify(item))
             }
+            await AsyncStorage.setItem('sms', JSON.stringify(item))
           }
         }
         else {
@@ -281,6 +290,7 @@ export function LoginNavigation() {
       }
     }
     else {
+      console.log("else")
       var requestOptions = {
         method: 'POST',
         headers: myHeaders,
