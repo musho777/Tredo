@@ -4,6 +4,7 @@ import { MsgSvg } from "../../assets/svg"
 import { useEffect, useState } from "react"
 
 export const Switch = ({ text, onSwitch, value = false }) => {
+  console.log(value, '22')
   const [isEnabled, setIsEnabled] = useState(value);
   const toggleSwitch = () => {
     onSwitch()
@@ -12,6 +13,7 @@ export const Switch = ({ text, onSwitch, value = false }) => {
   }
 
   useEffect(() => {
+    console.log("00000")
     setIsEnabled(value)
   }, [value])
 
@@ -31,7 +33,7 @@ export const Switch = ({ text, onSwitch, value = false }) => {
       </Text>
     </View>
     <ToggleSwitch
-      isOn={isEnabled}
+      isOn={value}
       onColor="#006bf7"
       offColor="#c4d4f1"
       size='small'

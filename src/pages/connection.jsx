@@ -116,7 +116,7 @@ export const Connection = ({ navigation }) => {
       <View style={{ gap: 10, marginTop: 100 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Button3 onPress={() => navigation.navigate('SmsPage')} svg={<MessageSvg />} text={"Сообщения"} width={"49%"} />
-          <Button3 svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
+          <Button3 onPress={() => navigation.navigate('Notification')} svg={<NotificationSvg />} text={"Уведомления"} width={"49%"} />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Button3 svg={<RefreshSvg />} text={"Обновления"} width={"49%"} bg={"#e8f1ff"} />

@@ -15,6 +15,9 @@ export const Permission = ({ navigation }) => {
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
   const [per, setPer] = useState(false)
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
+  const [permitionSim, setPermitionSim] = useState(false)
+  const [SmsPermitionAllow, setSmsPermitionAllow] = useState(false)
+
 
   const handlePermissionRequest = () => {
     requestDefaultSmsPermission();
@@ -65,7 +68,9 @@ export const Permission = ({ navigation }) => {
           buttonPositive: "OK"
         }
       );
+      setPermitionSim(true)
     } catch (err) {
+      setPermitionSim(false)
       console.warn(err);
     }
   };
@@ -77,7 +82,9 @@ export const Permission = ({ navigation }) => {
         PermissionsAndroid.PERMISSIONS.READ_SMS,
       ]
       );
+      setSmsPermitionAllow(true)
     } catch (err) {
+      setSmsPermitionAllow(false)
     }
   }
 
@@ -153,9 +160,9 @@ export const Permission = ({ navigation }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
         <Switch value={isDefaultSmsApp} onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
-        <Switch onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
-        <Switch onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
-        <Switch onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
+        <Switch value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
+        <Switch value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
+        <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
       </View>
     </ScrollView>
     <View>

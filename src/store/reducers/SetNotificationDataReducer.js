@@ -19,6 +19,9 @@ const SetNotificationDataReducer = (state = initialState, action) => {
       item.data = null
       item.status = false
       break
+    case 'ClearNotification':
+      item.data = null
+      break
     default:
       break;
   }

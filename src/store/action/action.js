@@ -74,6 +74,13 @@ export const ReadSms = (data) => {
   }
 }
 
+export const ReadNotification = (data) => {
+  return {
+    type: "ReadNotification",
+    data
+  }
+}
+
 export const AddSms = (data) => {
   return {
     type: 'AddSms',
@@ -81,6 +88,18 @@ export const AddSms = (data) => {
   }
 }
 
+export const AddNotification = (data) => {
+  return {
+    type: 'AddNotification',
+    data
+  }
+}
+
+export const ClearNotification = () => {
+  return {
+    type: 'ClearNotification',
+  }
+}
 
 export const LogoutAction = (token) => {
 

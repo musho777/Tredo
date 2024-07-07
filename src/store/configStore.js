@@ -6,6 +6,7 @@ import ReadSmsReducer from './reducers/readSmsReducer';
 import LogoutReducer from './reducers/logoutReducer';
 import SetNotificationDataReducer from './reducers/SetNotificationDataReducer';
 import SmsSinglPageReducer from './reducers/SmsSingPageReducer';
+import NotificationReducer from './reducers/notificationReducer';
 
 
 const rootReducer = combineReducers({
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   readSms: ReadSmsReducer,
   logout: LogoutReducer,
   setNotificationData: SetNotificationDataReducer,
-  smsSinglPage: SmsSinglPageReducer
+  smsSinglPage: SmsSinglPageReducer,
+  notification: NotificationReducer
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));

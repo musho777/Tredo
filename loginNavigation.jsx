@@ -6,13 +6,14 @@ import { AllMsg } from './src/pages/allMsg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch, useSelector } from 'react-redux';
-import { AddSms, ClearSetNotificationdata, SetNotificationData } from './src/store/action/action';
+import { AddNotification, AddSms, ClearNotification, ClearSetNotificationdata, SetNotificationData } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { useNavigation } from '@react-navigation/native';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
 import { store } from './src/store/configStore';
+import { Notification } from './src/pages/notification';
 
 
 const Tab = createBottomTabNavigator();
@@ -31,10 +32,12 @@ export const headlessNotificationListener = async ({ notification }) => {
       let temp = JSON.parse(await AsyncStorage.getItem('sms'))
       if (temp) {
         if (temp?.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+          console.log('11')
           store.dispatch(SetNotificationData(message));
         }
       }
       else {
+        console.log('22')
         store.dispatch(SetNotificationData(message));
       }
     }
@@ -69,10 +72,7 @@ export function LoginNavigation() {
   }
 
   useEffect(() => {
-
-
     AllNotificationGetPermitiopn()
-
     PushNotification.configure({
       onNotification: function (notification) {
         navigation.navigate("SmsPage")
@@ -104,7 +104,8 @@ export function LoginNavigation() {
 
   useEffect(() => {
     if (setNotificationData.data) {
-      setItem(setNotificationData.data)
+      console.log(setNotificationData.data, 'setNotificationData.data')
+      setNotification(setNotificationData.data)
     }
   }, [setNotificationData])
 
@@ -175,6 +176,7 @@ export function LoginNavigation() {
     await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
       .then(response => response.json())
       .then(result => {
+        dispatch()
         if (result.status) {
           message.confirm = true
         }
@@ -206,6 +208,63 @@ export function LoginNavigation() {
     }
   }
 
+  const setNotification = async (message) => {
+    let token = await AsyncStorage.getItem('token')
+
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+    myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
+    let sms = await AsyncStorage.getItem('notification')
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify({
+        title: message.originatingAddress,
+        unix: message.timestamp,
+        message: message.body
+      }),
+      redirect: 'follow'
+    };
+    message.confirm = 2
+    await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        dispatch(ClearNotification())
+        if (result.status) {
+          console.log('-----1')
+          message.confirm = true
+        }
+        else {
+          message.confirm = false
+        }
+      })
+      .catch(error => {
+        message.confirm = false
+      });
+    if (sms) {
+      let item = JSON.parse(await AsyncStorage.getItem('notification'))
+      if (message.confirm != 2) {
+        message.confirm = 2
+        if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+          item.unshift(message)
+          handleButtonClick(message)
+          dispatch(AddNotification(message))
+          await AsyncStorage.setItem('notification', JSON.stringify(item))
+
+        }
+      }
+    }
+    else {
+      dispatch(AddNotification(message))
+      let item = []
+      handleButtonClick(message)
+      item.unshift(message)
+      await AsyncStorage.setItem('notification', JSON.stringify(item))
+    }
+  }
+
 
 
 
@@ -233,6 +292,12 @@ export function LoginNavigation() {
           headerShown: false,
         }}
         name="AllMsg" component={AllMsg} />
+      <Tab.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="Notification" component={Notification} />
+
     </Tab.Navigator>
   );
 
