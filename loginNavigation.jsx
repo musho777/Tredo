@@ -127,22 +127,14 @@ export function LoginNavigation() {
 
   const setSms = async (message) => {
     let item = JSON.parse(await AsyncStorage.getItem('sms'))
-    if (item) {
-      if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-        await sendMessage(message)
-        item.unshift(message)
-        handleButtonClick(message)
-        dispatch(AddSms(message))
-      }
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
+    if (!item) {
+      item = []
     }
-    else {
-      dispatch(AddSms(message))
-      let item = []
-      message.confirm = 2
+    if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
       await sendMessage(message)
-      handleButtonClick(message)
       item.unshift(message)
+      handleButtonClick(message)
+      dispatch(AddSms(message))
       await AsyncStorage.setItem('sms', JSON.stringify(item))
     }
   }

@@ -80,17 +80,15 @@ export const headlessNotificationListener = async ({ notification }) => {
       handleNotification(message)
       if (item.sortKey) {
         let data = JSON.parse(await AsyncStorage.getItem('notification'))
-        if (data?.findIndex((e) => e.sortKey == message.sortKey) == -1) {
-          await setNotification(message)
-        }
         if (!data) {
           data = []
-          data.unshift(message)
+        }
+        if (data?.findIndex((e) => e.sortKey == message.sortKey) == -1) {
           await setNotification(message)
         }
       }
       else {
-        setNotification(message)
+        await setNotification(message)
       }
     }
   }
