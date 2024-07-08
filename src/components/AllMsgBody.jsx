@@ -20,13 +20,6 @@ export const AllMsgBody = ({ time, data, last, index }) => {
     Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${data.originatingAddress}: ${data.body}`);
   };
 
-
-  const [setData, setNewData] = useState()
-
-  useEffect(() => {
-    setNewData(data)
-  }, [])
-
   let date = new Date(time)
   let minut = date.getMinutes()
   let hours = date.getHours()
@@ -57,7 +50,6 @@ export const AllMsgBody = ({ time, data, last, index }) => {
     let item = JSON.parse(await AsyncStorage.getItem('sms'))
     let index = item.findIndex((e) => e.timestamp == data.timestamp)
     item[index].confirm = true
-    setNewData(item[index])
     await AsyncStorage.setItem('sms', JSON.stringify(item))
   }
 

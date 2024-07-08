@@ -6,77 +6,18 @@ import { AllMsg } from './src/pages/allMsg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
 import { useDispatch } from 'react-redux';
-import { AddNotification, AddSms } from './src/store/action/action';
+import { AddSms } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { useNavigation } from '@react-navigation/native';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
-import { store } from './src/store/configStore';
 import { Notification } from './src/pages/notification';
-import { sendMessage } from './src/func/function';
-
-
-const Tab = createBottomTabNavigator();
-
-
-const handleNotification = (message) => {
-  PushNotification.localNotification({
-    channelId: "Navigation-channel",
-    title: message.originatingAddress,
-    message: message.body,
-  });
-};
-
-
-const setNotification = async (message) => {
-  let sms = await AsyncStorage.getItem('notification')
-  let item = []
-  if (sms) {
-    item = JSON.parse(sms)
-  }
-  item.unshift(message)
-  message.confirm = 2
-  store.dispatch(AddNotification(message))
-  await sendMessage(message)
-  await AsyncStorage.setItem('notification', JSON.stringify(item))
-}
-
-
-export const headlessNotificationListener = async ({ notification }) => {
-
-
-  if (notification) {
-    const item = JSON.parse(notification)
-    const message = {
-      body: item.text,
-      timestamp: item.time,
-      originatingAddress: item.title,
-      sortKey: item.sortKey
-    };
-
-    if (item.app != 'com.tredo') {
-      handleNotification(message)
-      if (item.sortKey) {
-        let data = JSON.parse(await AsyncStorage.getItem('notification'))
-        if (data?.findIndex((e) => e.sortKey == message.sortKey) == -1) {
-          await setNotification(message)
-        }
-        if (!data) {
-          data = []
-          data.unshift(message)
-          await setNotification(message)
-        }
-      }
-      else {
-        setNotification(message)
-      }
-    }
-  }
-}
-
+import { handleButtonClick, headlessNotificationListener, sendMessage } from './src/func/function';
 
 export function LoginNavigation() {
+  const Tab = createBottomTabNavigator();
+
   const dispatch = useDispatch()
   const navigation = useNavigation()
 
@@ -113,6 +54,7 @@ export function LoginNavigation() {
   }
 
   useEffect(() => {
+    PushNotification.removeAllDeliveredNotifications();
     AllNotificationGetPermitiopn()
     PushNotification.configure({
       onNotification: function (notification) {
@@ -141,23 +83,12 @@ export function LoginNavigation() {
     };
   }, [])
 
-  useEffect(() => {
-    PushNotification.removeAllDeliveredNotifications();
-  }, [])
-
-  const handleButtonClick = (message) => {
-    PushNotification.localNotification({
-      channelId: "sms-channel",
-      title: message.originatingAddress,
-      message: message.body,
-    });
-  };
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
     try {
       SmsListener.addListener(message => {
-        setItem(message)
+        setSms(message)
       });
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -180,9 +111,7 @@ export function LoginNavigation() {
             type: 'mipmap',
           },
           color: '#0073ff',
-          parameters: {
-            delay: 1000,
-          },
+          parameters: { delay: 1000 },
         });
       } catch (e) {
       }
@@ -196,7 +125,7 @@ export function LoginNavigation() {
   }, []);
 
 
-  const setItem = async (message) => {
+  const setSms = async (message) => {
     let item = JSON.parse(await AsyncStorage.getItem('sms'))
     if (item) {
       if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
@@ -222,10 +151,8 @@ export function LoginNavigation() {
   return (
     <Tab.Navigator
       initialRouteName={'connectionPage'}
-      screenOptions={({ route }) => ({
-        tabBarStyle: {
-          display: 'none',
-        },
+      screenOptions={() => ({
+        tabBarStyle: { display: 'none' }
       })}
     >
       <Tab.Screen
