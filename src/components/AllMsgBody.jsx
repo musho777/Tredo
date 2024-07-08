@@ -66,13 +66,9 @@ export const AllMsgBody = ({ time, data, last, index }) => {
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
         <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
-        {setData?.confirm ? <View style={{ width: 20, height: 20 }}>
+        <View style={{ width: 20, height: 20 }}>
           <SuccessSvg />
-        </View> :
-          <TouchableOpacity onPress={() => SetAgain()}>
-            <ErrorSvg />
-          </TouchableOpacity>
-        }
+        </View>
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>
