@@ -3,23 +3,16 @@ import { Connection } from './src/pages/connection';
 import { useEffect } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import SmsListener from 'react-native-android-sms-listener'
-import { useDispatch } from 'react-redux';
-import { AddSms } from './src/store/action/action';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
-import { useNavigation } from '@react-navigation/native';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
 import { Notification } from './src/pages/notification';
-import { handleButtonClick, headlessNotificationListener, sendMessage } from './src/func/function';
+import { headlessNotificationListener, setSms } from './src/func/function';
 
-export function LoginNavigation() {
+export function LoginNavigation({ navigation }) {
   const Tab = createBottomTabNavigator();
-
-  const dispatch = useDispatch()
-  const navigation = useNavigation()
 
   PushNotification.createChannel(
     {
@@ -124,50 +117,17 @@ export function LoginNavigation() {
     };
   }, []);
 
-
-  const setSms = async (message) => {
-    let item = JSON.parse(await AsyncStorage.getItem('sms'))
-    if (!item) {
-      item = []
-    }
-    if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-      await sendMessage(message)
-      item.unshift(message)
-      handleButtonClick(message)
-      dispatch(AddSms(message))
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    }
-  }
-
-
   return (
     <Tab.Navigator
       initialRouteName={'connectionPage'}
       screenOptions={() => ({
-        tabBarStyle: { display: 'none' }
-      })}
-    >
-      <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="connectionPage" component={Connection} />
-      <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="SmsPage" component={SmsPage} />
-      <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="AllMsg" component={AllMsg} />
-      <Tab.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="Notification" component={Notification} />
-
+        tabBarStyle: { display: 'none' },
+        headerShown: false
+      })}>
+      <Tab.Screen name="connectionPage" component={Connection} />
+      <Tab.Screen name="SmsPage" component={SmsPage} />
+      <Tab.Screen name="AllMsg" component={AllMsg} />
+      <Tab.Screen name="Notification" component={Notification} />
     </Tab.Navigator>
   );
 

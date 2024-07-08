@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
-export const Button3 = ({ svg, text, width, bg = "#3282f1", onPress = () => { } }) => {
+export const Button3 = ({ svg, text, width = '49%', bg = "#3282f1", onPress = () => { } }) => {
   return <TouchableOpacity onPress={() => onPress()} style={[styles.button, { width: width, backgroundColor: bg }]}>
     <View>
       {svg}

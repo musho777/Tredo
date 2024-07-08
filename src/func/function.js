@@ -1,7 +1,24 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddNotification } from "../store/action/action";
+import { AddNotification, AddSms } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
+
+
+const handleNotification = (message) => {
+  PushNotification.localNotification({
+    channelId: "Navigation-channel",
+    title: message.originatingAddress,
+    message: message.body,
+  });
+};
+
+export const handleButtonClick = (message) => {
+  PushNotification.localNotification({
+    channelId: "sms-channel",
+    title: message.originatingAddress,
+    message: message.body,
+  });
+};
 
 
 export const sendMessage = async (message) => {
@@ -40,13 +57,10 @@ export const sendMessage = async (message) => {
 }
 
 
-
 export const setNotification = async (message) => {
   let sms = await AsyncStorage.getItem('notification')
   let item = []
-  if (sms) {
-    item = JSON.parse(sms)
-  }
+  if (sms) item = JSON.parse(sms)
   item.unshift(message)
   message.confirm = 2
   store.dispatch(AddNotification(message))
@@ -54,15 +68,17 @@ export const setNotification = async (message) => {
   await AsyncStorage.setItem('notification', JSON.stringify(item))
 }
 
-
-const handleNotification = (message) => {
-  PushNotification.localNotification({
-    channelId: "Navigation-channel",
-    title: message.originatingAddress,
-    message: message.body,
-  });
-};
-
+export const setSms = async (message) => {
+  let item = JSON.parse(await AsyncStorage.getItem('sms'))
+  if (!item) item = [];
+  if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+    await sendMessage(message)
+    item.unshift(message)
+    handleButtonClick(message)
+    store.dispatch(AddSms(message))
+    await AsyncStorage.setItem('sms', JSON.stringify(item))
+  }
+}
 
 
 export const headlessNotificationListener = async ({ notification }) => {
@@ -94,10 +110,3 @@ export const headlessNotificationListener = async ({ notification }) => {
   }
 }
 
-export const handleButtonClick = (message) => {
-  PushNotification.localNotification({
-    channelId: "sms-channel",
-    title: message.originatingAddress,
-    message: message.body,
-  });
-};
