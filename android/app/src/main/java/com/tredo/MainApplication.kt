@@ -17,6 +17,7 @@ import com.facebook.soloader.SoLoader
 import com.tredo.sms.SmsPackage;
 import java.util.Arrays
 import com.tredo.SmsDefaultHandlerPackage
+import com.reactnativerestart.RestartPackage;  
 // import com.tredo.SmsPackageModule;
 
 class MainApplication : Application(), ReactApplication {
@@ -27,6 +28,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               SmsPackage()
               add(SmsDefaultHandlerPackage())
+               RestartPackage()
               // SmsDefaultHandlerPackage()
               SmsListenerPackage()
             }

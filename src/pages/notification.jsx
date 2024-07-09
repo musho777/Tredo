@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { MsgBody } from "../components/msgBody";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
-import { ReadNotification, ReadSms } from "../store/action/action";
+import { ReadNotification } from "../store/action/action";
 
 export const Notification = ({ navigation }) => {
 

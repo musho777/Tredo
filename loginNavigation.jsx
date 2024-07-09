@@ -78,9 +78,10 @@ export function LoginNavigation({ navigation }) {
 
 
   const YourTask = async (taskDataArguments) => {
+    let subscription;
     const { delay } = taskDataArguments;
     try {
-      SmsListener.addListener(message => {
+      subscription = SmsListener.addListener(message => {
         setSms(message)
       });
       while (BackgroundService.isRunning()) {
@@ -89,8 +90,12 @@ export function LoginNavigation({ navigation }) {
     } catch (error) {
       console.error('Error in background task:', error);
     }
-  };
-
+    finally {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
+  }
 
   useEffect(() => {
     const startBackgroundTask = async () => {
