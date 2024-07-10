@@ -56,7 +56,6 @@ export const Connection = ({ navigation }) => {
     const timer = setTimeout(() => {
       func()
     }, 2000);
-    // func()
     GoNextPage()
     getToken()
     return () => clearTimeout(timer);

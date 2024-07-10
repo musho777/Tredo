@@ -46,7 +46,7 @@ export const Notification = ({ navigation }) => {
     </View>
     <ScrollView style={styles.body} >
       {sms.map((elm, i) => {
-        return <MsgBody last={i == readSms?.data?.length - 1} data={elm} key={i} />
+        return <MsgBody type='notification' last={i == readSms?.data?.length - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>

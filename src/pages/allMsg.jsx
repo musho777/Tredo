@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 export const AllMsg = ({ route }) => {
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
-
+  console.log(route.params.type)
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const AllMsg = ({ route }) => {
     })
     if (search == '') {
       setValue('')
-      setSms(route.params.data)
+      setSms(smsSinglPage.data)
     }
     else {
       setValue(search)
@@ -64,7 +64,7 @@ export const AllMsg = ({ route }) => {
     </View>
     <ScrollView style={styles.body} >
       {sms?.map((elm, i) => {
-        return <AllMsgBody time={JSON.parse(elm.timestamp)} index={i} last={i == sms?.length - 1} data={elm} key={i} />
+        return <AllMsgBody type={route.params.type} time={JSON.parse(elm.timestamp)} index={i} last={i == sms?.length - 1} data={elm} key={i} />
       })}
     </ScrollView>
   </View>

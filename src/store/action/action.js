@@ -30,7 +30,7 @@ export const LoginAction = (token) => {
   }
 }
 
-export const SendSmgAction = (token, data) => {
+export const SendSmsAction = (token, data) => {
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('Authorization', `Bearer ${token}`);
@@ -56,6 +56,7 @@ export const SendSmgAction = (token, data) => {
         }
       })
       .catch(error => {
+        console.log(error, '2')
         dispatch(ErrorSendSMg(error))
       });
   }

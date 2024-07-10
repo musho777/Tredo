@@ -1,13 +1,21 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { ErrorSvg, SuccessSvg } from "../../assets/svg"
-import { useDispatch } from "react-redux"
-import { SendSmgAction } from "../store/action/action"
+import { useDispatch, useSelector } from "react-redux"
+import { SendSmgAction, SendSmsAction } from "../store/action/action"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Clipboard from '@react-native-clipboard/clipboard';
 
 
-export const AllMsgBody = ({ time, data, last, index }) => {
+export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
+
+  const sendSms = useSelector((st) => st.sendSms)
+  const [data1, setData1] = useState(data)
+  useEffect(() => {
+    setData1(data)
+  }, [data])
+
+  console.log(type, 'type')
 
   const copyToClipboard = () => {
     let date = new Date(data.timestamp)
@@ -33,10 +41,10 @@ export const AllMsgBody = ({ time, data, last, index }) => {
   if (hours < 10) {
     hours = `0${hours}`
   }
-  const dispaatch = useDispatch()
+  const dispatch = useDispatch()
 
   const SetAgain = async () => {
-
+    let temp1 = { ...data1 }
     let token = await AsyncStorage.getItem('token')
     let temp = {
       title: data.originatingAddress,
@@ -44,23 +52,80 @@ export const AllMsgBody = ({ time, data, last, index }) => {
       message: data.body
     }
 
-    dispaatch(SendSmgAction(token, temp))
+
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('Authorization', `Bearer ${token}`);
+    myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(temp),
+      redirect: 'follow'
+    };
 
 
-    let item = JSON.parse(await AsyncStorage.getItem('sms'))
+    // dispatch(StartSendSmg())
+    await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result, 'result')
+        if (result.status) {
+          temp1.confirm = true
+        }
+        else {
+          temp1.confirm = false
+        }
+      })
+      .catch(error => {
+        temp1.confirm = false
+      });
+
+    let item
+    if (type == 'sms') {
+      item = JSON.parse(await AsyncStorage.getItem('sms'))
+    }
+    else {
+      item = JSON.parse(await AsyncStorage.getItem('notification'))
+    }
     let index = item.findIndex((e) => e.timestamp == data.timestamp)
+    console.log(index, 'index')
     item[index].confirm = true
-    await AsyncStorage.setItem('sms', JSON.stringify(item))
+    setData1(temp1)
+    if (type == 'sms') {
+      await AsyncStorage.setItem('sms', JSON.stringify(item))
+    } else {
+      await AsyncStorage.setItem('notification', JSON.stringify(item))
+    }
   }
 
+  // useEffect(() => {
+  //   console.log(sendSms.status, 'sendSms.status')
+  //   let item = { ...data1 }
+  //   if (sendSms.status) {
+  //     item.confirm = true
+
+  //   }
+  //   // else {
+  //   //   item.confirm = false
+  //   // }
+  //   setData1(item)
+  // }, [sendSms.status])
+
+  console.log(data1.confirm, 'confrim')
   return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
         <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
-        <View style={{ width: 20, height: 20 }}>
+        {data1.confirm ? <View style={{ width: 20, height: 20 }}>
           <SuccessSvg />
-        </View>
+        </View> :
+          <TouchableOpacity onPress={() => SetAgain()} style={{ width: 20, height: 20 }}>
+            <ErrorSvg />
+          </TouchableOpacity>
+        }
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>

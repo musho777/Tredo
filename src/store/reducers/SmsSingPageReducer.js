@@ -10,12 +10,6 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       item.data = action.data
       item.status = false
       break;
-    // case 'ClearSendSms':
-    //   item.error = ''
-    //   item.loading = false
-    //   item.data = null
-    //   item.status = false
-    //   break
     default:
       break;
   }

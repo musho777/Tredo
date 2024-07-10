@@ -19,10 +19,10 @@ export const handleButtonClick = (message) => {
     message: message.body,
   });
 };
-
+let confirm = false
 
 export const sendMessage = async (message) => {
-  let confirm = false
+  // let confirm = false
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -43,7 +43,9 @@ export const sendMessage = async (message) => {
   await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
     .then(response => response.json())
     .then(result => {
+      console.log(result.status, 'result.status')
       if (result.status) {
+        console.log("----")
         confirm = true
       }
       else {
@@ -58,26 +60,30 @@ export const sendMessage = async (message) => {
 
 
 export const setNotification = async (message) => {
+  confirm = false
   let sms = await AsyncStorage.getItem('notification')
   let item = []
   if (sms) item = JSON.parse(sms)
   item.unshift(message)
-  message.confirm = 2
-  store.dispatch(AddNotification(message))
   await sendMessage(message)
+  console.log(confirm, 'confirm')
+  message.confirm = confirm
+  store.dispatch(AddNotification(message))
   await AsyncStorage.setItem('notification', JSON.stringify(item))
 }
 
 export const setSms = async (message) => {
   let item = JSON.parse(await AsyncStorage.getItem('sms'))
   if (!item) item = [];
-  if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-    await sendMessage(message)
-    item.unshift(message)
-    handleButtonClick(message)
-    store.dispatch(AddSms(message))
-    await AsyncStorage.setItem('sms', JSON.stringify(item))
-  }
+  // if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+  await sendMessage(message)
+  item.unshift(message)
+  handleButtonClick(message)
+  message.confirm = confirm
+  store.dispatch(AddSms(message))
+  console.log(confirm, 'confirm')
+  await AsyncStorage.setItem('sms', JSON.stringify(item))
+  // }
 }
 
 
