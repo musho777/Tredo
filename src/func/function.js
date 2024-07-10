@@ -93,26 +93,8 @@ export const headlessNotificationListener = async ({ notification }) => {
     };
 
     if (item.app != 'com.tredo') {
-      if (item.sortKey) {
-        let data = JSON.parse(await AsyncStorage.getItem('notification'))
-        if (!data) {
-          data = []
-        }
-        if (data.findIndex((e) => e.sortKey == message.sortKey) == -1) {
-          handleNotification(message)
-          await setNotification(message)
-          data.push(message)
-        }
-        // if (!data) {
-        //   data.push(message)
-        // }
-      }
-      else {
-        if (item.app != 'org.telegram.messenger.web') {
-          handleNotification(message)
-          await setNotification(message)
-        }
-      }
+      handleNotification(message)
+      await setNotification(message)
     }
   }
 }
