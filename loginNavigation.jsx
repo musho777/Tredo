@@ -10,6 +10,7 @@ import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsN
 import { AppRegistry } from 'react-native';
 import { Notification } from './src/pages/notification';
 import { headlessNotificationListener, setSms } from './src/func/function';
+import { SplashScreen } from './src/pages/SplashScreen';
 
 export function LoginNavigation({ navigation }) {
   const Tab = createBottomTabNavigator();
@@ -124,12 +125,13 @@ export function LoginNavigation({ navigation }) {
 
   return (
     <Tab.Navigator
-      initialRouteName={'connectionPage'}
+      initialRouteName={'SplashScreen'}
       screenOptions={() => ({
         tabBarStyle: { display: 'none' },
         headerShown: false
       })}>
       <Tab.Screen name="connectionPage" component={Connection} />
+      <Tab.Screen name="SplashScreen" component={SplashScreen} />
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
       <Tab.Screen name="Notification" component={Notification} />

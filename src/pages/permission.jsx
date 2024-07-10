@@ -168,7 +168,9 @@ export const Permission = ({ navigation }) => {
       if (g2 && g4 && g5 && per && permitionforNotifcation) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {
-          navigation.replace("connection")
+          navigation.replace("connection", {
+            screen: "connectionPage"
+          })
         }
       }
     } catch (err) {

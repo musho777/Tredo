@@ -18,6 +18,11 @@ export const Connection = ({ navigation }) => {
   const [token, setToken] = useState()
   const [refresh, setRefresh] = useState(false)
 
+
+  const func = async () => {
+    await AsyncStorage.setItem('restart', 'true')
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setRefresh(false)
@@ -48,8 +53,13 @@ export const Connection = ({ navigation }) => {
   }
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      func()
+    }, 2000);
+    // func()
     GoNextPage()
     getToken()
+    return () => clearTimeout(timer);
   }, []);
 
 
