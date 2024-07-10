@@ -56,25 +56,25 @@ export function LoginNavigation({ navigation }) {
     AllNotificationGetPermitiopn()
     PushNotification.configure({
       onNotification: function (notification) {
-        if (notification.channelId == 'sms-channel') {
-          navigation.navigate("SmsPage")
-        }
-        else {
-          navigation.navigate('Notification')
-        }
+        // if (notification.channelId == 'sms-channel') {
+        //   navigation.navigate("SmsPage")
+        // }
+        // else {
+        //   navigation.navigate('Notification')
+        // }
       },
       popInitialNotification: true,
       requestPermissions: Platform.OS === 'ios',
     });
     PushNotification.popInitialNotification((notification) => {
-      if (notification) {
-        if (notification.channelId == 'sms-channel') {
-          navigation.navigate("SmsPage")
-        }
-        else {
-          navigation.navigate('Notification')
-        }
-      }
+      // if (notification) {
+      //   if (notification.channelId == 'sms-channel') {
+      //     navigation.navigate("SmsPage")
+      //   }
+      //   else {
+      //     navigation.navigate('Notification')
+      //   }
+      // }
     });
     return () => {
       PushNotification.unregister();
@@ -91,8 +91,9 @@ export function LoginNavigation({ navigation }) {
   const YourTask = async (taskDataArguments) => {
     let subscription;
     const { delay } = taskDataArguments;
+    let intervalId;
     try {
-      const intervalId = BackgroundTimer.setInterval(() => {
+      intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
       }, 30000);
       subscription = SmsListener.addListener(message => {
@@ -108,6 +109,7 @@ export function LoginNavigation({ navigation }) {
       if (subscription) {
         subscription.remove();
       }
+      BackgroundTimer.clearInterval(intervalId);
     };
   }
 
