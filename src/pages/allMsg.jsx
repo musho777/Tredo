@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 export const AllMsg = ({ route }) => {
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
-  console.log(route.params.type)
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
 
   useEffect(() => {

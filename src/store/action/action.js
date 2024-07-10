@@ -56,7 +56,6 @@ export const SendSmsAction = (token, data) => {
         }
       })
       .catch(error => {
-        console.log(error, '2')
         dispatch(ErrorSendSMg(error))
       });
   }
@@ -163,5 +162,32 @@ export const SmsSingPage = (data) => {
   return {
     type: 'SmsSingPage',
     data
+  }
+}
+
+
+export const CheckOnline = (token) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', `Bearer ${token}`);
+  myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  return (dispatch) => {
+    fetch(`https://iron-pay.com/api/auth_user_info`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status) {
+        }
+        else {
+        }
+      })
+      .catch(error => {
+      });
   }
 }

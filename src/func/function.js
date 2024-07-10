@@ -43,9 +43,7 @@ export const sendMessage = async (message) => {
   await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
     .then(response => response.json())
     .then(result => {
-      console.log(result.status, 'result.status')
       if (result.status) {
-        console.log("----")
         confirm = true
       }
       else {
@@ -66,7 +64,6 @@ export const setNotification = async (message) => {
   if (sms) item = JSON.parse(sms)
   item.unshift(message)
   await sendMessage(message)
-  console.log(confirm, 'confirm')
   message.confirm = confirm
   store.dispatch(AddNotification(message))
   await AsyncStorage.setItem('notification', JSON.stringify(item))
@@ -81,7 +78,6 @@ export const setSms = async (message) => {
   handleButtonClick(message)
   message.confirm = confirm
   store.dispatch(AddSms(message))
-  console.log(confirm, 'confirm')
   await AsyncStorage.setItem('sms', JSON.stringify(item))
   // }
 }

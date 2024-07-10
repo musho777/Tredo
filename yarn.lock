@@ -3471,6 +3471,7 @@ __metadata:
     react-native-async-storage: ^0.0.1
     react-native-background-actions: ^4.0.0
     react-native-background-fetch: ^4.2.5
+    react-native-background-timer: ^2.4.1
     react-native-badge: ^1.0.0
     react-native-callkeep: ^4.3.13
     react-native-camera: ^4.2.1
@@ -9562,6 +9563,15 @@ __metadata:
   version: 4.2.5
   resolution: "react-native-background-fetch@npm:4.2.5"
   checksum: d124418a69377f0399b72cb86bfea5e801a4dc2d5b8215e6736fd21836a82ad514a3b89fd2915b866c205e6e7f2feddd0486d4893a0261e7d978502773397d45
+  languageName: node
+  linkType: hard
+
+"react-native-background-timer@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "react-native-background-timer@npm:2.4.1"
+  peerDependencies:
+    react-native: ">=0.47.0"
+  checksum: 635feb23bfdc8c43b8ee85dc85a5eb83f85aa9c285ce92ac329946ac83864121ae66bfb64fefa21e2a10462d094e03c17ff87eeb5d7e6349bc8e72d941f12754
   languageName: node
   linkType: hard
 

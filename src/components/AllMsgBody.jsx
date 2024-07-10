@@ -15,7 +15,6 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
     setData1(data)
   }, [data])
 
-  console.log(type, 'type')
 
   const copyToClipboard = () => {
     let date = new Date(data.timestamp)
@@ -70,7 +69,6 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
     await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result, 'result')
         if (result.status) {
           temp1.confirm = true
         }
@@ -90,7 +88,6 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
       item = JSON.parse(await AsyncStorage.getItem('notification'))
     }
     let index = item.findIndex((e) => e.timestamp == data.timestamp)
-    console.log(index, 'index')
     item[index].confirm = true
     setData1(temp1)
     if (type == 'sms') {
@@ -100,20 +97,6 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
     }
   }
 
-  // useEffect(() => {
-  //   console.log(sendSms.status, 'sendSms.status')
-  //   let item = { ...data1 }
-  //   if (sendSms.status) {
-  //     item.confirm = true
-
-  //   }
-  //   // else {
-  //   //   item.confirm = false
-  //   // }
-  //   setData1(item)
-  // }, [sendSms.status])
-
-  console.log(data1.confirm, 'confrim')
   return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>

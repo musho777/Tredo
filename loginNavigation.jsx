@@ -11,6 +11,10 @@ import { AppRegistry } from 'react-native';
 import { Notification } from './src/pages/notification';
 import { headlessNotificationListener, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
+import { useDispatch } from 'react-redux';
+import { CheckOnline } from './src/store/action/action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import BackgroundTimer from 'react-native-background-timer';
 
 export function LoginNavigation({ navigation }) {
   const Tab = createBottomTabNavigator();
@@ -76,12 +80,21 @@ export function LoginNavigation({ navigation }) {
       PushNotification.unregister();
     };
   }, [])
+  const dispatch = useDispatch()
+
+  const isOnline = async () => {
+    let token = await AsyncStorage.getItem('token')
+    dispatch(CheckOnline(token))
+  }
 
 
   const YourTask = async (taskDataArguments) => {
     let subscription;
     const { delay } = taskDataArguments;
     try {
+      const intervalId = BackgroundTimer.setInterval(() => {
+        isOnline()
+      }, 30000);
       subscription = SmsListener.addListener(message => {
         setSms(message)
       });
@@ -110,18 +123,19 @@ export function LoginNavigation({ navigation }) {
             type: 'mipmap',
           },
           color: '#0073ff',
-          parameters: { delay: 1000 },
+          parameters: { delay: 3000 },
         });
       } catch (e) {
       }
     };
 
     startBackgroundTask();
-
     return () => {
       BackgroundService.stop();
     };
   }, []);
+
+
 
   return (
     <Tab.Navigator
