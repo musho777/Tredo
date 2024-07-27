@@ -22,6 +22,6 @@ export const SplashScreen = ({ navigation }) => {
     func1()
   }, [])
   return <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-    <Image source={require('../../assets/image/ic_launcher.png')} />
+    {/* <Image source={require('../../assets/image/ic_launcher.png')} /> */}
   </View>
 }

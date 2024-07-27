@@ -6,7 +6,7 @@ import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
 import { addSmsPermissionListener, requestDefaultSmsPermission } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
+import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 
 
 export const Permission = ({ navigation }) => {

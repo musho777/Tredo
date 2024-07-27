@@ -72,14 +72,14 @@ export const setNotification = async (message) => {
 export const setSms = async (message) => {
   let item = JSON.parse(await AsyncStorage.getItem('sms'))
   if (!item) item = [];
-  // if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-  await sendMessage(message)
-  item.unshift(message)
-  handleButtonClick(message)
-  message.confirm = confirm
-  store.dispatch(AddSms(message))
-  await AsyncStorage.setItem('sms', JSON.stringify(item))
-  // }
+  if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
+    await sendMessage(message)
+    item.unshift(message)
+    handleButtonClick(message)
+    message.confirm = confirm
+    store.dispatch(AddSms(message))
+    await AsyncStorage.setItem('sms', JSON.stringify(item))
+  }
 }
 
 
