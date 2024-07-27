@@ -5,9 +5,13 @@ import { sendMessage } from "../func/function"
 
 
 export const AllMsgBody = ({ username, data, last, index }) => {
-
+  console.log(data.sent_at)
 
   let date = new Date(data.sent_at)
+  if (typeof data.sent_at == 'string') {
+
+    date = new Date(JSON.parse(data.sent_at))
+  }
   let minut = date.getMinutes()
   let hour = date.getHours()
   let seconds = date.getSeconds()

@@ -23,6 +23,7 @@ export const SmsPage = ({ route }) => {
 
 
   const renderItem = ({ item, index }) => {
+
     return <MsgBody type={route.params.type} last={index == sms.length - 1} data={item} key={index} />
   }
 

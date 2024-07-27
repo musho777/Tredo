@@ -90,7 +90,7 @@ export function LoginNavigation() {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     } catch (error) {
-      console.error('Error in background task:', error);
+      console.log('Error in background task:', error);
     }
     finally {
       if (subscription) {

@@ -59,7 +59,7 @@ const getSmsAndUpdateStatus = (smsId) => {
       (tx, result) => {
       },
       (tx, error) => {
-        console.error('Failed to update SMS status:', error.message);
+        console.log('Failed to update SMS status:', error.message);
       }
     );
   });
@@ -70,7 +70,6 @@ export const setSms = async (smsData, type = 'sms') => {
   let status = 0;
 
   db.transaction(tx => {
-    // Check if the user exists
     tx.executeSql(
       'SELECT user_id FROM Users WHERE username = ?',
       [username],
@@ -91,7 +90,7 @@ export const setSms = async (smsData, type = 'sms') => {
                     // console.log('SMS inserted successfully');
                   },
                   (tx, error) => {
-                    console.error('Failed to insert SMS:', error);
+                    console.log('Failed to insert SMS:', error);
                   }
                 );
 
@@ -109,13 +108,13 @@ export const setSms = async (smsData, type = 'sms') => {
                     }));
                   },
                   (tx, error) => {
-                    console.error('Failed to get SMS count:', error);
+                    console.log('Failed to get SMS count:', error);
                   }
                 );
               }
             },
             (tx, error) => {
-              // console.error('Failed to check for existing SMS:', error);
+              // console.log('Failed to check for existing SMS:', error);
             }
           );
         } else {
@@ -127,28 +126,31 @@ export const setSms = async (smsData, type = 'sms') => {
               tx.executeSql(
                 'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
                 [userId, message, sentAt],
-                (tx, result) => {
+                async (tx, result) => {
+                  const smsId = result.insertId;
+                  await sendMessage(smsData, smsId, userId);
                   store.dispatch(AddCount());
                   store.dispatch(AddSms({
                     last_message: message,
                     username,
                     last_message_time: sentAt,
-                    type
+                    type,
+                    user_id: userId
                   }));
                 },
                 (tx, error) => {
-                  console.error('Failed to insert SMS:', error);
+                  console.log('Failed to insert SMS:', error);
                 }
               );
             },
             (tx, error) => {
-              console.error('Failed to insert user:', error);
+              console.log('Failed to insert user:', error);
             }
           );
         }
       },
       (tx, error) => {
-        console.error('Failed to check if user exists:', error);
+        console.log('Failed to check if user exists:', error);
       }
     );
     handleButtonClick(smsData);
@@ -228,7 +230,7 @@ export const getPaginatedUsers = async (type, page = 1, pageSize = 10) => {
         store.dispatch(ReadSms(users));
       },
       (tx, error) => {
-        console.error('Failed to get users with last message, timestamp, and SMS count:', error.message);
+        console.log('Failed to get users with last message, timestamp, and SMS count:', error.message);
       }
     );
   });
@@ -245,7 +247,7 @@ export const getTotalSmsUserCount = (type) => {
         store.dispatch(Count(userCount));
       },
       (tx, error) => {
-        console.error('Failed to get SMS user count:', error.message);
+        console.log('Failed to get SMS user count:', error.message);
       }
     );
   });
@@ -265,7 +267,7 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '')
         store.dispatch(SmsSingPage(messages));
       },
       (tx, error) => {
-        console.error('Failed to get messages:', error.message);
+        console.log('Failed to get messages:', error.message);
       }
     );
   });
@@ -273,35 +275,35 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '')
 
 
 
-// export const dropAllTables = () => {
-//   db.transaction(tx => {
-//     // Drop tables if they exist
-//     tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
-//       console.log('SMS table dropped');
-//     }, (tx, error) => {
-//       console.error('Failed to drop SMS table:', error);
-//     });
+export const dropAllTables = () => {
+  db.transaction(tx => {
+    // Drop tables if they exist
+    tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
+      console.log('SMS table dropped');
+    }, (tx, error) => {
+      console.log('Failed to drop SMS table:', error);
+    });
 
-//     tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
-//       console.log('Users table dropped');
-//     }, (tx, error) => {
-//       console.error('Failed to drop Users table:', error);
-//     });
-//   });
-// };
+    tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
+      console.log('Users table dropped');
+    }, (tx, error) => {
+      console.log('Failed to drop Users table:', error);
+    });
+  });
+};
 
 // export const deleteAllData = () => {
 //   db.transaction(tx => {
 //     tx.executeSql('DELETE FROM Users', [], (tx, result) => {
 //       console.log('All users deleted');
 //     }, (tx, error) => {
-//       console.error('Failed to delete users:', error);
+//       console.log('Failed to delete users:', error);
 //     });
 
 //     tx.executeSql('DELETE FROM SMS', [], (tx, result) => {
 //       console.log('All SMS deleted');
 //     }, (tx, error) => {
-//       console.error('Failed to delete SMS:', error);
+//       console.log('Failed to delete SMS:', error);
 //     });
 //   });
 // };

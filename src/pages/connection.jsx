@@ -10,6 +10,7 @@ import { DefaultSmsButton } from "../components/defaultSmsButton"
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
 import { Status_Bar } from "../components/statusBar"
+import { dropAllTables } from "../func/function"
 
 
 export const Connection = ({ navigation }) => {
@@ -68,6 +69,10 @@ export const Connection = ({ navigation }) => {
     await AsyncStorage.clear()
     navigation.replace('home')
   }
+
+  // useEffect(() => {
+  //   dropAllTables()
+  // }, [])
 
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
