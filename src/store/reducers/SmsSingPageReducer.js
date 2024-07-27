@@ -5,10 +5,10 @@ const SmsSinglPageReducer = (state = initialState, action) => {
   let item = { ...state };
   switch (action.type) {
     case 'SmsSingPage':
-      item.error = false;
-      item.loading = true;
-      item.data = action.data
-      item.status = false
+      action.data.map((elm, i) => {
+        item.data.push(elm)
+      })
+
       break;
     default:
       break;

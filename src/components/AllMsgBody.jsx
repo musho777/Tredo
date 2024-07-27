@@ -1,15 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { ErrorSvg, SuccessSvg } from "../../assets/svg"
-import { useDispatch, useSelector } from "react-redux"
-import { SendSmgAction, SendSmsAction } from "../store/action/action"
+import { useDispatch } from "react-redux"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Clipboard from '@react-native-clipboard/clipboard';
 
 
-export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
-
-  const sendSms = useSelector((st) => st.sendSms)
+export const AllMsgBody = ({ data, last, index, type = 'sms' }) => {
+  console.log(data)
   const [data1, setData1] = useState(data)
   useEffect(() => {
     setData1(data)
@@ -17,7 +15,7 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
 
 
   const copyToClipboard = () => {
-    let date = new Date(data.timestamp)
+    let date = new Date(data.sent_at)
     let day = date.getDate()
     let mount = date.getMonth()
     let year = date.getFullYear()
@@ -27,7 +25,7 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
     Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${data.originatingAddress}: ${data.body}`);
   };
 
-  let date = new Date(time)
+  let date = new Date(data.sent_at)
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()
@@ -65,7 +63,6 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
     };
 
 
-    // dispatch(StartSendSmg())
     await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -102,7 +99,7 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
         <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
-        {data1.confirm ? <View style={{ width: 20, height: 20 }}>
+        {data.status != 0 ? <View style={{ width: 20, height: 20 }}>
           <SuccessSvg />
         </View> :
           <TouchableOpacity onPress={() => SetAgain()} style={{ width: 20, height: 20 }}>
@@ -112,7 +109,7 @@ export const AllMsgBody = ({ time, data, last, index, type = 'sms' }) => {
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>
-    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.body}</Text>
+    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.message}</Text>
     <View style={styles.smsCount}>
       <Text style={{ color: "#6e90d3", fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}></Text>
     </View>

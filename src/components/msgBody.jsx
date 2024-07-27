@@ -2,10 +2,12 @@ import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { useDispatch } from "react-redux"
 import { SmsSingPage } from "../store/action/action"
+
+
 export const MsgBody = ({ data, last, type = 'sms' }) => {
   const dispatch = useDispatch()
   const naviagtion = useNavigation()
-  let date = new Date(JSON.parse(data[0]?.timestamp))
+  let date = new Date(data.last_message_time)
   let minut = date.getMinutes()
   let hours = date.getHours()
   let seconds = date.getSeconds()
@@ -22,21 +24,20 @@ export const MsgBody = ({ data, last, type = 'sms' }) => {
   }
 
   const OpenAllSms = () => {
-    dispatch(SmsSingPage(data))
-    naviagtion.navigate('AllMsg', { type: type })
+    naviagtion.navigate('AllMsg', { type: type, id: data.user_id })
   }
   return <TouchableOpacity onPress={() => OpenAllSms()} style={[styles.shadow, last && { marginBottom: 50 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправитель:</Text>
-        <Text style={{ color: "#6e90d3", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>{data[0]?.originatingAddress}</Text>
+        <Text style={{ color: "#6e90d3", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>{data.username}</Text>
       </View>
       <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
     </View>
-    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data[0]?.body}</Text>
+    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.last_message}</Text>
     <View style={styles.smsCount}>
       <Text style={{ color: "#6e90d3", fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}>Всего сообщений:</Text>
-      <Text style={{ color: "#2f508e", fontSize: 16, fontFamily: 'RobotoCondensed-Regular' }}>{data.length}</Text>
+      <Text style={{ color: "#2f508e", fontSize: 16, fontFamily: 'RobotoCondensed-Regular' }}>{data.sms_count}</Text>
     </View>
   </TouchableOpacity>
 }

@@ -191,3 +191,16 @@ export const CheckOnline = (token) => {
       });
   }
 }
+
+export const Count = (count) => {
+  return {
+    type: 'Count',
+    count
+  }
+}
+
+export const AddCount = () => {
+  return {
+    type: 'AddCount'
+  }
+}

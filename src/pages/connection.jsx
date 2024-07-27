@@ -11,6 +11,7 @@ import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
 import { Loading } from "../components/loading"
 import { Status_Bar } from "../components/statusBar"
+import { dropAllTables, getPaginatedUsers } from "../func/function"
 
 
 export const Connection = ({ navigation }) => {
@@ -52,6 +53,12 @@ export const Connection = ({ navigation }) => {
     }
   }
 
+
+  useEffect(() => {
+    // dropAllTables()
+    // getPaginatedUsers()
+    // deleteAllData();
+  }, [])
   useEffect(() => {
     const timer = setTimeout(() => {
       func()

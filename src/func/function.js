@@ -1,7 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddNotification, AddSms } from "../store/action/action";
+import { AddCount, AddNotification, AddSms } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
+import SQLite from 'react-native-sqlite-2';
+
+const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
 
 const handleNotification = (message) => {
@@ -21,8 +24,45 @@ export const handleButtonClick = (message) => {
 };
 let confirm = false
 
-export const sendMessage = async (message) => {
-  // let confirm = false
+
+const getSmsAndUpdateStatus = (smsId) => {
+  console.log(smsId, '000000')
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM SMS WHERE sms_id = ?',
+      [smsId],
+      (tx, result) => {
+        if (result.rows.length > 0) {
+          // Log the retrieved SMS record
+          const sms = result.rows.item(0);
+          console.log("------------")
+          console.log('Retrieved SMS:', sms);
+
+          // Update the status of the SMS record to 1
+          tx.executeSql(
+            'UPDATE SMS SET status = ? WHERE sms_id = ?',
+            [1, smsId],
+            (tx, result) => {
+              console.log('SMS status updated successfully');
+              console.log('Affected rows:', result.rowsAffected); // Log the number of affected rows
+            },
+            (tx, error) => {
+              console.error('Failed to update SMS status:', error.message);
+            }
+          );
+        } else {
+          console.log('No SMS found with the provided ID');
+        }
+      },
+      (tx, error) => {
+        console.error('Failed to retrieve SMS:', error.message);
+      }
+    );
+  });
+};
+
+
+export const sendMessage = async (message, id) => {
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -44,16 +84,11 @@ export const sendMessage = async (message) => {
     .then(response => response.json())
     .then(result => {
       if (result.status) {
-        confirm = true
-      }
-      else {
-        confirm = false
+        getSmsAndUpdateStatus(id)
       }
     })
     .catch(error => {
-      confirm = false
     });
-  return confirm
 }
 
 
@@ -69,19 +104,140 @@ export const setNotification = async (message) => {
   await AsyncStorage.setItem('notification', JSON.stringify(item))
 }
 
-export const setSms = async (message) => {
-  let item = JSON.parse(await AsyncStorage.getItem('sms'))
-  if (!item) item = [];
-  if (item.findIndex((e) => e.timestamp == message.timestamp) == -1) {
-    await sendMessage(message)
-    item.unshift(message)
-    handleButtonClick(message)
-    message.confirm = confirm
-    store.dispatch(AddSms(message))
-    await AsyncStorage.setItem('sms', JSON.stringify(item))
-  }
+
+
+export const getPaginatedUsers = (page = 1, pageSize = 10) => {
+  const offset = (page - 1) * pageSize;
+  db.transaction(tx => {
+    tx.executeSql(
+      `SELECT Users.username, SMS.message AS last_message, SMS.sent_at AS last_message_time
+       FROM Users
+       INNER JOIN SMS ON Users.user_id = SMS.user_id
+       WHERE Users.type = ?
+         AND SMS.sent_at = (
+           SELECT MAX(sent_at)
+           FROM SMS
+           WHERE SMS.user_id = Users.user_id
+         )
+       GROUP BY Users.user_id
+       LIMIT ? OFFSET ?`,
+      ["sms", pageSize, offset],
+      (tx, result) => {
+        const users = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          users.push(result.rows.item(i));
+        }
+      },
+      (tx, error) => {
+        console.error('Failed to get users with last message and timestamp:', error);
+      }
+    );
+  });
+};
+
+
+export const setSms = async (smsData) => {
+  const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
+  let type = 'Sms'
+  let status = 0
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT user_id FROM Users WHERE username = ?',
+      [username],
+      async (tx, result) => {
+        if (result.rows.length > 0) {
+          const userId = result.rows.item(0).user_id;
+
+          tx.executeSql(
+            'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
+            [userId, message, status, new Date(sentAt).toISOString()],
+            (tx, result) => {
+              const smsId = result.insertId;
+              sendMessage(smsData, smsId)
+              console.log('SMS inserted successfully');
+            },
+            (tx, error) => {
+              console.error('Failed to insert SMS:', error);
+            }
+          );
+
+          tx.executeSql(
+            'SELECT COUNT(*) AS message_count FROM SMS WHERE user_id = ?',
+            [userId],
+            (tx, result) => {
+              store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt, count: result.rows.item(0).message_count }))
+            },
+            (tx, error) => {
+            }
+          );
+
+        } else {
+          store.dispatch(AddCount())
+          store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt }))
+          tx.executeSql(
+            'INSERT INTO Users (username) VALUES (?)',
+            [username],
+            (tx, result) => {
+              const userId = result.insertId;
+              tx.executeSql(
+                'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
+                [userId, message, new Date(sentAt).toISOString()],
+                (tx, result) => {
+                  console.log('SMS inserted successfully');
+                },
+                (tx, error) => {
+                  console.error('Failed to insert SMS:', error);
+                }
+              );
+            },
+            (tx, error) => {
+              console.error('Failed to insert user:', error);
+            }
+          );
+        }
+      },
+      (tx, error) => {
+        console.error('Failed to check if user exists:', error);
+      }
+    );
+    // sendMessage(smsData,)  
+  });
+  // await sendMessage(message)
 }
 
+
+export const dropAllTables = () => {
+  db.transaction(tx => {
+    // Drop tables if they exist
+    tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
+      console.log('SMS table dropped');
+    }, (tx, error) => {
+      console.error('Failed to drop SMS table:', error);
+    });
+
+    tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
+      console.log('Users table dropped');
+    }, (tx, error) => {
+      console.error('Failed to drop Users table:', error);
+    });
+  });
+};
+
+export const deleteAllData = () => {
+  db.transaction(tx => {
+    tx.executeSql('DELETE FROM Users', [], (tx, result) => {
+      console.log('All users deleted');
+    }, (tx, error) => {
+      console.error('Failed to delete users:', error);
+    });
+
+    tx.executeSql('DELETE FROM SMS', [], (tx, result) => {
+      console.log('All SMS deleted');
+    }, (tx, error) => {
+      console.error('Failed to delete SMS:', error);
+    });
+  });
+};
 
 export const headlessNotificationListener = async ({ notification }) => {
 

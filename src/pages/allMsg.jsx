@@ -1,21 +1,64 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { AllMsgBody } from "../components/AllMsgBody";
 import { ClearSvg, SearchSvg } from "../../assets/svg";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import SQLite from 'react-native-sqlite-2';
+import { SmsSingPage } from "../store/action/action";
 
 
-export const AllMsg = ({ route }) => {
+export const AllMsg = ({ route, navigation }) => {
+
+  const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
+  const [page, setPage] = useState(1)
+
+  const dispatch = useDispatch()
+
+  const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
+    const offset = (page - 1) * pageSize;
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM SMS WHERE user_id = ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
+        [userId, pageSize, offset],
+        (tx, result) => {
+          const messages = [];
+          for (let i = 0; i < result.rows.length; i++) {
+            messages.push(result.rows.item(i));
+          }
+          dispatch(SmsSingPage(messages))
+        },
+        (tx, error) => {
+          console.error('Failed to get messages:', error.message);
+        }
+      );
+    });
+  };
+
+
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
+
 
   useEffect(() => {
     if (smsSinglPage.data) {
       setSms(smsSinglPage.data)
     }
-  }, [smsSinglPage.data])
+  }, [smsSinglPage])
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      setPage(1)
+      // getSmsByUserId(1, 10, route.params.id)
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+
+  useEffect(() => {
+    setSms([])
+    getSmsByUserId(page, 10, route.params.id)
+  }, [route.params.id, page])
 
   const SearchMsg = (search) => {
     let item = [...sms]
@@ -34,7 +77,12 @@ export const AllMsg = ({ route }) => {
       setValue(search)
       setSms(newArr)
     }
+
   }
+  const renderItem = ({ item, index }) => {
+    return <AllMsgBody type={route.params.type} index={index} last={index == sms?.length - 1} data={item} key={index} />
+  }
+
 
 
   return <View>
@@ -61,11 +109,14 @@ export const AllMsg = ({ route }) => {
         </TouchableOpacity>
       </View>
     </View>
-    <ScrollView style={styles.body} >
-      {sms?.map((elm, i) => {
-        return <AllMsgBody type={route.params.type} time={JSON.parse(elm.timestamp)} index={i} last={i == sms?.length - 1} data={elm} key={i} />
-      })}
-    </ScrollView>
+    <FlatList style={styles.body}
+      data={sms}
+      renderItem={renderItem}
+      onEndReached={() => {
+        setPage(page + 1)
+      }}
+    >
+    </FlatList>
   </View>
 }
 

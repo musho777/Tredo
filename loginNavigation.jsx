@@ -9,14 +9,67 @@ import PushNotification from 'react-native-push-notification';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
 import { Notification } from './src/pages/notification';
-import { headlessNotificationListener, setSms } from './src/func/function';
+import { dropAllTables, headlessNotificationListener, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
 import { useDispatch } from 'react-redux';
 import { CheckOnline } from './src/store/action/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundTimer from 'react-native-background-timer';
+import SQLite from 'react-native-sqlite-2'
+
+const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
+
 
 export function LoginNavigation({ navigation }) {
+
+  const createTables = () => {
+    db.transaction(txn => {
+      txn.executeSql(
+        `CREATE TABLE IF NOT EXISTS Users (
+          user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          username TEXT NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          type TEXT NOT NULL DEFAULT sms
+        )`,
+        [],
+        (sqlTxn, res) => {
+          console.log("table created successfully");
+        },
+        error => {
+          console.log("error on creating table " + error.message);
+        },
+      );
+
+      txn.executeSql(
+        `CREATE TABLE IF NOT EXISTS SMS (
+          sms_id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER,
+          message TEXT,
+          sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          status INTEGER DEFAULT 0,
+          FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        )`,
+        [],
+        (sqlTxn, res) => {
+          console.log("table created successfully1");
+        },
+        error => {
+          console.log("error on creating table " + error.message);
+        },
+      );
+    });
+  };
+
+
+
+  useEffect(() => {
+    createTables()
+    // dropAllTables()
+  }, [])
+
+
+
+
   const Tab = createBottomTabNavigator();
 
   PushNotification.createChannel(
@@ -93,12 +146,12 @@ export function LoginNavigation({ navigation }) {
     const { delay } = taskDataArguments;
     let intervalId;
     try {
-      intervalId = BackgroundTimer.setInterval(() => {
-        isOnline()
-      }, 30000);
       subscription = SmsListener.addListener(message => {
         setSms(message)
       });
+      intervalId = BackgroundTimer.setInterval(() => {
+        isOnline()
+      }, 30000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
       }

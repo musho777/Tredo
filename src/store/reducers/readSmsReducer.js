@@ -1,37 +1,39 @@
 const initialState = {
   data: [],
+  count: null
 };
 const ReadSmsReducer = (state = initialState, action) => {
   let item = { ...state };
   switch (action.type) {
     case 'ReadSms':
-      item.data = action.data
-      break;
-    case 'AddSms':
-      let index = -1
-      let shouldStop = false;
-      item.data?.map((elm, i) => {
-        if (shouldStop) return;
-        if (elm.findIndex((el) => el.originatingAddress == action.data.originatingAddress) > -1) {
-          index = i
-        }
-        if (index > -1) {
-          shouldStop = true;
-          return
+      action.data.map((elm, i) => {
+        if (item.data.findIndex((el) => el.username == elm.username) == -1) {
+          item.data.push(elm)
         }
       })
-      if (index != -1) {
-        if (item.data[index].findIndex((elm) => elm.timestamp == action.data.timestamp)) {
-          item.data[index].unshift(action.data)
-          let newArr = item.data[index]
-          item.data.splice(index, 1)
-          item.data.unshift(newArr)
-        }
+      break;
+    case 'AddSms':
+      let index = item.data.findIndex((elm) => elm.username == action.data.username)
+      let count = 1
+      if (action.data.sms_count) {
+        count = item.data[index].sms_count + 1
       }
       else {
-        item.data.unshift([])
-        item.data[0].unshift(action.data)
+
+        action.data.sms_count = action.data.count
       }
+      if (index != -1) {
+        item.data.splice(index, 1)
+      }
+      // item.count = item.count + 1
+      item.data.unshift(action.data)
+      break
+
+    case 'Count':
+      item.count = action.count
+      break
+    case 'AddCount':
+      item.count = item.count + 1
       break
     default:
       break;
