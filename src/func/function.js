@@ -313,13 +313,12 @@ export const headlessNotificationListener = async ({ notification }) => {
     const item = JSON.parse(notification)
     const message = {
       body: item.text,
-      timestamp: item.time,
+      timestamp: JSON.parse(item.time),
       originatingAddress: item.title,
       sortKey: item.sortKey
     };
 
     if (item.app != 'com.tredo') {
-      handleButtonClick(message)
       setSms(message, 'notification')
     }
   }

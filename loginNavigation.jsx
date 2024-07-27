@@ -49,7 +49,13 @@ export function LoginNavigation() {
       requestPermissions: Platform.OS === 'ios',
     });
     PushNotification.popInitialNotification((notification) => { });
+    return () => {
+      PushNotification.unregister();
+    };
+  }, [])
 
+
+  useEffect(() => {
     const startBackgroundTask = async () => {
       try {
         await BackgroundService.start(YourTask, {
@@ -69,11 +75,9 @@ export function LoginNavigation() {
     startBackgroundTask();
 
     return () => {
-      PushNotification.unregister();
-      BackgroundService.stop();
+      // BackgroundService.stop();
     };
   }, [])
-
 
   const YourTask = async (taskDataArguments) => {
     let subscription;
@@ -81,10 +85,12 @@ export function LoginNavigation() {
     let intervalId;
     try {
       subscription = SmsListener.addListener(message => {
+        console.log("smsssssssssss--------")
         setSms(message)
       });
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
+        console.log("---1")
       }, 30000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
