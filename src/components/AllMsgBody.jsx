@@ -39,7 +39,6 @@ export const AllMsgBody = ({ username, data, last, index }) => {
   }
 
 
-  console.log(data.status)
   return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>

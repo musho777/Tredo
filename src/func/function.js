@@ -242,6 +242,7 @@ export const getTotalSmsUserCount = (type) => {
 
 export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '') => {
   const offset = (page - 1) * pageSize;
+  console.log(userId)
   db.transaction(tx => {
     tx.executeSql(
       'SELECT * FROM SMS WHERE user_id = ? AND message LIKE ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',

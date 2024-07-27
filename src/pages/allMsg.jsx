@@ -33,9 +33,6 @@ export const AllMsg = ({ route, navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPage(1)
-      dispatch(ClearSinglPage())
-      // setSms([])
-      getSmsByUserId(1, 10, route.params.id)
     });
     return unsubscribe;
   }, [navigation]);
