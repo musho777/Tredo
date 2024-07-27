@@ -17,7 +17,9 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       item.data[index].status = 1
       break
     case 'AddNewSms':
-      item.data.unshift(action.data)
+      if (item?.data[0]?.user_id == action.data.user_id) {
+        item.data.unshift(action.data)
+      }
     default:
       break;
   }

@@ -153,3 +153,10 @@ export const ClearAllSms = () => {
     type: 'ClearAllSms'
   }
 }
+
+export const AddNewSms = (data, id) => {
+  return {
+    type: 'AddNewSms',
+    data,
+  }
+}

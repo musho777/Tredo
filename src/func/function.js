@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddCount, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
+import { AddCount, AddNewSms, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
 
@@ -57,7 +57,6 @@ const getSmsAndUpdateStatus = (smsId) => {
       'UPDATE SMS SET status = ? WHERE sms_id = ?',
       [1, smsId],
       (tx, result) => {
-        console.log('Affected rows:', result.rowsAffected); // Log the number of affected rows
       },
       (tx, error) => {
         console.error('Failed to update SMS status:', error.message);
@@ -88,7 +87,7 @@ export const setSms = async (smsData, type = 'sms') => {
                   [userId, message, status, sentAt],
                   async (tx, result) => {
                     const smsId = result.insertId;
-                    await sendMessage(smsData, smsId);
+                    await sendMessage(smsData, smsId, userId);
                     // console.log('SMS inserted successfully');
                   },
                   (tx, error) => {
@@ -156,7 +155,8 @@ export const setSms = async (smsData, type = 'sms') => {
   });
 };
 
-export const sendMessage = async (message, id) => {
+export const sendMessage = async (message, id, userId) => {
+  let confirm = 0
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -178,12 +178,24 @@ export const sendMessage = async (message, id) => {
     .then(response => response.json())
     .then(result => {
       if (result.status) {
+        console.log("----11-----")
+        confirm = 1
         getSmsAndUpdateStatus(id)
         store.dispatch(ChangeStatus(id))
       }
     })
     .catch(error => {
     });
+  // body: message, originatingAddress: username, timestamp: sentAt
+  console.log(confirm, message.timestamp,)
+  let data = {
+    message: message.body,
+    username: message.originatingAddress,
+    sent_at: message.timestamp,
+    status: confirm,
+    user_id: userId
+  }
+  store.dispatch(AddNewSms(data))
 }
 
 
@@ -213,7 +225,6 @@ export const getPaginatedUsers = async (type, page = 1, pageSize = 10) => {
         for (let i = 0; i < result.rows.length; i++) {
           users.push(result.rows.item(i));
         }
-        console.log(users)
         store.dispatch(ReadSms(users));
       },
       (tx, error) => {
@@ -242,7 +253,6 @@ export const getTotalSmsUserCount = (type) => {
 
 export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '') => {
   const offset = (page - 1) * pageSize;
-  console.log(userId)
   db.transaction(tx => {
     tx.executeSql(
       'SELECT * FROM SMS WHERE user_id = ? AND message LIKE ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
