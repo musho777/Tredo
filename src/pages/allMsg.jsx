@@ -11,11 +11,10 @@ export const AllMsg = ({ route, navigation }) => {
 
   const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
   const [page, setPage] = useState(1)
-
   const count = route.params.count
   const username = route.params.username
-
   const dispatch = useDispatch()
+
 
   const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
     const offset = (page - 1) * pageSize;
@@ -36,6 +35,7 @@ export const AllMsg = ({ route, navigation }) => {
       );
     });
   };
+
 
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
@@ -65,25 +65,6 @@ export const AllMsg = ({ route, navigation }) => {
     dispatch(ClearSinglPage())
   }, [route.params.id])
 
-  // const SearchMsg = (search) => {
-  //   let item = [...sms]
-  //   let newArr = []
-
-  //   item.map((elm, i) => {
-  //     if (elm.body.includes(search)) {
-  //       newArr.push(elm)
-  //     }
-  //   })
-  //   if (search == '') {
-  //     setValue('')
-  //     setSms(smsSinglPage.data)
-  //   }
-  //   else {
-  //     setValue(search)
-  //     setSms(newArr)
-  //   }
-
-  // }
   const renderItem = ({ item, index }) => {
     return <AllMsgBody username={username} type={route.params.type} index={index} last={index == sms?.length - 1} data={item} key={index} />
   }

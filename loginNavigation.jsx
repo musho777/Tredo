@@ -9,7 +9,7 @@ import PushNotification from 'react-native-push-notification';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
 import { Notification } from './src/pages/notification';
-import { dropAllTables, headlessNotificationListener, setSms } from './src/func/function';
+import { headlessNotificationListener, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
 import { useDispatch } from 'react-redux';
 import { CheckOnline } from './src/store/action/action';

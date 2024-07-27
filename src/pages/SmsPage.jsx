@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native"
 import { MsgBody } from "../components/msgBody";
 import { useDispatch, useSelector } from "react-redux";
-import { Count, ReadSms } from "../store/action/action";
+import { ClearAllSms, Count, ReadSms } from "../store/action/action";
 import SQLite from 'react-native-sqlite-2';
 
-export const SmsPage = () => {
+export const SmsPage = ({ navigation }) => {
 
   const [sms, setSms] = useState([])
   const readSms = useSelector((st) => st.readSms)
@@ -36,9 +36,8 @@ export const SmsPage = () => {
 
 
 
-  const getPaginatedUsers = (page = 1, pageSize = 10) => {
+  const getPaginatedUsers = (type, page = 1, pageSize = 10) => {
     const offset = (page - 1) * pageSize;
-
     db.transaction(tx => {
       tx.executeSql(
         `SELECT Users.user_id, 
@@ -57,7 +56,7 @@ export const SmsPage = () => {
          GROUP BY Users.user_id, Users.username, SMS.message, SMS.sent_at
          ORDER BY SMS.sent_at DESC
          LIMIT ? OFFSET ?`,
-        ["sms", pageSize, offset],
+        [type, pageSize, offset],
         (tx, result) => {
           const users = [];
           for (let i = 0; i < result.rows.length; i++) {
@@ -70,6 +69,7 @@ export const SmsPage = () => {
         }
       );
     });
+
   };
 
   useEffect(() => {
@@ -77,12 +77,21 @@ export const SmsPage = () => {
   }, [])
 
   useEffect(() => {
-    getPaginatedUsers(page)
+    getPaginatedUsers('sms', page)
   }, [page])
 
   useEffect(() => {
     setSms(readSms.data)
   }, [readSms.data])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      // dispatch(ClearSendSms())
+      getPaginatedUsers('sms', 1)
+      dispatch(ClearAllSms())
+    });
+    return unsubscribe;
+  }, [navigation]);
 
 
 

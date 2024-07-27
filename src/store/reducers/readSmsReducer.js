@@ -28,7 +28,10 @@ const ReadSmsReducer = (state = initialState, action) => {
       // item.count = item.count + 1
       item.data.unshift(action.data)
       break
-
+    case 'ClearAllSms':
+      item.data = []
+      item.count = 0
+      break
     case 'Count':
       item.count = action.count
       break

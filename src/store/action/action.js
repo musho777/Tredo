@@ -217,3 +217,9 @@ export const ClearSinglPage = () => {
     type: 'ClearSinglPage'
   }
 }
+
+export const ClearAllSms = () => {
+  return {
+    type: 'ClearAllSms'
+  }
+}
