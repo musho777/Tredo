@@ -33,16 +33,16 @@ export function LoginNavigation() {
   );
 
 
-  const AllNotificationGetPermitiopn = async () => {
-    const status = await RNAndroidNotificationListener.getPermissionStatus()
-    if (status != 'authorized') {
-      RNAndroidNotificationListener.requestPermission()
-    }
-  }
+  // const AllNotificationGetPermitiopn = async () => {
+  //   const status = await RNAndroidNotificationListener.getPermissionStatus()
+  //   if (status != 'authorized') {
+  //     RNAndroidNotificationListener.requestPermission()
+  //   }
+  // }
 
   useEffect(() => {
     PushNotification.removeAllDeliveredNotifications();
-    AllNotificationGetPermitiopn()
+    // AllNotificationGetPermitiopn()
     PushNotification.configure({
       onNotification: function (notification) { },
       popInitialNotification: true,

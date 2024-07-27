@@ -165,7 +165,7 @@ export const Permission = ({ navigation }) => {
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
-      if (g2 && g4 && g5 && per && permitionforNotifcation) {
+      if (g2 && g4 && g5 && per) {
         await AsyncStorage.setItem('permition', 'yes')
         if (isDefaultSmsApp) {
           navigation.replace("connection", {
