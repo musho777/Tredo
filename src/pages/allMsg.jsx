@@ -47,6 +47,12 @@ export const AllMsg = ({ route, navigation }) => {
   }
 
 
+  const SearchMsg = (e) => {
+    dispatch(ClearSinglPage())
+    getSmsByUserId(1, 10, route.params.id, e)
+    setValue(e)
+  }
+
   return <View>
     <View style={styles.header}>
       <Text style={styles.AllSms}>Отправитель: {username}</Text>

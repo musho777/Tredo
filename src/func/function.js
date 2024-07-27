@@ -50,34 +50,6 @@ const handleButtonClick = (message) => {
   });
 };
 
-// const getSmsAndUpdateStatus = (smsId) => {
-//   db.transaction(tx => {
-//     tx.executeSql(
-//       'SELECT * FROM SMS WHERE sms_id = ?',
-//       [smsId],
-//       (tx, result) => {
-//         if (result.rows.length > 0) {
-//           tx.executeSql(
-//             'UPDATE SMS SET status = ? WHERE sms_id = ?',
-//             [1, smsId],
-//             (tx, result) => {
-//               console.log("Status Updated", result)
-//               store.dispatch(ChangeStatus(smsId))
-//             },
-//             (tx, error) => {
-//               console.error('Failed to update SMS status:', error.message);
-//             }
-//           );
-//         } else {
-//           console.log('No SMS found with the provided ID');
-//         }
-//       },
-//       (tx, error) => {
-//         console.error('Failed to retrieve SMS:', error.message);
-//       }
-//     );
-//   });
-// };
 
 const getSmsAndUpdateStatus = (smsId) => {
   db.transaction(tx => {
@@ -268,18 +240,18 @@ export const getTotalSmsUserCount = (type) => {
   });
 };
 
-export const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
+export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '') => {
   const offset = (page - 1) * pageSize;
   db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM SMS WHERE user_id = ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
-      [userId, pageSize, offset],
+      'SELECT * FROM SMS WHERE user_id = ? AND message LIKE ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
+      [userId, `%${searchTerm}%`, pageSize, offset],
       (tx, result) => {
         const messages = [];
         for (let i = 0; i < result.rows.length; i++) {
           messages.push(result.rows.item(i));
         }
-        store.dispatch(SmsSingPage(messages))
+        store.dispatch(SmsSingPage(messages));
       },
       (tx, error) => {
         console.error('Failed to get messages:', error.message);
@@ -287,6 +259,7 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
     );
   });
 };
+
 
 
 // export const dropAllTables = () => {
