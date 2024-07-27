@@ -1,17 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { ErrorSvg, SuccessSvg } from "../../assets/svg"
-import { useDispatch } from "react-redux"
-import { useEffect, useState } from "react"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import Clipboard from '@react-native-clipboard/clipboard';
+import { sendMessage } from "../func/function"
 
 
-export const AllMsgBody = ({ data, last, index, type = 'sms' }) => {
-  console.log(data)
-  const [data1, setData1] = useState(data)
-  useEffect(() => {
-    setData1(data)
-  }, [data])
+export const AllMsgBody = ({ username, data, last, index, type = 'sms' }) => {
 
 
   const copyToClipboard = () => {
@@ -22,7 +15,7 @@ export const AllMsgBody = ({ data, last, index, type = 'sms' }) => {
     let hour = date.getHours()
     let min = date.getMinutes()
     let sec = date.getSeconds()
-    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${data.originatingAddress}: ${data.body}`);
+    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${username}: ${data.body}`);
   };
 
   let date = new Date(data.sent_at)
@@ -38,60 +31,14 @@ export const AllMsgBody = ({ data, last, index, type = 'sms' }) => {
   if (hours < 10) {
     hours = `0${hours}`
   }
-  const dispatch = useDispatch()
 
-  const SetAgain = async () => {
-    let temp1 = { ...data1 }
-    let token = await AsyncStorage.getItem('token')
-    let temp = {
-      title: data.originatingAddress,
-      unix: data.timestamp,
-      message: data.body
+  const SendAgin = () => {
+    const temp = {
+      originatingAddress: username,
+      timestamp: data.sent_at,
+      body: data.message
     }
-
-
-    var myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-    myHeaders.append('Authorization', `Bearer ${token}`);
-    myHeaders.append('X-App-Client', `MyReactNativeApp`);
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify(temp),
-      redirect: 'follow'
-    };
-
-
-    await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.status) {
-          temp1.confirm = true
-        }
-        else {
-          temp1.confirm = false
-        }
-      })
-      .catch(error => {
-        temp1.confirm = false
-      });
-
-    let item
-    if (type == 'sms') {
-      item = JSON.parse(await AsyncStorage.getItem('sms'))
-    }
-    else {
-      item = JSON.parse(await AsyncStorage.getItem('notification'))
-    }
-    let index = item.findIndex((e) => e.timestamp == data.timestamp)
-    item[index].confirm = true
-    setData1(temp1)
-    if (type == 'sms') {
-      await AsyncStorage.setItem('sms', JSON.stringify(item))
-    } else {
-      await AsyncStorage.setItem('notification', JSON.stringify(item))
-    }
+    sendMessage(temp, data.sms_id)
   }
 
   return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
@@ -102,7 +49,7 @@ export const AllMsgBody = ({ data, last, index, type = 'sms' }) => {
         {data.status != 0 ? <View style={{ width: 20, height: 20 }}>
           <SuccessSvg />
         </View> :
-          <TouchableOpacity onPress={() => SetAgain()} style={{ width: 20, height: 20 }}>
+          <TouchableOpacity onPress={() => SendAgin()} style={{ width: 20, height: 20 }}>
             <ErrorSvg />
           </TouchableOpacity>
         }

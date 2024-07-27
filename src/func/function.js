@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddCount, AddNotification, AddSms } from "../store/action/action";
+import { AddCount, AddNotification, AddSms, ChangeStatus } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
 
@@ -26,25 +26,18 @@ let confirm = false
 
 
 const getSmsAndUpdateStatus = (smsId) => {
-  console.log(smsId, '000000')
   db.transaction(tx => {
     tx.executeSql(
       'SELECT * FROM SMS WHERE sms_id = ?',
       [smsId],
       (tx, result) => {
         if (result.rows.length > 0) {
-          // Log the retrieved SMS record
           const sms = result.rows.item(0);
-          console.log("------------")
-          console.log('Retrieved SMS:', sms);
-
-          // Update the status of the SMS record to 1
           tx.executeSql(
             'UPDATE SMS SET status = ? WHERE sms_id = ?',
             [1, smsId],
             (tx, result) => {
-              console.log('SMS status updated successfully');
-              console.log('Affected rows:', result.rowsAffected); // Log the number of affected rows
+              store.dispatch(ChangeStatus(smsId))
             },
             (tx, error) => {
               console.error('Failed to update SMS status:', error.message);
@@ -63,6 +56,7 @@ const getSmsAndUpdateStatus = (smsId) => {
 
 
 export const sendMessage = async (message, id) => {
+  console.log(message)
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -83,11 +77,14 @@ export const sendMessage = async (message, id) => {
   await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
     .then(response => response.json())
     .then(result => {
+      console.log(result)
       if (result.status) {
+        console.log(id)
         getSmsAndUpdateStatus(id)
       }
     })
     .catch(error => {
+      console.log(error)
     });
 }
 
@@ -136,44 +133,145 @@ export const getPaginatedUsers = (page = 1, pageSize = 10) => {
 };
 
 
+// export const setSms = async (smsData) => {
+//   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
+//   let type = 'Sms'
+//   let status = 0
+//   db.transaction(tx => {
+
+
+
+
+
+//     tx.executeSql(
+//       'SELECT user_id FROM Users WHERE username = ?',
+//       [username],
+//       async (tx, result) => {
+//         if (result.rows.length > 0) {
+//           const userId = result.rows.item(0).user_id;
+
+//           tx.executeSql(
+//             'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
+//             [userId, message, status, new Date(sentAt).toISOString()],
+//             (tx, result) => {
+//               const smsId = result.insertId;
+//               sendMessage(smsData, smsId)
+//               console.log('SMS inserted successfully');
+//             },
+//             (tx, error) => {
+//               console.error('Failed to insert SMS:', error);
+//             }
+//           );
+
+//           tx.executeSql(
+//             'SELECT COUNT(*) AS message_count FROM SMS WHERE user_id = ?',
+//             [userId],
+//             (tx, result) => {
+//               store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt, count: result.rows.item(0).message_count }))
+//             },
+//             (tx, error) => {
+//             }
+//           );
+
+//         } else {
+//           store.dispatch(AddCount())
+//           store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt }))
+//           tx.executeSql(
+//             'INSERT INTO Users (username) VALUES (?)',
+//             [username],
+//             (tx, result) => {
+//               const userId = result.insertId;
+//               tx.executeSql(
+//                 'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
+//                 [userId, message, new Date(sentAt).toISOString()],
+//                 (tx, result) => {
+//                   console.log('SMS inserted successfully');
+//                 },
+//                 (tx, error) => {
+//                   console.error('Failed to insert SMS:', error);
+//                 }
+//               );
+//             },
+//             (tx, error) => {
+//               console.error('Failed to insert user:', error);
+//             }
+//           );
+//         }
+//       },
+//       (tx, error) => {
+//         console.error('Failed to check if user exists:', error);
+//       }
+//     );
+//     handleButtonClick(smsData)
+//   });
+// }
 export const setSms = async (smsData) => {
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
-  let type = 'Sms'
-  let status = 0
+  let type = 'Sms';
+  let status = 0;
+  const formattedSentAt = new Date(sentAt).toISOString();
+
   db.transaction(tx => {
+    // Check if the user exists
     tx.executeSql(
       'SELECT user_id FROM Users WHERE username = ?',
       [username],
-      async (tx, result) => {
+      (tx, result) => {
         if (result.rows.length > 0) {
           const userId = result.rows.item(0).user_id;
 
+          // Check if an SMS with the same sent_at timestamp and user_id exists
           tx.executeSql(
-            'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
-            [userId, message, status, new Date(sentAt).toISOString()],
+            'SELECT * FROM SMS WHERE user_id = ? AND sent_at = ?',
+            [userId, formattedSentAt],
             (tx, result) => {
-              const smsId = result.insertId;
-              sendMessage(smsData, smsId)
-              console.log('SMS inserted successfully');
+              if (result.rows.length === 0) {
+                // SMS does not exist, insert new record
+                tx.executeSql(
+                  'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
+                  [userId, message, status, formattedSentAt],
+                  (tx, result) => {
+                    const smsId = result.insertId;
+                    sendMessage(smsData, smsId);
+                    console.log('SMS inserted successfully');
+                  },
+                  (tx, error) => {
+                    console.error('Failed to insert SMS:', error);
+                  }
+                );
+
+                // Update message count for the user
+                tx.executeSql(
+                  'SELECT COUNT(*) AS message_count FROM SMS WHERE user_id = ?',
+                  [userId],
+                  (tx, result) => {
+                    store.dispatch(AddSms({
+                      last_message: message,
+                      username,
+                      last_message_time: sentAt,
+                      count: result.rows.item(0).message_count
+                    }));
+                  },
+                  (tx, error) => {
+                    console.error('Failed to get SMS count:', error);
+                  }
+                );
+              } else {
+                console.log('SMS with the same timestamp already exists');
+              }
             },
             (tx, error) => {
-              console.error('Failed to insert SMS:', error);
+              console.error('Failed to check for existing SMS:', error);
             }
           );
-
-          tx.executeSql(
-            'SELECT COUNT(*) AS message_count FROM SMS WHERE user_id = ?',
-            [userId],
-            (tx, result) => {
-              store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt, count: result.rows.item(0).message_count }))
-            },
-            (tx, error) => {
-            }
-          );
-
         } else {
-          store.dispatch(AddCount())
-          store.dispatch(AddSms({ last_message: message, username, last_message_time: sentAt }))
+          // User does not exist, insert new user and SMS
+          store.dispatch(AddCount());
+          store.dispatch(AddSms({
+            last_message: message,
+            username,
+            last_message_time: sentAt
+          }));
           tx.executeSql(
             'INSERT INTO Users (username) VALUES (?)',
             [username],
@@ -181,7 +279,7 @@ export const setSms = async (smsData) => {
               const userId = result.insertId;
               tx.executeSql(
                 'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
-                [userId, message, new Date(sentAt).toISOString()],
+                [userId, message, formattedSentAt],
                 (tx, result) => {
                   console.log('SMS inserted successfully');
                 },
@@ -200,10 +298,10 @@ export const setSms = async (smsData) => {
         console.error('Failed to check if user exists:', error);
       }
     );
-    // sendMessage(smsData,)  
+    handleButtonClick(smsData);
   });
-  // await sendMessage(message)
-}
+};
+
 
 
 export const dropAllTables = () => {

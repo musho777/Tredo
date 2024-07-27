@@ -204,3 +204,16 @@ export const AddCount = () => {
     type: 'AddCount'
   }
 }
+
+export const ChangeStatus = (id) => {
+  return {
+    type: 'ChangeStatus',
+    id
+  }
+}
+
+export const ClearSinglPage = () => {
+  return {
+    type: 'ClearSinglPage'
+  }
+}

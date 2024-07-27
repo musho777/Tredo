@@ -95,7 +95,7 @@ export const SmsPage = () => {
       <Text style={styles.AllSms}>Все сообщения</Text>
       <View style={styles.smsCount}>
         <Text style={styles.AllSms1}>Всего сообщений:</Text>
-        <Text style={styles.AllSms1}>{readSms.count}</Text>
+        <Text style={styles.AllSms1}>{count}</Text>
       </View>
     </View>
     <FlatList

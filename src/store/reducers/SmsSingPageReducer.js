@@ -8,8 +8,15 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       action.data.map((elm, i) => {
         item.data.push(elm)
       })
-
       break;
+    case 'ClearSinglPage':
+      item.data = []
+      break
+    case 'ChangeStatus':
+      let index = item.data.findIndex((elm) => elm.sms_id == action.id)
+      console.log(index, action.id, item)
+      item.data[index].status = 1
+      break
     default:
       break;
   }
