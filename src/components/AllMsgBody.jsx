@@ -7,29 +7,26 @@ import { sendMessage } from "../func/function"
 export const AllMsgBody = ({ username, data, last, index }) => {
 
 
-  const copyToClipboard = () => {
-    let date = new Date(data.sent_at)
-    let day = date.getDate()
-    let mount = date.getMonth()
-    let year = date.getFullYear()
-    let hour = date.getHours()
-    let min = date.getMinutes()
-    let sec = date.getSeconds()
-    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${min}:${sec}  ${username}: ${data.body}`);
-  };
-
   let date = new Date(data.sent_at)
   let minut = date.getMinutes()
-  let hours = date.getHours()
+  let hour = date.getHours()
   let seconds = date.getSeconds()
+
+  const copyToClipboard = () => {
+    let mount = date.getMonth()
+    let day = date.getDate()
+    let year = date.getFullYear()
+    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${minut}:${seconds}  ${username}: ${data.body}`);
+  };
+
   if (seconds < 10) {
     seconds = `0${seconds}`
   }
   if (minut < 10) {
     minut = `0${minut}`
   }
-  if (hours < 10) {
-    hours = `0${hours}`
+  if (hour < 10) {
+    hour = `0${hour}`
   }
 
   const SendAgin = () => {
@@ -41,6 +38,8 @@ export const AllMsgBody = ({ username, data, last, index }) => {
     sendMessage(temp, data.sms_id)
   }
 
+
+  console.log(data.status)
   return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
@@ -54,7 +53,7 @@ export const AllMsgBody = ({ username, data, last, index }) => {
           </TouchableOpacity>
         }
       </View>
-      <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hours}:{minut}:{seconds}</Text>
+      <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hour}:{minut}:{seconds}</Text>
     </View>
     <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.message}</Text>
     <View style={styles.smsCount}>

@@ -50,36 +50,49 @@ const handleButtonClick = (message) => {
   });
 };
 
+// const getSmsAndUpdateStatus = (smsId) => {
+//   db.transaction(tx => {
+//     tx.executeSql(
+//       'SELECT * FROM SMS WHERE sms_id = ?',
+//       [smsId],
+//       (tx, result) => {
+//         if (result.rows.length > 0) {
+//           tx.executeSql(
+//             'UPDATE SMS SET status = ? WHERE sms_id = ?',
+//             [1, smsId],
+//             (tx, result) => {
+//               console.log("Status Updated", result)
+//               store.dispatch(ChangeStatus(smsId))
+//             },
+//             (tx, error) => {
+//               console.error('Failed to update SMS status:', error.message);
+//             }
+//           );
+//         } else {
+//           console.log('No SMS found with the provided ID');
+//         }
+//       },
+//       (tx, error) => {
+//         console.error('Failed to retrieve SMS:', error.message);
+//       }
+//     );
+//   });
+// };
+
 const getSmsAndUpdateStatus = (smsId) => {
-  console.log(smsId)
   db.transaction(tx => {
     tx.executeSql(
-      'SELECT * FROM SMS WHERE sms_id = ?',
-      [smsId],
+      'UPDATE SMS SET status = ? WHERE sms_id = ?',
+      [1, smsId],
       (tx, result) => {
-        if (result.rows.length > 0) {
-          tx.executeSql(
-            'UPDATE SMS SET status = ? WHERE sms_id = ?',
-            [1, smsId],
-            (tx, result) => {
-              console.log("Status Updated", result)
-              store.dispatch(ChangeStatus(smsId))
-            },
-            (tx, error) => {
-              console.error('Failed to update SMS status:', error.message);
-            }
-          );
-        } else {
-          console.log('No SMS found with the provided ID');
-        }
+        console.log('Affected rows:', result.rowsAffected); // Log the number of affected rows
       },
       (tx, error) => {
-        console.error('Failed to retrieve SMS:', error.message);
+        console.error('Failed to update SMS status:', error.message);
       }
     );
   });
 };
-
 export const setSms = async (smsData, type = 'sms') => {
 
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
@@ -144,7 +157,6 @@ export const setSms = async (smsData, type = 'sms') => {
                 'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
                 [userId, message, sentAt],
                 (tx, result) => {
-                  console.log("+++++")
                   store.dispatch(AddCount());
                   store.dispatch(AddSms({
                     last_message: message,
@@ -152,7 +164,6 @@ export const setSms = async (smsData, type = 'sms') => {
                     last_message_time: sentAt,
                     type
                   }));
-                  // console.log('SMS inserted successfully');
                 },
                 (tx, error) => {
                   console.error('Failed to insert SMS:', error);
@@ -174,7 +185,6 @@ export const setSms = async (smsData, type = 'sms') => {
 };
 
 export const sendMessage = async (message, id) => {
-  console.log('sendMessage')
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -197,6 +207,7 @@ export const sendMessage = async (message, id) => {
     .then(result => {
       if (result.status) {
         getSmsAndUpdateStatus(id)
+        store.dispatch(ChangeStatus(id))
       }
     })
     .catch(error => {
@@ -205,7 +216,6 @@ export const sendMessage = async (message, id) => {
 
 
 export const getPaginatedUsers = async (type, page = 1, pageSize = 10) => {
-  console.log(type, 'type')
   const offset = (page - 1) * pageSize;
   db.transaction(tx => {
     tx.executeSql(
@@ -267,9 +277,6 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
       (tx, result) => {
         const messages = [];
         for (let i = 0; i < result.rows.length; i++) {
-          if (i == 0) {
-            console.log(result.rows.item(i))
-          }
           messages.push(result.rows.item(i));
         }
         store.dispatch(SmsSingPage(messages))
