@@ -53,11 +53,6 @@ export const Connection = ({ navigation }) => {
 
 
   useEffect(() => {
-    // dropAllTables()
-    // getPaginatedUsers()
-    // deleteAllData();
-  }, [])
-  useEffect(() => {
     const timer = setTimeout(() => {
       func()
     }, 2000);

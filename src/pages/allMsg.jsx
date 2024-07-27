@@ -3,43 +3,19 @@ import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "r
 import { AllMsgBody } from "../components/AllMsgBody";
 import { ClearSvg, SearchSvg } from "../../assets/svg";
 import { useDispatch, useSelector } from "react-redux";
-import SQLite from 'react-native-sqlite-2';
-import { ClearSinglPage, SmsSingPage } from "../store/action/action";
+import { ClearSinglPage } from "../store/action/action";
+import { getSmsByUserId } from "../func/function";
 
 
 export const AllMsg = ({ route, navigation }) => {
 
-  const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
   const [page, setPage] = useState(1)
   const count = route.params.count
   const username = route.params.username
-  const dispatch = useDispatch()
-
-
-  const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
-    const offset = (page - 1) * pageSize;
-    db.transaction(tx => {
-      tx.executeSql(
-        'SELECT * FROM SMS WHERE user_id = ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
-        [userId, pageSize, offset],
-        (tx, result) => {
-          const messages = [];
-          for (let i = 0; i < result.rows.length; i++) {
-            messages.push(result.rows.item(i));
-          }
-          dispatch(SmsSingPage(messages))
-        },
-        (tx, error) => {
-          console.error('Failed to get messages:', error.message);
-        }
-      );
-    });
-  };
-
-
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
+  const dispatch = useDispatch()
 
 
   useEffect(() => {
@@ -49,21 +25,22 @@ export const AllMsg = ({ route, navigation }) => {
   }, [smsSinglPage])
 
   useEffect(() => {
+    if (page > 1) {
+      getSmsByUserId(page, 10, route.params.id)
+    }
+  }, [route.params.id, page])
+
+  useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       setPage(1)
+      dispatch(ClearSinglPage())
+      // setSms([])
+      getSmsByUserId(1, 10, route.params.id)
     });
     return unsubscribe;
   }, [navigation]);
 
 
-  useEffect(() => {
-    getSmsByUserId(page, 10, route.params.id)
-  }, [route.params.id, page])
-
-  useEffect(() => {
-    setSms([])
-    dispatch(ClearSinglPage())
-  }, [route.params.id])
 
   const renderItem = ({ item, index }) => {
     return <AllMsgBody username={username} index={index} last={index == sms?.length - 1} data={item} key={index} />

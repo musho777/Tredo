@@ -8,27 +8,18 @@ import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
-import { createTables, headlessNotificationListener, setSms } from './src/func/function';
+import { createTables, headlessNotificationListener, isOnline, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
-import { useDispatch } from 'react-redux';
-import { CheckOnline } from './src/store/action/action';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundTimer from 'react-native-background-timer';
 
 
-
-export function LoginNavigation({ navigation }) {
-
+export function LoginNavigation() {
 
   const Tab = createBottomTabNavigator();
-  const dispatch = useDispatch()
-
 
   useEffect(() => {
     createTables()
   }, [])
-
-
 
   PushNotification.createChannel(
     {
@@ -82,13 +73,6 @@ export function LoginNavigation({ navigation }) {
       BackgroundService.stop();
     };
   }, [])
-
-
-
-  const isOnline = async () => {
-    let token = await AsyncStorage.getItem('token')
-    dispatch(CheckOnline(token))
-  }
 
 
   const YourTask = async (taskDataArguments) => {

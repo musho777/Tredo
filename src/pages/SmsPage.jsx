@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native"
 import { MsgBody } from "../components/msgBody";
-import { useDispatch, useSelector } from "react-redux";
-import { ClearAllSms } from "../store/action/action";
-import { getPaginatedUsers, getTotalSmsUserCount } from "../func/function";
+import { useSelector } from "react-redux";
+import { getPaginatedUsers } from "../func/function";
 
 export const SmsPage = ({ route }) => {
 
   const [sms, setSms] = useState([])
   const readSms = useSelector((st) => st.readSms)
-  const dispatch = useDispatch()
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    dispatch(ClearAllSms())
-    getPaginatedUsers(route.params.type, page)
-    getTotalSmsUserCount(route.params.type)
-  }, [page, route.params.type])
+    if (page > 1) {
+      getPaginatedUsers(route.params.type, page)
+    }
+  }, [page])
+
 
   useEffect(() => {
     setSms(readSms.data)

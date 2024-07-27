@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddCount, AddSms, ChangeStatus, Count, ReadSms } from "../store/action/action";
+import { AddCount, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
 
@@ -19,10 +19,8 @@ export const createTables = () => {
       )`,
       [],
       (sqlTxn, res) => {
-        console.log("table created successfully");
       },
       error => {
-        console.log("error on creating table " + error.message);
       },
     );
 
@@ -37,10 +35,8 @@ export const createTables = () => {
       )`,
       [],
       (sqlTxn, res) => {
-        console.log("table created successfully1");
       },
       error => {
-        console.log("error on creating table " + error.message);
       },
     );
   });
@@ -55,17 +51,18 @@ const handleButtonClick = (message) => {
 };
 
 const getSmsAndUpdateStatus = (smsId) => {
+  console.log(smsId)
   db.transaction(tx => {
     tx.executeSql(
       'SELECT * FROM SMS WHERE sms_id = ?',
       [smsId],
       (tx, result) => {
         if (result.rows.length > 0) {
-          const sms = result.rows.item(0);
           tx.executeSql(
             'UPDATE SMS SET status = ? WHERE sms_id = ?',
             [1, smsId],
             (tx, result) => {
+              console.log("Status Updated", result)
               store.dispatch(ChangeStatus(smsId))
             },
             (tx, error) => {
@@ -73,7 +70,7 @@ const getSmsAndUpdateStatus = (smsId) => {
             }
           );
         } else {
-          // console.log('No SMS found with the provided ID');
+          console.log('No SMS found with the provided ID');
         }
       },
       (tx, error) => {
@@ -96,14 +93,11 @@ export const setSms = async (smsData, type = 'sms') => {
       (tx, result) => {
         if (result.rows.length > 0) {
           const userId = result.rows.item(0).user_id;
-
-          // Check if an SMS with the same sent_at timestamp and user_id exists
           tx.executeSql(
             'SELECT * FROM SMS WHERE user_id = ? AND sent_at = ?',
             [userId, sentAt],
             (tx, result) => {
               if (result.rows.length === 0) {
-                // SMS does not exist, insert new record
                 tx.executeSql(
                   'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
                   [userId, message, status, sentAt],
@@ -126,7 +120,8 @@ export const setSms = async (smsData, type = 'sms') => {
                       last_message: message,
                       username,
                       last_message_time: sentAt,
-                      count: result.rows.item(0).message_count
+                      count: result.rows.item(0).message_count,
+                      user_id: userId
                     }));
                   },
                   (tx, error) => {
@@ -140,7 +135,6 @@ export const setSms = async (smsData, type = 'sms') => {
             }
           );
         } else {
-
           tx.executeSql(
             'INSERT INTO Users (username, type) VALUES (?, ?)',
             [username, type],
@@ -150,6 +144,7 @@ export const setSms = async (smsData, type = 'sms') => {
                 'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
                 [userId, message, sentAt],
                 (tx, result) => {
+                  console.log("+++++")
                   store.dispatch(AddCount());
                   store.dispatch(AddSms({
                     last_message: message,
@@ -232,12 +227,11 @@ export const getPaginatedUsers = async (type, page = 1, pageSize = 10) => {
        LIMIT ? OFFSET ?`,
       [type, pageSize, offset],
       (tx, result) => {
-        console.log("-----1")
         const users = [];
         for (let i = 0; i < result.rows.length; i++) {
-          console.log(users)
           users.push(result.rows.item(i));
         }
+        console.log(users)
         store.dispatch(ReadSms(users));
       },
       (tx, error) => {
@@ -259,6 +253,29 @@ export const getTotalSmsUserCount = (type) => {
       },
       (tx, error) => {
         console.error('Failed to get SMS user count:', error.message);
+      }
+    );
+  });
+};
+
+export const getSmsByUserId = (page = 1, pageSize = 10, userId) => {
+  const offset = (page - 1) * pageSize;
+  db.transaction(tx => {
+    tx.executeSql(
+      'SELECT * FROM SMS WHERE user_id = ? ORDER BY sent_at DESC LIMIT ? OFFSET ?',
+      [userId, pageSize, offset],
+      (tx, result) => {
+        const messages = [];
+        for (let i = 0; i < result.rows.length; i++) {
+          if (i == 0) {
+            console.log(result.rows.item(i))
+          }
+          messages.push(result.rows.item(i));
+        }
+        store.dispatch(SmsSingPage(messages))
+      },
+      (tx, error) => {
+        console.error('Failed to get messages:', error.message);
       }
     );
   });
@@ -313,5 +330,10 @@ export const headlessNotificationListener = async ({ notification }) => {
       setSms(message, 'notification')
     }
   }
+}
+
+export const isOnline = async () => {
+  let token = await AsyncStorage.getItem('token')
+  store.dispatch(CheckOnline(token))
 }
 

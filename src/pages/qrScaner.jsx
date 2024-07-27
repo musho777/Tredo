@@ -33,7 +33,6 @@ const ScanScreen = ({ navigation }) => {
         }
       })
       .catch(error => {
-        console.log(error, 'error')
       });
   };
 

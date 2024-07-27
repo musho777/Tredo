@@ -16,6 +16,8 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       let index = item.data.findIndex((elm) => elm.sms_id == action.id)
       item.data[index].status = 1
       break
+    case 'AddNewSms':
+      item.data.unshift(action.data)
     default:
       break;
   }
