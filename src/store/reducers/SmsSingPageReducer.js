@@ -14,7 +14,6 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       break
     case 'ChangeStatus':
       let index = item.data.findIndex((elm) => elm.sms_id == action.id)
-      console.log(index, action.id, item)
       item.data[index].status = 1
       break
     default:

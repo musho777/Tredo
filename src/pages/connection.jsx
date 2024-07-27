@@ -9,9 +9,7 @@ import { ClearLoginAction, LogoutAction } from "../store/action/action"
 import { DefaultSmsButton } from "../components/defaultSmsButton"
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
-import { Loading } from "../components/loading"
 import { Status_Bar } from "../components/statusBar"
-import { dropAllTables, getPaginatedUsers } from "../func/function"
 
 
 export const Connection = ({ navigation }) => {
@@ -83,7 +81,6 @@ export const Connection = ({ navigation }) => {
     <TouchableOpacity onPress={() => Logout()} style={styles.logout}>
       <LogOut />
     </TouchableOpacity>
-    <Loading loading={refresh} />
     <View>
       <Ping refresh={refresh} />
       <HomeButtonWrapper setRefresh={(e) => setRefresh(e)} />

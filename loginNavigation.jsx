@@ -8,69 +8,27 @@ import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry } from 'react-native';
-import { Notification } from './src/pages/notification';
-import { headlessNotificationListener, setSms } from './src/func/function';
+import { createTables, headlessNotificationListener, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
 import { useDispatch } from 'react-redux';
 import { CheckOnline } from './src/store/action/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundTimer from 'react-native-background-timer';
-import SQLite from 'react-native-sqlite-2'
 
-const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
 
 export function LoginNavigation({ navigation }) {
 
-  const createTables = () => {
-    db.transaction(txn => {
-      txn.executeSql(
-        `CREATE TABLE IF NOT EXISTS Users (
-          user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          username TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          type TEXT NOT NULL DEFAULT sms
-        )`,
-        [],
-        (sqlTxn, res) => {
-          console.log("table created successfully");
-        },
-        error => {
-          console.log("error on creating table " + error.message);
-        },
-      );
 
-      txn.executeSql(
-        `CREATE TABLE IF NOT EXISTS SMS (
-          sms_id INTEGER PRIMARY KEY AUTOINCREMENT,
-          user_id INTEGER,
-          message TEXT,
-          sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          status INTEGER DEFAULT 0,
-          FOREIGN KEY (user_id) REFERENCES Users(user_id)
-        )`,
-        [],
-        (sqlTxn, res) => {
-          console.log("table created successfully1");
-        },
-        error => {
-          console.log("error on creating table " + error.message);
-        },
-      );
-    });
-  };
-
+  const Tab = createBottomTabNavigator();
+  const dispatch = useDispatch()
 
 
   useEffect(() => {
     createTables()
-    // dropAllTables()
   }, [])
 
 
-
-
-  const Tab = createBottomTabNavigator();
 
   PushNotification.createChannel(
     {
@@ -81,21 +39,8 @@ export function LoginNavigation({ navigation }) {
       importance: 4,
       vibrate: true,
     },
-    (created) => { }
   );
 
-
-  PushNotification.createChannel(
-    {
-      channelId: "Navigation-channel",
-      channelName: "Navigation",
-      channelDescription: "A channel to categorise your notifications",
-      soundName: "default",
-      importance: 4,
-      vibrate: true,
-    },
-    (created) => { }
-  );
 
   const AllNotificationGetPermitiopn = async () => {
     const status = await RNAndroidNotificationListener.getPermissionStatus()
@@ -108,32 +53,37 @@ export function LoginNavigation({ navigation }) {
     PushNotification.removeAllDeliveredNotifications();
     AllNotificationGetPermitiopn()
     PushNotification.configure({
-      onNotification: function (notification) {
-        // if (notification.channelId == 'sms-channel') {
-        //   navigation.navigate("SmsPage")
-        // }
-        // else {
-        //   navigation.navigate('Notification')
-        // }
-      },
+      onNotification: function (notification) { },
       popInitialNotification: true,
       requestPermissions: Platform.OS === 'ios',
     });
-    PushNotification.popInitialNotification((notification) => {
-      // if (notification) {
-      //   if (notification.channelId == 'sms-channel') {
-      //     navigation.navigate("SmsPage")
-      //   }
-      //   else {
-      //     navigation.navigate('Notification')
-      //   }
-      // }
-    });
+    PushNotification.popInitialNotification((notification) => { });
+
+    const startBackgroundTask = async () => {
+      try {
+        await BackgroundService.start(YourTask, {
+          taskName: 'LightPay',
+          taskTitle: 'LightPay',
+          taskDesc: '',
+          taskIcon: {
+            name: 'ic_launcher',
+            type: 'mipmap',
+          },
+          color: '#0073ff',
+          parameters: { delay: 3000 },
+        });
+      } catch (e) {
+      }
+    };
+    startBackgroundTask();
+
     return () => {
       PushNotification.unregister();
+      BackgroundService.stop();
     };
   }, [])
-  const dispatch = useDispatch()
+
+
 
   const isOnline = async () => {
     let token = await AsyncStorage.getItem('token')
@@ -166,31 +116,6 @@ export function LoginNavigation({ navigation }) {
     };
   }
 
-  useEffect(() => {
-    const startBackgroundTask = async () => {
-      try {
-        await BackgroundService.start(YourTask, {
-          taskName: 'LightPay',
-          taskTitle: 'LightPay',
-          taskDesc: '',
-          taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap',
-          },
-          color: '#0073ff',
-          parameters: { delay: 3000 },
-        });
-      } catch (e) {
-      }
-    };
-
-    startBackgroundTask();
-    return () => {
-      BackgroundService.stop();
-    };
-  }, []);
-
-
 
   return (
     <Tab.Navigator
@@ -203,7 +128,6 @@ export function LoginNavigation({ navigation }) {
       <Tab.Screen name="SplashScreen" component={SplashScreen} />
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
-      <Tab.Screen name="Notification" component={Notification} />
     </Tab.Navigator>
   );
 

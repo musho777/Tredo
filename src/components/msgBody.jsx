@@ -1,10 +1,7 @@
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { useDispatch } from "react-redux"
-import { SmsSingPage } from "../store/action/action"
 
-
-export const MsgBody = ({ data, last, type = 'sms' }) => {
+export const MsgBody = ({ data, last }) => {
   const naviagtion = useNavigation()
   let date = new Date(data.last_message_time)
   let minut = date.getMinutes()
@@ -23,7 +20,7 @@ export const MsgBody = ({ data, last, type = 'sms' }) => {
   }
 
   const OpenAllSms = () => {
-    naviagtion.navigate('AllMsg', { username: data.username, type: type, id: data.user_id, count: data.sms_count })
+    naviagtion.navigate('AllMsg', { username: data.username, id: data.user_id, count: data.sms_count })
   }
   return <TouchableOpacity onPress={() => OpenAllSms()} style={[styles.shadow, last && { marginBottom: 50 }]}>
     <View style={styles.name}>

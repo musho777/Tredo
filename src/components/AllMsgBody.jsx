@@ -4,7 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { sendMessage } from "../func/function"
 
 
-export const AllMsgBody = ({ username, data, last, index, type = 'sms' }) => {
+export const AllMsgBody = ({ username, data, last, index }) => {
 
 
   const copyToClipboard = () => {

@@ -66,7 +66,7 @@ export const AllMsg = ({ route, navigation }) => {
   }, [route.params.id])
 
   const renderItem = ({ item, index }) => {
-    return <AllMsgBody username={username} type={route.params.type} index={index} last={index == sms?.length - 1} data={item} key={index} />
+    return <AllMsgBody username={username} index={index} last={index == sms?.length - 1} data={item} key={index} />
   }
 
 
