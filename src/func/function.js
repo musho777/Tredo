@@ -72,7 +72,6 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
   });
 };
 export const setSms = async (smsData, type = 'sms') => {
-  console.log(1)
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
   let status = 0;
 

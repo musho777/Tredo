@@ -30,7 +30,6 @@ export const Home = ({ navigation }) => {
   }, [login.status])
 
   const SetUser = async () => {
-    console.log(login.data.user)
     await AsyncStorage.setItem('token', login.data.token)
     await AsyncStorage.setItem('id', JSON.stringify(login.data.user.id))
     navigation.replace('permission')
