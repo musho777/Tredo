@@ -14,7 +14,17 @@ const SmsSinglPageReducer = (state = initialState, action) => {
       break
     case 'ChangeStatus':
       let index = item.data.findIndex((elm) => elm.sms_id == action.id)
-      item.data[index].status = 1
+      if (index != -1) {
+        if (action.status == 1) {
+          item.data[index].status = 1
+        }
+        else if (action.status == 2) {
+          item.data[index].status = 2
+        }
+        else {
+          item.data[index].status = 0
+        }
+      }
       break
     case 'AddNewSms':
       if (item?.data[0]?.user_id == action.data.user_id) {

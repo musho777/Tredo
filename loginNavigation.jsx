@@ -85,12 +85,10 @@ export function LoginNavigation() {
     let intervalId;
     try {
       subscription = SmsListener.addListener(message => {
-        console.log("smsssssssssss--------")
         setSms(message)
       });
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
-        console.log("---1")
       }, 30000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));

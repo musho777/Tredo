@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { store } from './src/store/configStore';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GetAllDontSendSms } from './src/func/function';
 
 
 const App = () => {
@@ -28,6 +29,16 @@ const App = () => {
   useEffect(() => {
     GetUser()
   }, [])
+
+
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      GetAllDontSendSms()
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
+
 
   return (
     <Provider store={store}>

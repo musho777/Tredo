@@ -28,6 +28,7 @@ export const createTables = () => {
       `CREATE TABLE IF NOT EXISTS SMS (
         sms_id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
+        username TEXT,
         message TEXT,
         sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         status INTEGER DEFAULT 0,
@@ -51,21 +52,20 @@ const handleButtonClick = (message) => {
 };
 
 
-const getSmsAndUpdateStatus = (smsId) => {
+const getSmsAndUpdateStatus = (smsId, id = 1) => {
   db.transaction(tx => {
     tx.executeSql(
       'UPDATE SMS SET status = ? WHERE sms_id = ?',
-      [1, smsId],
+      [id, smsId],
       (tx, result) => {
       },
       (tx, error) => {
-        console.log('Failed to update SMS status:', error.message);
       }
     );
   });
 };
 export const setSms = async (smsData, type = 'sms') => {
-
+  console.log(1)
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
   let status = 0;
 
@@ -82,15 +82,14 @@ export const setSms = async (smsData, type = 'sms') => {
             (tx, result) => {
               if (result.rows.length === 0) {
                 tx.executeSql(
-                  'INSERT INTO SMS (user_id, message, status, sent_at) VALUES (?, ?, ?, ?)',
-                  [userId, message, status, sentAt],
+                  'INSERT INTO SMS (user_id, message, status, sent_at, username) VALUES (?, ?, ?, ?, ?)',
+                  [userId, message, status, sentAt, username],
                   async (tx, result) => {
                     const smsId = result.insertId;
                     await sendMessage(smsData, smsId, userId);
                     // console.log('SMS inserted successfully');
                   },
                   (tx, error) => {
-                    console.log('Failed to insert SMS:', error);
                   }
                 );
 
@@ -124,8 +123,8 @@ export const setSms = async (smsData, type = 'sms') => {
             (tx, result) => {
               const userId = result.insertId;
               tx.executeSql(
-                'INSERT INTO SMS (user_id, message, sent_at) VALUES (?, ?, ?)',
-                [userId, message, sentAt],
+                'INSERT INTO SMS (user_id, message, sent_at, username) VALUES (?, ?, ?, ?)',
+                [userId, message, sentAt, username],
                 async (tx, result) => {
                   const smsId = result.insertId;
                   await sendMessage(smsData, smsId, userId);
@@ -157,8 +156,8 @@ export const setSms = async (smsData, type = 'sms') => {
   });
 };
 
-export const sendMessage = async (message, id, userId) => {
-  let confirm = 0
+export const sendMessage = async (message, id, userId, rev = true) => {
+  let confirm = 2
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
@@ -176,28 +175,34 @@ export const sendMessage = async (message, id, userId) => {
     redirect: 'follow'
   };
 
+  store.dispatch(ChangeStatus(id, 2))
   await fetch(`https://iron-pay.com/api/send_message`, requestOptions)
     .then(response => response.json())
     .then(result => {
       if (result.status) {
-        console.log("----11-----")
         confirm = 1
-        getSmsAndUpdateStatus(id)
-        store.dispatch(ChangeStatus(id))
+        console.log('11')
+        getSmsAndUpdateStatus(id, 1)
+        store.dispatch(ChangeStatus(id, 1))
       }
     })
     .catch(error => {
+      getSmsAndUpdateStatus(id, 0)
+      store.dispatch(ChangeStatus(id, 0))
+      console.log('22')
+      confirm = 0
     });
   // body: message, originatingAddress: username, timestamp: sentAt
-  console.log(confirm, message.timestamp,)
-  let data = {
-    message: message.body,
-    username: message.originatingAddress,
-    sent_at: message.timestamp,
-    status: confirm,
-    user_id: userId
+  if (rev) {
+    let data = {
+      message: message.body,
+      username: message.originatingAddress,
+      sent_at: message.timestamp,
+      status: confirm,
+      user_id: userId
+    }
+    store.dispatch(AddNewSms(data))
   }
-  store.dispatch(AddNewSms(data))
 }
 
 
@@ -230,7 +235,6 @@ export const getPaginatedUsers = async (type, page = 1, pageSize = 10) => {
         store.dispatch(ReadSms(users));
       },
       (tx, error) => {
-        console.log('Failed to get users with last message, timestamp, and SMS count:', error.message);
       }
     );
   });
@@ -247,7 +251,6 @@ export const getTotalSmsUserCount = (type) => {
         store.dispatch(Count(userCount));
       },
       (tx, error) => {
-        console.log('Failed to get SMS user count:', error.message);
       }
     );
   });
@@ -267,7 +270,6 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '')
         store.dispatch(SmsSingPage(messages));
       },
       (tx, error) => {
-        console.log('Failed to get messages:', error.message);
       }
     );
   });
@@ -275,22 +277,63 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '')
 
 
 
-export const dropAllTables = () => {
-  db.transaction(tx => {
-    // Drop tables if they exist
-    tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
-      console.log('SMS table dropped');
-    }, (tx, error) => {
-      console.log('Failed to drop SMS table:', error);
+export const GetAllDontSendSms = () => {
+  let dontSendmessages = [];
+  if (dontSendmessages.length == 0) {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM Sms WHERE status = ?',
+        [0],
+        async (tx, result) => {
+          for (let i = 0; i < result.rows.length; i++) {
+            dontSendmessages.push(result.rows.item(i));
+          }
+          tx.executeSql(
+            'UPDATE Sms SET status = ? WHERE status = ?',
+            [2, 0],
+            (tx, result) => {
+              // console.log('Update successful:', result);
+            },
+            (tx, error) => {
+            }
+          );
+          for (let i = 0; i < dontSendmessages.length; i++) {
+            const elm = dontSendmessages[i];
+            const temp = {
+              originatingAddress: elm.username,
+              timestamp: elm.sent_at,
+              body: elm.message
+            }
+            await sendMessage(temp, elm.sms_id, elm.user_id, false)
+            dontSendmessages.splice(i, 1);
+            i--;
+          }
+        },
+        (tx, error) => {
+        }
+      );
     });
+  }
+}
 
-    tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
-      console.log('Users table dropped');
-    }, (tx, error) => {
-      console.log('Failed to drop Users table:', error);
-    });
-  });
-};
+
+
+// export const dropAllTables = () => {
+//   db.transaction(tx => {
+//     // Drop tables if they exist
+//     tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
+//       console.log('SMS table dropped');
+//     }, (tx, error) => {
+//       console.log('Failed to drop SMS table:', error);
+//     });
+
+//     tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
+//       console.log('Users table dropped');
+//     }, (tx, error) => {
+//       console.log('Failed to drop Users table:', error);
+//     });
+//   });
+// };
 
 // export const deleteAllData = () => {
 //   db.transaction(tx => {

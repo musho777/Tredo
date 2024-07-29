@@ -40,9 +40,6 @@ export const AllMsg = ({ route, navigation }) => {
 
 
   const renderItem = ({ item, index }) => {
-    if (index == 0) {
-      console.log(item)
-    }
     return <AllMsgBody username={username} index={index} last={index == sms?.length - 1} data={item} key={index} />
   }
 

@@ -1,11 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { ErrorSvg, SuccessSvg } from "../../assets/svg"
 import Clipboard from '@react-native-clipboard/clipboard';
 import { sendMessage } from "../func/function"
 
 
 export const AllMsgBody = ({ username, data, last, index }) => {
-  console.log(data.sent_at)
 
   let date = new Date(data.sent_at)
   if (typeof data.sent_at == 'string') {
@@ -48,9 +47,14 @@ export const AllMsgBody = ({ username, data, last, index }) => {
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
         <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
-        {data.status != 0 ? <View style={{ width: 20, height: 20 }}>
+        {data.status == 1 && <View style={{ width: 20, height: 20 }}>
           <SuccessSvg />
-        </View> :
+        </View>
+        }
+        {data.status == 2 &&
+          <ActivityIndicator size="small" color="#0000ff" />
+        }
+        {data.status == 0 &&
           <TouchableOpacity onPress={() => SendAgin()} style={{ width: 20, height: 20 }}>
             <ErrorSvg />
           </TouchableOpacity>

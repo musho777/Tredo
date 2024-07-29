@@ -135,10 +135,11 @@ export const AddCount = () => {
   }
 }
 
-export const ChangeStatus = (id) => {
+export const ChangeStatus = (id, status) => {
   return {
     type: 'ChangeStatus',
-    id
+    id,
+    status
   }
 }
 
