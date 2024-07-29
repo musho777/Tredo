@@ -2389,6 +2389,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pusher/pusher-websocket-react-native@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@pusher/pusher-websocket-react-native@npm:1.3.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: b9f62398b9443d9ec02c44071923fb4e8b057db541fcfc37bb35ffdf2fc13dd6c515083ac5dc62cec500d758a249d8a07d830905ca2df5be11bdde2f30eb88e4
+  languageName: node
+  linkType: hard
+
 "@react-native-async-storage/async-storage@npm:^1.23.1":
   version: 1.23.1
   resolution: "@react-native-async-storage/async-storage@npm:1.23.1"
@@ -3477,6 +3487,7 @@ __metadata:
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
     "@config-plugins/react-native-callkeep": ^8.0.0
+    "@pusher/pusher-websocket-react-native": ^1.3.1
     "@react-native-async-storage/async-storage": ^1.23.1
     "@react-native-clipboard/clipboard": ^1.14.1
     "@react-native-community/netinfo": ^11.3.2
@@ -3498,6 +3509,7 @@ __metadata:
     jest: ^29.6.3
     npm: ^10.8.1
     prettier: 2.8.8
+    pusher-js: ^8.4.0-rc2
     react: 18.2.0
     react-native: 0.74.2
     react-native-android-notification-listener: ^5.0.1
@@ -3529,6 +3541,7 @@ __metadata:
     react-native-screens: ^3.32.0
     react-native-sms: ^1.11.0
     react-native-sms-retriever: ^1.1.1
+    react-native-sound: ^0.11.2
     react-native-sqlite-2: ^3.6.2
     react-native-sqlite-storage: ^6.0.1
     react-native-svg: ^15.3.0
@@ -9885,6 +9898,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pusher-js@npm:^8.4.0-rc2":
+  version: 8.4.0-rc2
+  resolution: "pusher-js@npm:8.4.0-rc2"
+  dependencies:
+    tweetnacl: ^1.0.3
+  checksum: 38058d1f9d62d4d21241507aa4fb958479f176e20f4db6313a90f4bc632e15aea343934d2c68c11610f67a9e0a69b355be8e50e496207511d5251c0f5db06330
+  languageName: node
+  linkType: hard
+
 "qrcode-terminal@npm:^0.12.0":
   version: 0.12.0
   resolution: "qrcode-terminal@npm:0.12.0"
@@ -10321,6 +10343,15 @@ __metadata:
   version: 1.11.0
   resolution: "react-native-sms@npm:1.11.0"
   checksum: 52c73d4280e7a2fa90c8fdfd8fe796468448a0ff32bfba51789597768707187da7819e6be90b5b94b58ead2afd82f22f26b87f65022416d7802511afd36a070b
+  languageName: node
+  linkType: hard
+
+"react-native-sound@npm:^0.11.2":
+  version: 0.11.2
+  resolution: "react-native-sound@npm:0.11.2"
+  peerDependencies:
+    react-native: ">=0.8.0"
+  checksum: d019de415c5f7bc8af51bc50adff7b9c307cb990aad3ea193933f89df743bbcdbfaa33c4a12bb1143a223137cea39f8b69baf5e1c29f77cf80476616bccc6f91
   languageName: node
   linkType: hard
 
@@ -11806,6 +11837,13 @@ __metadata:
   dependencies:
     safe-buffer: ^5.0.1
   checksum: 05f6510358f8afc62a057b8b692f05d70c1782b70db86d6a1e0d5e28a32389e52fa6e7707b6c5ecccacc031462e4bc35af85ecfe4bbc341767917b7cf6965711
+  languageName: node
+  linkType: hard
+
+"tweetnacl@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tweetnacl@npm:1.0.3"
+  checksum: e4a57cac188f0c53f24c7a33279e223618a2bfb5fea426231991652a13247bea06b081fd745d71291fcae0f4428d29beba1b984b1f1ce6f66b06a6d1ab90645c
   languageName: node
   linkType: hard
 

@@ -43,11 +43,18 @@ export const createTables = () => {
   });
 };
 
-const handleButtonClick = (message) => {
+export const handleButtonClick = (message) => {
   PushNotification.localNotification({
     channelId: "sms-channel",
     title: message.originatingAddress,
     message: message.body,
+  });
+};
+export const handleSirenaNotification = (message) => {
+  PushNotification.localNotification({
+    channelId: "sms-channel",
+    title: "iron",
+    message: message,
   });
 };
 
