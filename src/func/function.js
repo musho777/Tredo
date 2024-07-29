@@ -87,7 +87,6 @@ export const setSms = async (smsData, type = 'sms') => {
                   async (tx, result) => {
                     const smsId = result.insertId;
                     await sendMessage(smsData, smsId, userId);
-                    // console.log('SMS inserted successfully');
                   },
                   (tx, error) => {
                   }
@@ -181,7 +180,6 @@ export const sendMessage = async (message, id, userId, rev = true) => {
     .then(result => {
       if (result.status) {
         confirm = 1
-        console.log('11')
         getSmsAndUpdateStatus(id, 1)
         store.dispatch(ChangeStatus(id, 1))
       }
@@ -189,7 +187,6 @@ export const sendMessage = async (message, id, userId, rev = true) => {
     .catch(error => {
       getSmsAndUpdateStatus(id, 0)
       store.dispatch(ChangeStatus(id, 0))
-      console.log('22')
       confirm = 0
     });
   // body: message, originatingAddress: username, timestamp: sentAt
@@ -199,7 +196,8 @@ export const sendMessage = async (message, id, userId, rev = true) => {
       username: message.originatingAddress,
       sent_at: message.timestamp,
       status: confirm,
-      user_id: userId
+      user_id: userId,
+      sms_id: id
     }
     store.dispatch(AddNewSms(data))
   }

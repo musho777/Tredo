@@ -35,7 +35,7 @@ const App = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       GetAllDontSendSms()
-    }, 5000);
+    }, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
