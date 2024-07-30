@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { Modal, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export const ModalComponent = ({ modalVisible, message, accept }) => {
   return <View style={styles.centeredView}>
@@ -13,7 +13,9 @@ export const ModalComponent = ({ modalVisible, message, accept }) => {
           <Text style={styles.modalText}>{message}</Text>
           <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
-            onPress={() => accept()}>
+            onPress={() => {
+              accept()
+            }}>
             <Text style={styles.textStyle}>Понятно</Text>
           </TouchableOpacity>
         </View>

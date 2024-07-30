@@ -52,6 +52,19 @@ const handleButtonClick = (message) => {
 };
 
 
+
+export const handleSirenaNotification = (message) => {
+
+  PushNotification.localNotification({
+    channelId: "s-channel",
+    title: "iron",
+    message: message,
+    soundName: 'sirena.mp3',
+  });
+};
+
+
+
 const getSmsAndUpdateStatus = (smsId, id = 1) => {
   db.transaction(tx => {
     tx.executeSql(

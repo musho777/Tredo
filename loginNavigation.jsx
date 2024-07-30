@@ -55,6 +55,17 @@ export function LoginNavigation() {
     },
   );
 
+  PushNotification.createChannel(
+    {
+      channelId: "s-channel",
+      channelName: "SmS",
+      channelDescription: "A channel to categorise your notifications",
+      soundName: "sirena.mp3",
+      importance: 4,
+      vibrate: true,
+    },
+  );
+
 
   // const AllNotificationGetPermitiopn = async () => {
   //   const status = await RNAndroidNotificationListener.getPermissionStatus()
