@@ -8,7 +8,7 @@ import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.shell.MainReactPackage
-import com.centaurwarchief.smslistener.SmsListenerPackage;
+// import com.centaurwarchief.smslistener.SmsListenerPackage;
 
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
@@ -18,7 +18,8 @@ import com.tredo.sms.SmsPackage;
 import java.util.Arrays
 import com.tredo.SmsDefaultHandlerPackage
 import com.reactnativerestart.RestartPackage;  
-// import com.tredo.SmsPackageModule;
+// import com.tredo.SmsListenerPackage
+import com.tredo.SmsListenerPackage;
 
 class MainApplication : Application(), ReactApplication {
 
@@ -30,7 +31,7 @@ class MainApplication : Application(), ReactApplication {
               add(SmsDefaultHandlerPackage())
                RestartPackage()
               // SmsDefaultHandlerPackage()
-              SmsListenerPackage()
+              add(SmsListenerPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

@@ -43,18 +43,11 @@ export const createTables = () => {
   });
 };
 
-export const handleButtonClick = (message) => {
+const handleButtonClick = (message) => {
   PushNotification.localNotification({
     channelId: "sms-channel",
     title: message.originatingAddress,
     message: message.body,
-  });
-};
-export const handleSirenaNotification = (message) => {
-  PushNotification.localNotification({
-    channelId: "sms-channel",
-    title: "iron",
-    message: message,
   });
 };
 
@@ -72,6 +65,7 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
   });
 };
 export const setSms = async (smsData, type = 'sms') => {
+  console.log('s,s')
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
   let status = 0;
 

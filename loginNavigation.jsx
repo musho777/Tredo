@@ -1,19 +1,42 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Connection } from './src/pages/connection';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import SmsListener from 'react-native-android-sms-listener'
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, DeviceEventEmitter } from 'react-native';
 import { createTables, headlessNotificationListener, isOnline, setSms } from './src/func/function';
 import { SplashScreen } from './src/pages/SplashScreen';
 import BackgroundTimer from 'react-native-background-timer';
 
 
+import { NativeModules } from 'react-native';
+
+
+
 export function LoginNavigation() {
+
+
+  // useEffect(() => {
+  //   let subscriber = DeviceEventEmitter.addListener(
+  //     'onSMSReceived',
+  //     message => {
+  //       const { messageBody, senderPhoneNumber } = JSON.parse(message);
+  //       // setMessage(messageBody);
+  //       console.log("3")
+  //     },
+  //   );
+
+  //   return () => {
+  //     subscriber.remove();
+  //   };
+  // }, []);
+
+
+  const [a, setA] = useState('')
 
   const Tab = createBottomTabNavigator();
 
@@ -54,39 +77,63 @@ export function LoginNavigation() {
     };
   }, [])
 
+  const startBackgroundTask = async () => {
+    try {
+      await BackgroundService.start(YourTask, {
+        taskName: 'LightPay',
+        taskTitle: 'LightPay',
+        taskDesc: '',
+        taskIcon: {
+          name: 'ic_launcher',
+          type: 'mipmap',
+        },
+        color: '#0073ff',
+        parameters: { delay: 1000 },
+      });
+    } catch (e) {
+    }
+  };
+  // useEffect(() => {
+  //   let subscription = SmsListener.addListener(async message => {
+  //     console.log('1')
+  //     await setSms(message)
+  //   });
+
+  //   return () => {
+  //     console.log("23")
+  //     subscription.remove();
+  //     // BackgroundService.stop();
+  //   };
+  // }, [])
+
+  const stopTask = async () => {
+    await BackgroundService.stop();
+    setTimeout(() => {
+      startBackgroundTask();
+    }, 1000)
+  };
 
   useEffect(() => {
-    const startBackgroundTask = async () => {
-      try {
-        await BackgroundService.start(YourTask, {
-          taskName: 'LightPay',
-          taskTitle: 'LightPay',
-          taskDesc: '',
-          taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap',
-          },
-          color: '#0073ff',
-          parameters: { delay: 3000 },
-        });
-      } catch (e) {
-      }
-    };
-    startBackgroundTask();
-
-    return () => {
-      // BackgroundService.stop();
-    };
+    stopTask();
   }, [])
 
+
   const YourTask = async (taskDataArguments) => {
-    let subscription;
     const { delay } = taskDataArguments;
     let intervalId;
+    let subscriber = DeviceEventEmitter.addListener(
+      'onSMSReceived',
+      message => {
+        const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
+        let data = {
+          body: messageBody,
+          originatingAddress: senderPhoneNumber,
+          timestamp: timestamp
+        }
+        setSms(data)
+      },
+    );
     try {
-      subscription = SmsListener.addListener(message => {
-        setSms(message)
-      });
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
       }, 30000);
@@ -97,9 +144,8 @@ export function LoginNavigation() {
       console.log('Error in background task:', error);
     }
     finally {
-      if (subscription) {
-        subscription.remove();
-      }
+      console.log("---222")
+      subscriber.remove();
       BackgroundTimer.clearInterval(intervalId);
     };
   }
@@ -107,7 +153,7 @@ export function LoginNavigation() {
 
   return (
     <Tab.Navigator
-      initialRouteName={'SplashScreen'}
+      initialRouteName={'connectionPage'}
       screenOptions={() => ({
         tabBarStyle: { display: 'none' },
         headerShown: false

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react"
-import { View, Image } from "react-native"
+import { View } from "react-native"
 import RNRestart from 'react-native-restart';
 
 export const SplashScreen = ({ navigation }) => {

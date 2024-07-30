@@ -3517,6 +3517,7 @@ __metadata:
     react-native-async-storage: ^0.0.1
     react-native-background-actions: ^4.0.0
     react-native-background-fetch: ^4.2.5
+    react-native-background-task: ^0.2.1
     react-native-background-timer: ^2.4.1
     react-native-badge: ^1.0.0
     react-native-callkeep: ^4.3.13
@@ -10080,6 +10081,16 @@ __metadata:
   version: 4.2.5
   resolution: "react-native-background-fetch@npm:4.2.5"
   checksum: d124418a69377f0399b72cb86bfea5e801a4dc2d5b8215e6736fd21836a82ad514a3b89fd2915b866c205e6e7f2feddd0486d4893a0261e7d978502773397d45
+  languageName: node
+  linkType: hard
+
+"react-native-background-task@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "react-native-background-task@npm:0.2.1"
+  peerDependencies:
+    react-native: ">=0.36.0"
+    react-native-background-fetch: 2.0.x
+  checksum: 8e370629f218c12b6a58016ff07ebde02cd49c003a9b49b36a6b9edbb4765ae0030002ac8886088dd74f5667cee1acf708d2f72e1935da0852749f37f7d13893
   languageName: node
   linkType: hard
 

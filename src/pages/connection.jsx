@@ -146,7 +146,7 @@ export const Connection = ({ navigation }) => {
 
 
   useEffect(() => {
-    Pusher.logToConsole = true;
+    Pusher.logToConsole = false;
 
     const pusher = new Pusher('local', {
       cluster: 'mt1',
@@ -206,9 +206,9 @@ export const Connection = ({ navigation }) => {
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={message} popUp={popUp} />
     <Status_Bar />
     <AppInfo version={false} light />
-    {/* <TouchableOpacity onPress={() => Logout()} style={styles.logout}>
+    <TouchableOpacity onPress={() => Logout()} style={styles.logout}>
       <LogOut />
-    </TouchableOpacity> */}
+    </TouchableOpacity>
     <View>
       <Ping refresh={refresh} />
       <HomeButtonWrapper setRefresh={(e) => setRefresh(e)} />
