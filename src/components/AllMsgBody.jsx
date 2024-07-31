@@ -8,7 +8,6 @@ export const AllMsgBody = ({ username, data, last, index }) => {
 
   let date = new Date(data.sent_at)
   if (typeof data.sent_at == 'string') {
-
     date = new Date(JSON.parse(data.sent_at))
   }
   let minut = date.getMinutes()

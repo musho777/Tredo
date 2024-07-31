@@ -98,7 +98,7 @@ export const setSms = async (smsData, type = 'sms') => {
                   [userId, message, status, sentAt, username],
                   async (tx, result) => {
                     const smsId = result.insertId;
-                    await sendMessage(smsData, message, smsId, userId);
+                    await sendMessage(smsData, smsId, userId);
                   },
                   (tx, error) => {
                   }
@@ -114,7 +114,8 @@ export const setSms = async (smsData, type = 'sms') => {
                       username,
                       last_message_time: sentAt,
                       count: result.rows.item(0).message_count,
-                      user_id: userId
+                      user_id: userId,
+                      type,
                     }));
                   },
                   (tx, error) => {
@@ -162,7 +163,7 @@ export const setSms = async (smsData, type = 'sms') => {
   });
 };
 
-export const sendMessage = async (message, messagebody, id, userId, rev = true) => {
+export const sendMessage = async (message, id, userId, rev = true) => {
   let confirm = 2
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
@@ -190,13 +191,16 @@ export const sendMessage = async (message, messagebody, id, userId, rev = true) 
         getSmsAndUpdateStatus(id, 1)
         store.dispatch(ChangeStatus(id, 1))
       }
+      else {
+        getSmsAndUpdateStatus(id, 0)
+        store.dispatch(ChangeStatus(id, 0))
+      }
     })
     .catch(error => {
       getSmsAndUpdateStatus(id, 0)
       store.dispatch(ChangeStatus(id, 0))
       confirm = 0
     });
-  // body: message, originatingAddress: username, timestamp: sentAt
   if (rev) {
     let data = {
       message: message.body,

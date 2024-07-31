@@ -21,10 +21,10 @@ export const SmsPage = ({ route }) => {
     setSms(readSms.data)
   }, [readSms.data])
 
-
   const renderItem = ({ item, index }) => {
-
-    return <MsgBody type={route.params.type} last={index == sms.length - 1} data={item} key={index} />
+    if (item.type == route.params.type || !item.type) {
+      return <MsgBody type={route.params.type} last={index == sms.length - 1} data={item} key={index} />
+    }
   }
 
   return <View>
@@ -39,9 +39,6 @@ export const SmsPage = ({ route }) => {
       renderItem={renderItem}
       onEndReached={() => setPage(page + 1)}
       style={styles.body} >
-      {sms.map((elm, i) => {
-        return <MsgBody last={i == sms.length - 1} data={elm} key={i} />
-      })}
     </FlatList>
   </View>
 }
