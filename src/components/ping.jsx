@@ -14,13 +14,8 @@ export const Ping = ({ refresh }) => {
       const endTime = Date.now();
       const timeTaken = endTime - startTime;
       setPingTime(timeTaken);
-    } catch (error) {
-      console.error('Error fetching ping:', error);
-    }
+    } catch (error) { }
   };
-
-
-
 
   useEffect(() => {
     setSystemVersion(DeviceInfo.getSystemVersion());
@@ -38,7 +33,7 @@ export const Ping = ({ refresh }) => {
     <View style={styles.textWrapper}>
       <Text style={styles.text1}>Устройство подключено</Text>
       <Text style={styles.text2}>Пинг: {pingResult} мс</Text>
-      <Text style={styles.text3}>Версия: Release {systemVersion}</Text>
+      <Text style={styles.text2}>Версия: Release {systemVersion}</Text>
     </View>
   </View>
 }
@@ -55,11 +50,6 @@ const styles = StyleSheet.create({
     fontFamily: 'RobotoCondensed-Regular',
   },
   text2: {
-    color: '#5e86cf',
-    fontSize: 14,
-    fontFamily: 'RobotoCondensed-Regular'
-  },
-  text3: {
     color: '#5e86cf',
     fontSize: 14,
     fontFamily: 'RobotoCondensed-Regular'

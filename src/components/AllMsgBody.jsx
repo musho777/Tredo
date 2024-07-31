@@ -41,41 +41,73 @@ export const AllMsgBody = ({ username, data, last, index }) => {
   }
 
 
-  return <TouchableOpacity onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
+  return <TouchableOpacity activeOpacity={1} onPress={() => copyToClipboard()} style={[styles.shadow, last && { marginBottom: 150 }]}>
     <View style={styles.name}>
-      <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-        <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправлено:</Text>
-        <Text style={{ color: "#59c951", fontSize: 13, fontFamily: 'RobotoCondensed-Bold' }}>#{index + 1}</Text>
-        {data.status == 1 && <View style={{ width: 20, height: 20 }}>
+      <View style={styles.block}>
+        <Text style={styles.text1}>Отправлено:</Text>
+        <Text style={styles.text2}>#{index + 1}</Text>
+        {data.status == 1 && <View style={styles.icon}>
           <SuccessSvg />
         </View>
         }
-        {data.status == 2 &&
-          <ActivityIndicator size="small" color="#0000ff" />
-        }
+        {data.status == 2 && <ActivityIndicator size="small" color="#0000ff" />}
         {data.status == 0 &&
-          <TouchableOpacity onPress={() => SendAgin()} style={{ width: 20, height: 20 }}>
+          <TouchableOpacity onPress={() => SendAgin()} style={styles.icon}>
             <ErrorSvg />
           </TouchableOpacity>
         }
       </View>
-      <Text style={{ color: "#6271a5", fontSize: 13, fontFamily: 'RobotoCondensed-SemiBold' }}>{hour}:{minut}:{seconds}</Text>
+      <Text style={styles.text3}>{hour}:{minut}:{seconds}</Text>
     </View>
-    <Text style={{ color: "#2f508e", fontSize: 17, fontFamily: 'RobotoCondensed-Regular' }}>{data.message}</Text>
-    <View style={styles.smsCount}>
-      <Text style={{ color: "#6e90d3", fontSize: 14, fontFamily: 'RobotoCondensed-Regular' }}></Text>
-    </View>
+    <Text style={styles.text4}>{data.message}</Text>
   </TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
+  block: {
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'center'
+  },
+  text1: {
+    color: "#6e90d3",
+    fontSize: 12,
+    fontFamily: 'RobotoCondensed-SemiBold'
+  },
+  icon: {
+    width: 20,
+    height: 20
+  },
+  text2: {
+    color: "#59c951",
+    fontSize: 13,
+    fontFamily: 'RobotoCondensed-Bold'
+  },
+
+  text3: {
+    color: "#6271a5",
+    fontSize: 13,
+    fontFamily: 'RobotoCondensed-SemiBold'
+  },
+
+  text4: {
+    color: "#2f508e",
+    fontSize: 17,
+    fontFamily: 'RobotoCondensed-Regular'
+  },
+
+  text5: {
+    color: "#6e90d3",
+    fontSize: 14,
+    fontFamily: 'RobotoCondensed-Regular'
+  },
+
   shadow: {
     shadowColor: "#000000",
     gap: 10,
     shadowOffset: {
       width: 0,
       height: 3,
-
     },
     shadowOpacity: 0.17,
     shadowRadius: 3.05,
@@ -89,10 +121,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
-  smsCount: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    fontFamily: 'RobotoCondensed-Regular'
-  }
 });

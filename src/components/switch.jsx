@@ -1,4 +1,4 @@
-import { Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 import ToggleSwitch from "toggle-switch-react-native"
 import { MsgSvg } from "../../assets/svg"
 import { useEffect, useState } from "react"
@@ -15,20 +15,10 @@ export const Switch = ({ text, onSwitch, value = false }) => {
     setIsEnabled(value)
   }, [value])
 
-
-  return <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+  return <View style={styles.block}>
+    <View style={styles.continer}>
       <MsgSvg />
-      <Text
-        style={{
-          width: '70%',
-          color: '#6488d0',
-          fontWeight: '700',
-          fontFamily: 'RobotoCondensed-Bold',
-          fontSize: 15
-        }}>
-        {text}
-      </Text>
+      <Text style={styles.text}>{text}</Text>
     </View>
     <ToggleSwitch
       isOn={value}
@@ -45,3 +35,25 @@ export const Switch = ({ text, onSwitch, value = false }) => {
   </View>
 }
 
+
+
+
+const styles = StyleSheet.create({
+  block: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  continer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20
+  },
+  text: {
+    width: '70%',
+    color: '#6488d0',
+    fontWeight: '700',
+    fontFamily: 'RobotoCondensed-Bold',
+    fontSize: 15
+  },
+})

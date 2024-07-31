@@ -144,7 +144,8 @@ export const setSms = async (smsData, type = 'sms') => {
                     username,
                     last_message_time: sentAt,
                     type,
-                    user_id: userId
+                    user_id: userId,
+                    count: 1
                   }));
                 },
                 (tx, error) => {

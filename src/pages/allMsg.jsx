@@ -10,13 +10,13 @@ import { getSmsByUserId } from "../func/function";
 export const AllMsg = ({ route, navigation }) => {
 
   const [page, setPage] = useState(1)
-  const count = route.params.count
+  // const count = route.params.count
   const username = route.params.username
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
   const dispatch = useDispatch()
-
+  console.log(smsSinglPage.count)
 
   useEffect(() => {
     if (smsSinglPage.data) {
@@ -53,7 +53,7 @@ export const AllMsg = ({ route, navigation }) => {
   return <View>
     <View style={styles.header}>
       <Text style={styles.AllSms}>Отправитель: {username}</Text>
-      <Text style={styles.AllSms1}>Сообщений от отправителя: {count}</Text>
+      <Text style={styles.AllSms1}>Сообщений от отправителя: {smsSinglPage.count}</Text>
     </View>
     <View style={styles.block}>
       <View style={styles.inputView}>

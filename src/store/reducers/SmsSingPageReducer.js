@@ -1,5 +1,6 @@
 const initialState = {
   data: [],
+  count: []
 };
 const SmsSinglPageReducer = (state = initialState, action) => {
   let item = { ...state };
@@ -29,7 +30,12 @@ const SmsSinglPageReducer = (state = initialState, action) => {
     case 'AddNewSms':
       if (item?.data[0]?.user_id == action.data.user_id) {
         item.data.unshift(action.data)
+        item.count = item.count + 1
       }
+      break
+    case 'SinglSmsCount':
+      item.count = action.count
+      break
     default:
       break;
   }

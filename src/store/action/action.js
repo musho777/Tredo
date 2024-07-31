@@ -163,3 +163,10 @@ export const AddNewSms = (data, id) => {
     data,
   }
 }
+
+export const SinglSmsCount = (count) => {
+  return {
+    type: 'SinglSmsCount',
+    count,
+  }
+}
