@@ -55,7 +55,7 @@ export const AllMsg = ({ route, navigation }) => {
       <Text style={styles.AllSms}>Отправитель: {username}</Text>
       <Text style={styles.AllSms1}>Сообщений от отправителя: {count}</Text>
     </View>
-    <View style={{ paddingHorizontal: 30, backgroundColor: "#eef4ff", }}>
+    <View style={styles.block}>
       <View style={styles.inputView}>
         <View style={styles.searchSvg}>
           <SearchSvg />
@@ -80,6 +80,10 @@ export const AllMsg = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  block: {
+    paddingHorizontal: 30,
+    backgroundColor: "#eef4ff"
+  },
   inputView: {
     position: 'relative',
     marginTop: 20,

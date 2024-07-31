@@ -7,10 +7,13 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import { useDispatch } from 'react-redux';
+import { SuccessIsOnline } from '../store/action/successAction';
 
 const ScanScreen = ({ navigation }) => {
   const [permision, setPermision] = useState(true);
   const [r, setR] = useState(false)
+  const dispatch = useDispatch()
 
   const onSuccess = async e => {
     const headers = {
@@ -29,8 +32,7 @@ const ScanScreen = ({ navigation }) => {
           await AsyncStorage.setItem('token', result?.token)
           await AsyncStorage.setItem('id', JSON.stringify(result.user.id))
           navigation.navigate('permission')
-        }
-        else {
+          dispatch(SuccessIsOnline())
         }
       })
       .catch(error => {

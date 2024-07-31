@@ -28,7 +28,7 @@ export const MsgBody = ({ data, last }) => {
     getSmsByUserId(1, 10, data.user_id)
     naviagtion.navigate('AllMsg', { username: data.username, id: data.user_id, count: data.sms_count })
   }
-  return <TouchableOpacity onPress={() => OpenAllSms()} style={[styles.shadow, last && { marginBottom: 50 }]}>
+  return <TouchableOpacity activeOpacity={1} onPress={() => OpenAllSms()} style={[styles.shadow, last && { marginBottom: 50 }]}>
     <View style={styles.name}>
       <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
         <Text style={{ color: "#6e90d3", fontSize: 12, fontFamily: 'RobotoCondensed-SemiBold' }}>Отправитель:</Text>
