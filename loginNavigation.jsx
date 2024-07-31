@@ -9,12 +9,17 @@ import { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-androi
 import { AppRegistry, DeviceEventEmitter } from 'react-native';
 import { createTables, headlessNotificationListener, isOnline, setSms } from './src/func/function';
 import BackgroundTimer from 'react-native-background-timer';
+import { useDispatch, useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { ClearLoginAction } from './src/store/action/action';
 
 
 export function LoginNavigation() {
   const Tab = createBottomTabNavigator();
-
-
+  const navigation = useNavigation()
+  const { online } = useSelector((st) => st.isOnlie)
+  const dispatch = useDispatch()
   PushNotification.createChannel(
     {
       channelId: "sms-channel",
@@ -77,6 +82,21 @@ export function LoginNavigation() {
     stopTask();
     createTables()
   }, [])
+
+
+  const Logout = async () => {
+    dispatch(ClearLoginAction())
+    await AsyncStorage.clear()
+    AsyncStorage.removeItem('token')
+    navigation.replace('home')
+  }
+
+
+  useEffect(() => {
+    if (online == 0) {
+      Logout()
+    }
+  }, [online])
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;

@@ -17,3 +17,9 @@ export const SuccessLogOut = (data) => {
     data
   }
 }
+
+export const SuccessIsOnline = () => {
+  return {
+    type: 'SuccessIsOnline'
+  }
+}

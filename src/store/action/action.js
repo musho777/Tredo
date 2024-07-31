@@ -1,6 +1,6 @@
-import { ErrorLogOut, ErrorLogin } from './errorAction';
+import { ErrorIsOnline, ErrorLogOut, ErrorLogin } from './errorAction';
 import { StartLogOut, StartLogin } from './startAction';
-import { SuccessLogOut, SuccessLogin } from './successAction';
+import { SuccessIsOnline, SuccessLogOut, SuccessLogin } from './successAction';
 export const LoginAction = (token) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -58,7 +58,6 @@ export const LogoutAction = (token) => {
   var requestOptions = {
     method: 'POST',
     headers: myHeaders,
-    // body: JSON.stringify(data),
     redirect: 'follow'
   };
 
@@ -112,9 +111,12 @@ export const CheckOnline = (token) => {
     fetch(`https://iron-pay.com/api/auth_user_info`, requestOptions)
       .then(response => response.json())
       .then(result => {
+        // console.log(result.status, 'result.status')
         if (result.status) {
+          dispatch(SuccessIsOnline())
         }
         else {
+          dispatch(ErrorIsOnline())
         }
       })
       .catch(error => {

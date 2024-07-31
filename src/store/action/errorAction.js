@@ -16,3 +16,9 @@ export const ErrorLogOut = () => {
     type: 'ErrorLogOut'
   }
 }
+
+export const ErrorIsOnline = () => {
+  return {
+    type: 'ErrorIsOnline'
+  }
+}
