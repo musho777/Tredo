@@ -12,9 +12,7 @@ import { HomeButtonWrapper } from "../components/homeButtonWrapper"
 import { Status_Bar } from "../components/statusBar"
 import { handleSirenaNotification } from "../func/function"
 import Pusher from 'pusher-js/react-native';
-
 import { ModalComponent } from "../components/Modal"
-
 
 
 export const Connection = ({ navigation }) => {
@@ -23,10 +21,6 @@ export const Connection = ({ navigation }) => {
   const [token, setToken] = useState()
   const [refresh, setRefresh] = useState(false)
   const [popUp, setPopUp] = useState(false)
-  const [message, setMessage] = useState()
-
-
-
 
   const func = async () => {
     await AsyncStorage.setItem('restart', 'true')
@@ -42,7 +36,6 @@ export const Connection = ({ navigation }) => {
 
   const getToken = async () => {
     setToken(await AsyncStorage.getItem('token'))
-    // setId(await AsyncStorage.getItem('id'))
   }
 
 
@@ -100,7 +93,6 @@ export const Connection = ({ navigation }) => {
 
     cardBlockedChannel.bind('card_blocked', async function (data) {
       let id = await AsyncStorage.getItem('id')
-      setMessage(data.message.app_message)
       if (id == data.message.user_id) {
         setText(data.message.app_message)
         await AsyncStorage.setItem('showPopUp', "1")
@@ -109,10 +101,6 @@ export const Connection = ({ navigation }) => {
         await AsyncStorage.setItem('text1', JSON.stringify(data.message.app_message))
       }
     });
-
-    return () => {
-      // pusher.unsubscribe('card_blocked');
-    };
   }, []);
 
   const ShowPopUp = async () => {
@@ -122,9 +110,7 @@ export const Connection = ({ navigation }) => {
       setText(t)
     }
     if (show == 1) {
-
       setPopUp(true)
-
     }
     else {
       setPopUp(false)
@@ -140,7 +126,6 @@ export const Connection = ({ navigation }) => {
     setPopUp(false)
   }
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
-    {/* <Text onPress={() => handleSirenaNotification("333")}>3333</Text> */}
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />
     <Status_Bar />
     <AppInfo version={false} light />

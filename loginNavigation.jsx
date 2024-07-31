@@ -1,31 +1,19 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Connection } from './src/pages/connection';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
-import SmsListener from 'react-native-android-sms-listener'
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
-import RNAndroidNotificationListener, { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
+import { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
 import { AppRegistry, DeviceEventEmitter } from 'react-native';
 import { createTables, headlessNotificationListener, isOnline, setSms } from './src/func/function';
-import { SplashScreen } from './src/pages/SplashScreen';
 import BackgroundTimer from 'react-native-background-timer';
 
 
-import { NativeModules } from 'react-native';
-
-
-
 export function LoginNavigation() {
-
-  const [a, setA] = useState('')
-
   const Tab = createBottomTabNavigator();
 
-  useEffect(() => {
-    createTables()
-  }, [])
 
   PushNotification.createChannel(
     {
@@ -49,17 +37,8 @@ export function LoginNavigation() {
     },
   );
 
-
-  // const AllNotificationGetPermitiopn = async () => {
-  //   const status = await RNAndroidNotificationListener.getPermissionStatus()
-  //   if (status != 'authorized') {
-  //     RNAndroidNotificationListener.requestPermission()
-  //   }
-  // }
-
   useEffect(() => {
     PushNotification.removeAllDeliveredNotifications();
-    // AllNotificationGetPermitiopn()
     PushNotification.configure({
       onNotification: function (notification) { },
       popInitialNotification: true,
@@ -84,8 +63,7 @@ export function LoginNavigation() {
         color: '#0073ff',
         parameters: { delay: 1000 },
       });
-    } catch (e) {
-    }
+    } catch (e) { }
   };
 
   const stopTask = async () => {
@@ -97,8 +75,8 @@ export function LoginNavigation() {
 
   useEffect(() => {
     stopTask();
+    createTables()
   }, [])
-
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
@@ -140,7 +118,6 @@ export function LoginNavigation() {
         headerShown: false
       })}>
       <Tab.Screen name="connectionPage" component={Connection} />
-      <Tab.Screen name="SplashScreen" component={SplashScreen} />
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
     </Tab.Navigator>

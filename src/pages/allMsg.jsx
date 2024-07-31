@@ -74,10 +74,7 @@ export const AllMsg = ({ route, navigation }) => {
     <FlatList style={styles.body}
       data={sms}
       renderItem={renderItem}
-      onEndReached={() => {
-        setPage(page + 1)
-      }}
-    >
+      onEndReached={() => setPage(page + 1)}>
     </FlatList>
   </View>
 }

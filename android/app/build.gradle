@@ -114,9 +114,6 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    implementation project(':react-native-get-sms-android')
-    implementation project(':react-native-android-sms-listener')
-    // implementation project(':react-native-background-fetch')
 // implementation 'com.transistorsoft:tsbackgroundfetch:1.2.3'
  implementation project(':react-native-restart')
       implementation "androidx.activity:activity-ktx:1.2.3"

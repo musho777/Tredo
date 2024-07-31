@@ -21,7 +21,6 @@ buildscript {
        mavenLocal()
        mavenCentral()
         maven { url 'https://developer.huawei.com/repo/' }
-        maven { url("${project(':react-native-background-fetch').projectDir}/libs") }
     }
 }
 }
