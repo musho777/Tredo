@@ -19,23 +19,6 @@ import { NativeModules } from 'react-native';
 
 export function LoginNavigation() {
 
-
-  // useEffect(() => {
-  //   let subscriber = DeviceEventEmitter.addListener(
-  //     'onSMSReceived',
-  //     message => {
-  //       const { messageBody, senderPhoneNumber } = JSON.parse(message);
-  //       // setMessage(messageBody);
-  //       console.log("3")
-  //     },
-  //   );
-
-  //   return () => {
-  //     subscriber.remove();
-  //   };
-  // }, []);
-
-
   const [a, setA] = useState('')
 
   const Tab = createBottomTabNavigator();
@@ -104,18 +87,6 @@ export function LoginNavigation() {
     } catch (e) {
     }
   };
-  // useEffect(() => {
-  //   let subscription = SmsListener.addListener(async message => {
-  //     console.log('1')
-  //     await setSms(message)
-  //   });
-
-  //   return () => {
-  //     console.log("23")
-  //     subscription.remove();
-  //     // BackgroundService.stop();
-  //   };
-  // }, [])
 
   const stopTask = async () => {
     await BackgroundService.stop();
@@ -155,7 +126,6 @@ export function LoginNavigation() {
       console.log('Error in background task:', error);
     }
     finally {
-      console.log("---222")
       subscriber.remove();
       BackgroundTimer.clearInterval(intervalId);
     };

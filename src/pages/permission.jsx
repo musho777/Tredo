@@ -174,7 +174,6 @@ export const Permission = ({ navigation }) => {
         }
       }
     } catch (err) {
-      console.log(err)
     }
   }
 

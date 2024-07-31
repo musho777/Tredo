@@ -78,7 +78,6 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
   });
 };
 export const setSms = async (smsData, type = 'sms') => {
-  console.log('s,s')
   const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
   let status = 0;
 
@@ -99,7 +98,7 @@ export const setSms = async (smsData, type = 'sms') => {
                   [userId, message, status, sentAt, username],
                   async (tx, result) => {
                     const smsId = result.insertId;
-                    await sendMessage(smsData, smsId, userId);
+                    await sendMessage(smsData, message, smsId, userId);
                   },
                   (tx, error) => {
                   }
@@ -119,13 +118,11 @@ export const setSms = async (smsData, type = 'sms') => {
                     }));
                   },
                   (tx, error) => {
-                    console.log('Failed to get SMS count:', error);
                   }
                 );
               }
             },
             (tx, error) => {
-              // console.log('Failed to check for existing SMS:', error);
             }
           );
         } else {
@@ -150,25 +147,22 @@ export const setSms = async (smsData, type = 'sms') => {
                   }));
                 },
                 (tx, error) => {
-                  console.log('Failed to insert SMS:', error);
                 }
               );
             },
             (tx, error) => {
-              console.log('Failed to insert user:', error);
             }
           );
         }
       },
       (tx, error) => {
-        console.log('Failed to check if user exists:', error);
       }
     );
     handleButtonClick(smsData);
   });
 };
 
-export const sendMessage = async (message, id, userId, rev = true) => {
+export const sendMessage = async (message, messagebody, id, userId, rev = true) => {
   let confirm = 2
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
@@ -303,7 +297,6 @@ export const GetAllDontSendSms = () => {
             'UPDATE Sms SET status = ? WHERE status = ?',
             [2, 0],
             (tx, result) => {
-              // console.log('Update successful:', result);
             },
             (tx, error) => {
             }
@@ -326,41 +319,6 @@ export const GetAllDontSendSms = () => {
     });
   }
 }
-
-
-
-// export const dropAllTables = () => {
-//   db.transaction(tx => {
-//     // Drop tables if they exist
-//     tx.executeSql('DROP TABLE IF EXISTS SMS', [], (tx, result) => {
-//       console.log('SMS table dropped');
-//     }, (tx, error) => {
-//       console.log('Failed to drop SMS table:', error);
-//     });
-
-//     tx.executeSql('DROP TABLE IF EXISTS Users', [], (tx, result) => {
-//       console.log('Users table dropped');
-//     }, (tx, error) => {
-//       console.log('Failed to drop Users table:', error);
-//     });
-//   });
-// };
-
-// export const deleteAllData = () => {
-//   db.transaction(tx => {
-//     tx.executeSql('DELETE FROM Users', [], (tx, result) => {
-//       console.log('All users deleted');
-//     }, (tx, error) => {
-//       console.log('Failed to delete users:', error);
-//     });
-
-//     tx.executeSql('DELETE FROM SMS', [], (tx, result) => {
-//       console.log('All SMS deleted');
-//     }, (tx, error) => {
-//       console.log('Failed to delete SMS:', error);
-//     });
-//   });
-// };
 
 export const headlessNotificationListener = async ({ notification }) => {
   if (notification) {

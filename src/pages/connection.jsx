@@ -58,7 +58,6 @@ export const Connection = ({ navigation }) => {
         }
       }
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -100,12 +99,9 @@ export const Connection = ({ navigation }) => {
     const cardBlockedChannel = pusher.subscribe('card_blocked');
 
     cardBlockedChannel.bind('card_blocked', async function (data) {
-      // console.log('Card blocked event data:', data);
       let id = await AsyncStorage.getItem('id')
       setMessage(data.message.app_message)
-      console.log(data.message.app_message)
       if (id == data.message.user_id) {
-        console.log("Mushoooo")
         setText(data.message.app_message)
         await AsyncStorage.setItem('showPopUp', "1")
         setPopUp(true)

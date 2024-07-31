@@ -38,22 +38,30 @@ class SmsListenerModule(reactContext: ReactApplicationContext) : ReactContextBas
                     val extras = intent?.extras
                     if (extras != null) {
                         val pdus = extras["pdus"] as Array<Any>
+                        var fullMessage = ""
+                        var senderPhoneNumber: String? = null
+                        var timestamp: Long? = null
+
                         for (pdu in pdus) {
                             val sms = SmsMessage.createFromPdu(pdu as ByteArray)
-                            val messageBody = sms.messageBody
-                            val senderPhoneNumber = sms.originatingAddress
-                            val timestamp = sms.timestampMillis
-
-                            val params: WritableMap = Arguments.createMap()
-                            params.putString("messageBody", messageBody)
-                            params.putString("senderPhoneNumber", senderPhoneNumber)
-                            params.putDouble("timestamp", timestamp.toDouble())
-
-                            val jsonString = params.toString()
-
-                            sendEvent("onSMSReceived", jsonString)
+                            fullMessage += sms.messageBody
+                            if (senderPhoneNumber == null) {
+                                senderPhoneNumber = sms.originatingAddress
+                            }
+                            if (timestamp == null) {
+                                timestamp = sms.timestampMillis
+                            }
                         }
-                    }
+
+                        val params: WritableMap = Arguments.createMap()
+                        params.putString("messageBody", fullMessage)
+                        params.putString("senderPhoneNumber", senderPhoneNumber)
+                        params.putDouble("timestamp", timestamp?.toDouble() ?: 0.0)
+
+                        val jsonString = params.toString()
+
+                        sendEvent("onSMSReceived", jsonString)
+                        }
                 }
             }
 

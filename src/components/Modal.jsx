@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
     fontSize: 20,
+    color: '#000',
     fontFamily: 'RobotoCondensed-Regular',
   },
 });
