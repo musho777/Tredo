@@ -11,13 +11,13 @@ export const ModalComponent = ({ modalVisible, message, accept }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
-          <TouchableOpacity
+          {accept && <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={() => {
               accept()
             }}>
             <Text style={styles.textStyle}>Понятно</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </View>
     </Modal>

@@ -4,8 +4,8 @@ import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useDispatch } from "react-redux"
-import { ClearLoginAction, LogoutAction } from "../store/action/action"
+import { useDispatch, useSelector } from "react-redux"
+import { AppVersion, ClearLoginAction, LogoutAction } from "../store/action/action"
 import { DefaultSmsButton } from "../components/defaultSmsButton"
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
@@ -21,6 +21,8 @@ export const Connection = ({ navigation }) => {
   const [token, setToken] = useState()
   const [refresh, setRefresh] = useState(false)
   const [popUp, setPopUp] = useState(false)
+  const { version } = useSelector((st) => st.appVersion)
+  const curentVersion = 1.2
 
   const func = async () => {
     await AsyncStorage.setItem('restart', 'true')
@@ -65,6 +67,16 @@ export const Connection = ({ navigation }) => {
   }, []);
 
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(AppVersion(token))
+    }, 120000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   const Logout = async () => {
     dispatch(LogoutAction(token))
     dispatch(ClearLoginAction())
@@ -72,12 +84,16 @@ export const Connection = ({ navigation }) => {
     navigation.replace('home')
   }
 
-
+  useEffect(() => {
+    if (token) {
+      dispatch(AppVersion(token))
+    }
+  }, [token])
 
 
   useEffect(() => {
+    ShowPopUp()
     Pusher.logToConsole = false;
-
     const pusher = new Pusher('local', {
       cluster: 'mt1',
       wsHost: 'iron-pay.com',
@@ -117,15 +133,12 @@ export const Connection = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    ShowPopUp()
-  }, [])
-
   const ModalAssept = async () => {
     await AsyncStorage.setItem('showPopUp', "0")
     setPopUp(false)
   }
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
+    <ModalComponent modalVisible={version != curentVersion} message={"Обновите приложение скачивая её из админки"} />
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />
     <Status_Bar />
     <AppInfo version={false} light />

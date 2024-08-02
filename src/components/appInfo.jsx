@@ -26,7 +26,7 @@ export const AppInfo = ({ light, version = true }) => {
     </View>
     {version && <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Версия:</Text>
-      <Text style={styles.id}>{appVersion}</Text>
+      <Text style={styles.id}>1.2</Text>
     </View>}
   </View>
 }

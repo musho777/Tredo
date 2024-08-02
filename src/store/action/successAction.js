@@ -23,3 +23,10 @@ export const SuccessIsOnline = () => {
     type: 'SuccessIsOnline'
   }
 }
+
+export const SuccessAppVersion = (data) => {
+  return {
+    type: 'SuccessAppVersion',
+    data
+  }
+}

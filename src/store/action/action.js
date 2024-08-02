@@ -1,6 +1,6 @@
 import { ErrorIsOnline, ErrorLogOut, ErrorLogin } from './errorAction';
 import { StartLogOut, StartLogin } from './startAction';
-import { SuccessIsOnline, SuccessLogOut, SuccessLogin } from './successAction';
+import { SuccessAppVersion, SuccessIsOnline, SuccessLogOut, SuccessLogin } from './successAction';
 export const LoginAction = (token) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -167,5 +167,27 @@ export const SinglSmsCount = (count) => {
   return {
     type: 'SinglSmsCount',
     count,
+  }
+}
+
+export const AppVersion = (token) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', `Bearer ${token}`);
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow',
+  };
+  return (dispatch) => {
+    fetch(`https://iron-pay.com/api/app_version`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status) {
+          dispatch(SuccessAppVersion(result.version))
+        }
+      })
+      .catch(error => {
+      });
   }
 }
