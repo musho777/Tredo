@@ -45,7 +45,7 @@ export const AllMsgBody = ({ username, data, last, index }) => {
     <View style={styles.name}>
       <View style={styles.block}>
         <Text style={styles.text1}>Отправлено:</Text>
-        <Text style={styles.text2}>#{index + 1}</Text>
+        <Text style={styles.text2}>#{index}</Text>
         {data.status == 1 && <View style={styles.icon}>
           <SuccessSvg />
         </View>

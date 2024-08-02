@@ -16,7 +16,6 @@ export const AllMsg = ({ route, navigation }) => {
   const [value, setValue] = useState('')
   const smsSinglPage = useSelector((st) => st.smsSinglPage)
   const dispatch = useDispatch()
-  console.log(smsSinglPage.count)
 
   useEffect(() => {
     if (smsSinglPage.data) {
@@ -40,7 +39,7 @@ export const AllMsg = ({ route, navigation }) => {
 
 
   const renderItem = ({ item, index }) => {
-    return <AllMsgBody username={username} index={index} last={index == sms?.length - 1} data={item} key={index} />
+    return <AllMsgBody username={username} index={smsSinglPage.count - index} last={index == sms?.length - 1} data={item} key={index} />
   }
 
 

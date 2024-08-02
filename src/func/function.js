@@ -326,13 +326,13 @@ export const GetAllDontSendSms = () => {
 }
 
 export const headlessNotificationListener = async ({ notification }) => {
-  if (notification) {
+  let token = await AsyncStorage.getItem('token')
+  if (notification && token) {
     const item = JSON.parse(notification)
     const message = {
       body: item.text,
       timestamp: JSON.parse(item.time),
       originatingAddress: item.title,
-      sortKey: item.sortKey
     };
 
     if (item.app != 'com.tredo') {

@@ -111,7 +111,6 @@ export const CheckOnline = (token) => {
     fetch(`https://iron-pay.com/api/auth_user_info`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        // console.log(result.status, 'result.status')
         if (result.status) {
           dispatch(SuccessIsOnline())
         }

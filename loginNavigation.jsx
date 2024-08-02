@@ -5,9 +5,8 @@ import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
-import { RNAndroidNotificationListenerHeadlessJsName } from 'react-native-android-notification-listener';
-import { AppRegistry, DeviceEventEmitter } from 'react-native';
-import { createTables, headlessNotificationListener, isOnline, setSms } from './src/func/function';
+import { DeviceEventEmitter } from 'react-native';
+import { createTables, isOnline, setSms } from './src/func/function';
 import BackgroundTimer from 'react-native-background-timer';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -121,14 +120,12 @@ export function LoginNavigation() {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     } catch (error) {
-      console.log('Error in background task:', error);
     }
     finally {
       subscriber.remove();
       BackgroundTimer.clearInterval(intervalId);
     };
   }
-
 
   return (
     <Tab.Navigator
@@ -141,7 +138,5 @@ export function LoginNavigation() {
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
     </Tab.Navigator>
-  );
-
+  )
 }
-AppRegistry.registerHeadlessTask(RNAndroidNotificationListenerHeadlessJsName, () => headlessNotificationListener);
