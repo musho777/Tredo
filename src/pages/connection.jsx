@@ -22,7 +22,7 @@ export const Connection = ({ navigation }) => {
   const [refresh, setRefresh] = useState(false)
   const [popUp, setPopUp] = useState(false)
   const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.2
+  const curentVersion = 1.3
 
   const func = async () => {
     await AsyncStorage.setItem('restart', 'true')
@@ -133,12 +133,18 @@ export const Connection = ({ navigation }) => {
     }
   }
 
+  useEffect(() => {
+    if (version && (version != curentVersion)) {
+      Logout()
+    }
+  }, [version])
+
   const ModalAssept = async () => {
     await AsyncStorage.setItem('showPopUp', "0")
     setPopUp(false)
   }
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
-    <ModalComponent modalVisible={version != curentVersion} message={"Обновите приложение скачивая её из админки"} />
+    {/* <ModalComponent modalVisible={version && version != curentVersion} message={"Обновите приложение скачивая её из админки"} /> */}
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />
     <Status_Bar />
     <AppInfo version={false} light />

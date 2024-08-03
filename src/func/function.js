@@ -287,8 +287,8 @@ export const getSmsByUserId = (page = 1, pageSize = 10, userId, searchTerm = '')
 
 
 
+let dontSendmessages = [];
 export const GetAllDontSendSms = () => {
-  let dontSendmessages = [];
   if (dontSendmessages.length == 0) {
     db.transaction(tx => {
       tx.executeSql(
