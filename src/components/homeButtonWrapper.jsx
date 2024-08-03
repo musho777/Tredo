@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native"
-import { Button3 } from "./button3"
+import { Button } from "./button"
 import { useNavigation } from "@react-navigation/native"
 import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg } from "../../assets/svg"
 import { useDispatch } from "react-redux"
@@ -19,12 +19,12 @@ export const HomeButtonWrapper = ({ setRefresh }) => {
 
   return <View style={styles.buttonWrapper}>
     <View style={styles.buttonContiner}>
-      <Button3 onPress={() => HendelClikc('sms')} svg={<MessageSvg />} text={"Сообщения"} />
-      <Button3 onPress={() => HendelClikc('notification')} svg={<NotificationSvg />} text={"Уведомления"} />
+      <Button onPress={() => HendelClikc('sms')} svg={<MessageSvg />} text={"Сообщения"} />
+      <Button onPress={() => HendelClikc('notification')} svg={<NotificationSvg />} text={"Уведомления"} />
     </View>
     <View style={styles.buttonContiner}>
-      <Button3 onPress={() => setRefresh(true)} svg={<RefreshSvg />} text={"Обновления"} bg={"#e8f1ff"} />
-      <Button3 svg={<KeySvg />} text={"Разрешения"} bg={"#e8f1ff"} />
+      <Button onPress={() => setRefresh(true)} svg={<RefreshSvg />} text={"Обновления"} bg={"#e8f1ff"} />
+      <Button svg={<KeySvg />} text={"Разрешения"} bg={"#e8f1ff"} />
     </View>
   </View>
 }

@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Text, PermissionsAndroid, StyleSheet, Vibration, AppState, Linking, } from "react-native"
+import { TouchableOpacity, View, Text, PermissionsAndroid, StyleSheet } from "react-native"
 import { LogOut } from "../../assets/svg"
 import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
@@ -19,22 +19,10 @@ export const Connection = ({ navigation }) => {
   const [text, setText] = useState("")
   const dispatch = useDispatch()
   const [token, setToken] = useState()
-  const [refresh, setRefresh] = useState(false)
+  const [refresh, setRefresh] = useState(0)
   const [popUp, setPopUp] = useState(false)
   const { version } = useSelector((st) => st.appVersion)
   const curentVersion = 1.3
-
-  const func = async () => {
-    await AsyncStorage.setItem('restart', 'true')
-  }
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setRefresh(false)
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [refresh]);
-
 
   const getToken = async () => {
     setToken(await AsyncStorage.getItem('token'))
@@ -56,18 +44,9 @@ export const Connection = ({ navigation }) => {
     }
   }
 
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      func()
-    }, 2000);
     GoNextPage()
     getToken()
-    return () => clearTimeout(timer);
-  }, []);
-
-
-  useEffect(() => {
     const interval = setInterval(() => {
       dispatch(AppVersion(token))
     }, 120000);
@@ -144,7 +123,6 @@ export const Connection = ({ navigation }) => {
     setPopUp(false)
   }
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
-    {/* <ModalComponent modalVisible={version && version != curentVersion} message={"Обновите приложение скачивая её из админки"} /> */}
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />
     <Status_Bar />
     <AppInfo version={false} light />
@@ -153,9 +131,9 @@ export const Connection = ({ navigation }) => {
     </TouchableOpacity>
     <View>
       <Ping refresh={refresh} />
-      <HomeButtonWrapper setRefresh={(e) => setRefresh(e)} />
+      <HomeButtonWrapper setRefresh={(e) => setRefresh(refresh + 1)} />
       <DefaultSmsButton />
-      <Text style={styles.text4}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
+      <Text style={styles.text}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
     </View>
   </View>
 }
@@ -166,7 +144,7 @@ const styles = StyleSheet.create({
     top: 30,
     left: 15
   },
-  text4: {
+  text: {
     textAlign: 'center',
     marginTop: 25,
     color: "#7091d3",

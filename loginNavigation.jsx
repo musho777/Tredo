@@ -78,7 +78,7 @@ export function LoginNavigation() {
   };
 
   useEffect(() => {
-    stopTask();
+    stopTask()
     createTables()
   }, [])
 

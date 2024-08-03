@@ -1,6 +1,5 @@
-import { Dimensions, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { Dimensions, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import LinearGradient from 'react-native-linear-gradient';
-import { Button } from "../components/button";
 import { useEffect, useState } from "react";
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
@@ -56,7 +55,10 @@ export const Home = ({ navigation }) => {
             <Text style={styles.text2}>Введите секретный ключ для подключения устройства к приложению</Text>
           </View>
           <View style={styles.buttonWrapper}>
-            <Button onPress={() => navigation.navigate('ScanScreen')} svg={<QrSvg />} text={"Войти по QR"} />
+            <TouchableOpacity onPress={() => navigation.navigate('ScanScreen')} style={[styles.button]}>
+              <QrSvg />
+              <Text style={styles.text}>Войти по QR</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <Text style={styles.text3}>Секретный ключ</Text>
@@ -131,5 +133,20 @@ const styles = StyleSheet.create({
   text3: {
     color: 'white',
     fontFamily: 'RobotoCondensed-Regular'
+  },
+  button: {
+    backgroundColor: "#3282f1",
+    paddingVertical: 8,
+    paddingHorizontal: 35,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: 'row',
+    gap: 10,
+  },
+  text: {
+    fontSize: 15,
+    fontFamily: 'RobotoCondensed-SemiBold',
+    color: 'white'
   }
 });

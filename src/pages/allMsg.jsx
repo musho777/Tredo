@@ -10,7 +10,6 @@ import { getSmsByUserId } from "../func/function";
 export const AllMsg = ({ route, navigation }) => {
 
   const [page, setPage] = useState(1)
-  // const count = route.params.count
   const username = route.params.username
   const [sms, setSms] = useState()
   const [value, setValue] = useState('')
