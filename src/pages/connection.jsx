@@ -22,7 +22,7 @@ export const Connection = ({ navigation }) => {
   const [refresh, setRefresh] = useState(0)
   const [popUp, setPopUp] = useState(false)
   const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.4
+  const curentVersion = 1.3
 
   const getToken = async () => {
     setToken(await AsyncStorage.getItem('token'))

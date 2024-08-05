@@ -15,7 +15,7 @@ export const Home = ({ navigation }) => {
   const login = useSelector((st) => st.login)
   const dispatch = useDispatch()
   const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.4
+  const curentVersion = 1.3
 
 
   const Login = () => {

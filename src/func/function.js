@@ -98,7 +98,7 @@ export const setSms = async (smsData, type = 'sms') => {
                   [userId, message, status, sentAt, username],
                   async (tx, result) => {
                     const smsId = result.insertId;
-                    await sendMessage(smsData, smsId, userId);
+                    await sendMessage(smsData, smsId, userId, true, type);
                   },
                   (tx, error) => {
                   }
@@ -137,7 +137,7 @@ export const setSms = async (smsData, type = 'sms') => {
                 [userId, message, sentAt, username],
                 async (tx, result) => {
                   const smsId = result.insertId;
-                  await sendMessage(smsData, smsId, userId);
+                  await sendMessage(smsData, smsId, userId, true, type);
                   store.dispatch(AddCount());
                   store.dispatch(AddSms({
                     last_message: message,
@@ -164,7 +164,7 @@ export const setSms = async (smsData, type = 'sms') => {
   });
 };
 
-export const sendMessage = async (message, id, userId, rev = true) => {
+export const sendMessage = async (message, id, userId, rev = true, type) => {
   let confirm = 2
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
@@ -178,7 +178,8 @@ export const sendMessage = async (message, id, userId, rev = true) => {
     body: JSON.stringify({
       title: message.originatingAddress,
       unix: message.timestamp,
-      message: message.body
+      message: message.body,
+      type: type == 'sms' ? 'message' : 'push'
     }),
     redirect: 'follow'
   };
@@ -292,7 +293,7 @@ export const GetAllDontSendSms = () => {
   if (dontSendmessages.length == 0) {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM Sms WHERE status = ?',
+        'SELECT Sms.*, Users.type FROM Sms INNER JOIN Users ON Sms.user_id = Users.user_id WHERE Sms.status = ?',
         [0],
         async (tx, result) => {
           for (let i = 0; i < result.rows.length; i++) {
@@ -313,7 +314,7 @@ export const GetAllDontSendSms = () => {
               timestamp: elm.sent_at,
               body: elm.message
             }
-            await sendMessage(temp, elm.sms_id, elm.user_id, false)
+            await sendMessage(temp, elm.sms_id, elm.user_id, false, elm.type)
             dontSendmessages.splice(i, 1);
             i--;
           }
