@@ -71,13 +71,14 @@ export function LoginNavigation() {
   };
 
   const stopTask = async () => {
-    await BackgroundService.stop();
+    await BackgroundService.stop()
     setTimeout(() => {
       startBackgroundTask();
     }, 1000)
   };
 
   useEffect(() => {
+    startBackgroundTask()
     stopTask()
     createTables()
   }, [])
@@ -97,21 +98,29 @@ export function LoginNavigation() {
     }
   }, [online])
 
+
+
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
     let intervalId;
-    let subscriber = DeviceEventEmitter.addListener(
-      'onSMSReceived',
-      message => {
-        const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
-        let data = {
-          body: messageBody,
-          originatingAddress: senderPhoneNumber,
-          timestamp: timestamp
-        }
-        setSms(data)
-      },
-    );
+    let subscriber
+    // await AsyncStorage.removeItem('isListenerRegistered')
+    let isListenerRegistered = await AsyncStorage.getItem('isListenerRegistered')
+    if (!isListenerRegistered) {
+      await AsyncStorage.setItem('isListenerRegistered', 'true')
+      subscriber = DeviceEventEmitter.addListener(
+        'onSMSReceived',
+        message => {
+          const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
+          let data = {
+            body: messageBody,
+            originatingAddress: senderPhoneNumber,
+            timestamp: timestamp
+          }
+          setSms(data)
+        },
+      );
+    }
     try {
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
@@ -122,7 +131,8 @@ export function LoginNavigation() {
     } catch (error) {
     }
     finally {
-      subscriber.remove();
+      DeviceEventEmitter.removeAllListeners('onSMSReceived');
+      await AsyncStorage.removeItem('isListenerRegistered')
       BackgroundTimer.clearInterval(intervalId);
     };
   }
