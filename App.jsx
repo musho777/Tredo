@@ -10,12 +10,11 @@ const App = () => {
   const [initialRouteName, setInitialRouteName] = useState('')
 
   const GetUser = async () => {
-    let permition1 = await AsyncStorage.getItem('defaultapp')
     let permition2 = await AsyncStorage.getItem('permition')
 
     let item = await AsyncStorage.getItem('token')
     if (item) {
-      if (permition1 == 'yes' && permition2 == 'yes') {
+      if (permition2 == 'yes') {
         setInitialRouteName('connection')
       }
       else {

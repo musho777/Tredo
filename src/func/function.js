@@ -3,6 +3,7 @@ import { store } from "../store/configStore";
 import { AddCount, AddNewSms, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
+import { Alert } from "react-native";
 
 const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
@@ -326,18 +327,36 @@ export const GetAllDontSendSms = () => {
   }
 }
 
+
+let lastEventTimestamp = 0;
+const DEBOUNCE_INTERVAL = 500;
 export const headlessNotificationListener = async ({ notification }) => {
   let token = await AsyncStorage.getItem('token')
+  const currentTimestamp = Date.now();
+  console.log(currentTimestamp - lastEventTimestamp < DEBOUNCE_INTERVAL)
+  if (currentTimestamp - lastEventTimestamp <= DEBOUNCE_INTERVAL) {
+    return;
+  }
+  lastEventTimestamp = currentTimestamp;
+
   if (notification && token) {
     const item = JSON.parse(notification)
-    const message = {
+    let message = {
       body: item.text,
       timestamp: JSON.parse(item.time),
       originatingAddress: item.title,
     };
 
     if (item.app != 'com.tredo') {
-      setSms(message, 'notification')
+      if (item.app == 'com.google.android.apps.messaging') {
+        // message.originatingAddress = item.title.replace(/\D/g, '');
+        if (item.title) {
+          setSms(message, 'sms')
+        }
+      }
+      else {
+        setSms(message, 'notification')
+      }
     }
   }
 }

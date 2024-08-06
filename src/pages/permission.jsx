@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { addSmsPermissionListener, requestDefaultSmsPermission } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
+import { ModalComponent } from "../components/Modal";
 
 
 export const Permission = ({ navigation }) => {
@@ -17,11 +18,7 @@ export const Permission = ({ navigation }) => {
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
   const [permitionSim, setPermitionSim] = useState(false)
   const [SmsPermitionAllow, setSmsPermitionAllow] = useState(false)
-
-
-  const handlePermissionRequest = () => {
-    requestDefaultSmsPermission();
-  };
+  const [errorText, setErrorText] = useState(false)
 
 
   async function requestBackgroundPermissions() {
@@ -166,11 +163,15 @@ export const Permission = ({ navigation }) => {
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       if (g2 && g4 && g5 && per) {
-        await AsyncStorage.setItem('permition', 'yes')
-        if (isDefaultSmsApp) {
+        if (isDefaultSmsApp || permitionforNotifcation) {
+          await AsyncStorage.setItem('permition', 'yes')
           navigation.replace("connection", {
             screen: "connectionPage"
           })
+          setErrorText(false)
+        }
+        else {
+          setErrorText(true)
         }
       }
     } catch (err) {
@@ -178,6 +179,7 @@ export const Permission = ({ navigation }) => {
   }
 
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
+    <ModalComponent message={'Вам следует выбрать Приложением SMS по-умолчанию или Активировать чтение пуш-уведомлений'} modalVisible={errorText} accept={() => setErrorText(false)} />
     <StatusBar
       animated={true}
       barStyle="dark-content"
@@ -189,7 +191,7 @@ export const Permission = ({ navigation }) => {
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
-        <Switch value={isDefaultSmsApp} onSwitch={() => handlePermissionRequest()} text="Сделать приложением SMS по-умолчанию" />
+        <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" />
         <Switch value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
         <Switch value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />

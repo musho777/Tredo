@@ -6,7 +6,6 @@ import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useDispatch, useSelector } from "react-redux"
 import { AppVersion, ClearLoginAction, LogoutAction } from "../store/action/action"
-import { DefaultSmsButton } from "../components/defaultSmsButton"
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
 import { Status_Bar } from "../components/statusBar"
@@ -22,12 +21,11 @@ export const Connection = ({ navigation }) => {
   const [refresh, setRefresh] = useState(0)
   const [popUp, setPopUp] = useState(false)
   const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.3
+  const curentVersion = 1.5
 
   const getToken = async () => {
     setToken(await AsyncStorage.getItem('token'))
   }
-
 
   const GoNextPage = async () => {
     try {
@@ -36,9 +34,7 @@ export const Connection = ({ navigation }) => {
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       if (!g2 || !g4 || !g5) {
         await AsyncStorage.setItem('permition', 'no')
-        if (defaultSms) {
-          navigation.navigate("permission")
-        }
+        navigation.navigate("permission")
       }
     } catch (err) {
     }
@@ -132,7 +128,7 @@ export const Connection = ({ navigation }) => {
     <View>
       <Ping refresh={refresh} />
       <HomeButtonWrapper setRefresh={(e) => setRefresh(refresh + 1)} />
-      <DefaultSmsButton />
+      {/* <DefaultSmsButton /> */}
       <Text style={styles.text}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
     </View>
   </View>

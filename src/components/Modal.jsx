@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export const ModalComponent = ({ modalVisible, message, accept }) => {
+export const ModalComponent = ({ modalVisible, message, accept, showButton = true }) => {
   return <View style={styles.centeredView}>
     <Modal
       animationType="slide"
@@ -11,7 +11,7 @@ export const ModalComponent = ({ modalVisible, message, accept }) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
-          {accept && <TouchableOpacity
+          {showButton && <TouchableOpacity
             style={[styles.button, styles.buttonClose]}
             onPress={() => {
               accept()

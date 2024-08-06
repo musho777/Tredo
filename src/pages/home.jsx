@@ -15,7 +15,7 @@ export const Home = ({ navigation }) => {
   const login = useSelector((st) => st.login)
   const dispatch = useDispatch()
   const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.3
+  const curentVersion = 1.5
 
 
   const Login = () => {
@@ -23,8 +23,6 @@ export const Home = ({ navigation }) => {
       dispatch(LoginAction(value))
     }
   }
-
-  console.log(version)
 
   useEffect(() => {
     if (login.status) {
@@ -46,7 +44,7 @@ export const Home = ({ navigation }) => {
       barStyle="dark-content"
       backgroundColor="white" />
     <ScrollView showsVerticalScrollIndicator={false}>
-      <ModalComponent modalVisible={version && version != curentVersion} message={"Обновите приложение скачивая её из админки"} />
+      <ModalComponent modalVisible={version && version != curentVersion} message={"Обновите приложение скачивая её из админки"} showButton={false} />
       <View style={[Styles.home, { height: windowHeight - 140 }]}>
         <AppInfo />
         <View>

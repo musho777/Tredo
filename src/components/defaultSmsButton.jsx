@@ -1,5 +1,5 @@
 import { NativeModules, Text, TouchableOpacity } from "react-native"
-import { requestDefaultSmsPermission } from "./SmsDefaultHandler";
+import { addSmsPermissionListener, requestDefaultSmsPermission } from "./SmsDefaultHandler";
 import { useEffect, useState } from "react";
 
 export const DefaultSmsButton = () => {
@@ -8,13 +8,27 @@ export const DefaultSmsButton = () => {
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
   const [check, setCheck] = useState(0)
 
+  useEffect(() => {
+    const listener = addSmsPermissionListener((message) => {
+      if (message == 'Success requesting ROLE_SMS!') {
+        console.log("yess")
+        setCheck(true)
+      }
+      else {
+        setCheck(false)
+      }
+    });
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
+
+
+
 
   const handlePermissionRequest = async () => {
     requestDefaultSmsPermission();
-    let time = setTimeout(() => {
-      setCheck(true)
-    }, 1500)
-    clearTimeout(time)
   };
 
   useEffect(() => {
