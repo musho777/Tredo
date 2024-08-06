@@ -3,7 +3,6 @@ import { store } from "../store/configStore";
 import { AddCount, AddNewSms, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
-import { Alert } from "react-native";
 
 const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
@@ -55,7 +54,7 @@ const handleButtonClick = (message) => {
 
 
 export const handleSirenaNotification = (message) => {
-
+  console.log(message, 'message')
   PushNotification.localNotification({
     channelId: "s-channel",
     title: "iron",
@@ -347,16 +346,8 @@ export const headlessNotificationListener = async ({ notification }) => {
       originatingAddress: item.title,
     };
 
-    if (item.app != 'com.tredo') {
-      if (item.app == 'com.google.android.apps.messaging') {
-        // message.originatingAddress = item.title.replace(/\D/g, '');
-        if (item.title) {
-          setSms(message, 'sms')
-        }
-      }
-      else {
-        setSms(message, 'notification')
-      }
+    if (item.app != 'com.tredo' && item.app != 'com.google.android.apps.messaging') {
+      setSms(message, 'notification')
     }
   }
 }

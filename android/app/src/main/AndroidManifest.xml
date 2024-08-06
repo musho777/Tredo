@@ -100,14 +100,14 @@
             </intent-filter>
 
       </activity>
-      <receiver
+      <!-- <receiver
         android:name=".sms.SmsReceiver"
         android:exported="true"
         android:permission="android.permission.BROADCAST_SMS">
         <intent-filter>
             <action android:name="android.provider.Telephony.SMS_DELIVER" />
         </intent-filter>
-    </receiver>
+    </receiver> -->
 
     <receiver
     android:name=".MmsReceiver"

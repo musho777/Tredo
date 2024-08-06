@@ -5,7 +5,7 @@ import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, PermissionsAndroid } from 'react-native';
 import { createTables, isOnline, setSms } from './src/func/function';
 import BackgroundTimer from 'react-native-background-timer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -98,6 +98,17 @@ export function LoginNavigation() {
     }
   }, [online])
 
+  const requestSmsPermission = async () => {
+    try {
+      const permission = await PermissionsAndroid
+        .request(PermissionsAndroid.PERMISSIONS.RECEIVE_SMS);
+    } catch (err) {
+    }
+  };
+
+  useEffect(() => {
+    requestSmsPermission();
+  }, []);
 
 
   const YourTask = async (taskDataArguments) => {

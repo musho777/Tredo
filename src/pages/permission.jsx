@@ -8,6 +8,7 @@ import { addSmsPermissionListener, requestDefaultSmsPermission } from "../compon
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 import { ModalComponent } from "../components/Modal";
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 
 export const Permission = ({ navigation }) => {
@@ -106,6 +107,7 @@ export const Permission = ({ navigation }) => {
       await PermissionsAndroid.requestMultiple([
         PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
         PermissionsAndroid.PERMISSIONS.READ_SMS,
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
       ]
       );
       setSmsPermitionAllow(true)
@@ -163,16 +165,11 @@ export const Permission = ({ navigation }) => {
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
       if (g2 && g4 && g5 && per) {
-        if (isDefaultSmsApp || permitionforNotifcation) {
-          await AsyncStorage.setItem('permition', 'yes')
-          navigation.replace("connection", {
-            screen: "connectionPage"
-          })
-          setErrorText(false)
-        }
-        else {
-          setErrorText(true)
-        }
+        await AsyncStorage.setItem('permition', 'yes')
+        navigation.replace("connection", {
+          screen: "connectionPage"
+        })
+        setErrorText(false)
       }
     } catch (err) {
     }
@@ -191,7 +188,7 @@ export const Permission = ({ navigation }) => {
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
-        <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" />
+        {/* <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" /> */}
         <Switch value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
         <Switch value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
