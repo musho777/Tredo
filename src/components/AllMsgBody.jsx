@@ -13,12 +13,16 @@ export const AllMsgBody = ({ username, data, last, index }) => {
   let minut = date.getMinutes()
   let hour = date.getHours()
   let seconds = date.getSeconds()
-
   const copyToClipboard = () => {
     let mount = date.getMonth()
     let day = date.getDate()
     let year = date.getFullYear()
-    Clipboard.setString(`${day}.${mount}.${year}, ${hour}:${minut}:${seconds}  ${username}: ${data.body}`);
+    Clipboard.setString(`
+${day}.${mount}.${year}, ${hour}:${minut}:${seconds}\n\
+\n\
+${username}\n\
+\n\
+${data.message}`);
   };
 
   if (seconds < 10) {

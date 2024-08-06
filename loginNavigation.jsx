@@ -6,7 +6,7 @@ import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { DeviceEventEmitter, PermissionsAndroid } from 'react-native';
-import { createTables, isOnline, setSms } from './src/func/function';
+import { createTables, GetAllDontSendSms, isOnline, setSms } from './src/func/function';
 import BackgroundTimer from 'react-native-background-timer';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -135,6 +135,7 @@ export function LoginNavigation() {
     try {
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
+        GetAllDontSendSms()
       }, 30000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
