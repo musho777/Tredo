@@ -108,11 +108,11 @@ export const Connection = ({ navigation }) => {
     }
   }
 
-  useEffect(() => {
-    if (version && (version != curentVersion)) {
-      Logout()
-    }
-  }, [version])
+  // useEffect(() => {
+  //   if (version && (version != curentVersion)) {
+  //     Logout()
+  //   }
+  // }, [version])
 
   const ModalAssept = async () => {
     await AsyncStorage.setItem('showPopUp', "0")

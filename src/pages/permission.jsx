@@ -8,7 +8,6 @@ import { addSmsPermissionListener, requestDefaultSmsPermission } from "../compon
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 import { ModalComponent } from "../components/Modal";
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 
 export const Permission = ({ navigation }) => {
@@ -21,7 +20,11 @@ export const Permission = ({ navigation }) => {
   const [permitionSim, setPermitionSim] = useState(false)
   const [SmsPermitionAllow, setSmsPermitionAllow] = useState(false)
   const [notificatonPermition, setNotificatonPermition] = useState(false)
-  const [errorText, setErrorText] = useState(false)
+  const [errorSim, setErrorSim] = useState(false)
+  const [errorContact, setErrorContact] = useState(false)
+  const [errorPhone, setErrorPhone] = useState(false)
+  const [errorNotfication, setErrorNotification] = useState(false)
+
 
 
   async function requestBackgroundPermissions() {
@@ -99,8 +102,27 @@ export const Permission = ({ navigation }) => {
 
   const requestNotificationPermition = async () => {
     try {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      setNotificatonPermition(true)
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setNotificatonPermition(true)
+        setErrorNotification(false)
+      }
+      else {
+        setNotificatonPermition(false)
+      }
+      if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        setNotificatonPermition(false);
+        // Guide user to the app settings
+        Alert.alert(
+          'Permission Required',
+          'Notification permission is required for this feature. Please enable it in the app settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+      }
     } catch (err) {
       setNotificatonPermition(false)
     }
@@ -108,8 +130,27 @@ export const Permission = ({ navigation }) => {
 
   const requestForContact = async () => {
     try {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS);
-      setPermitionForContact(true)
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS);
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setPermitionForContact(true)
+        setErrorContact(false)
+      }
+      else {
+        setPermitionForContact(false)
+      }
+      if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        setPermitionForContact(false);
+        // Guide user to the app settings
+        Alert.alert(
+          'Permission Required',
+          'Contact permission is required for this feature. Please enable it in the app settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+      }
     } catch (err) {
       setPermitionForContact(false)
     }
@@ -119,7 +160,7 @@ export const Permission = ({ navigation }) => {
 
   const requestPhonePermissions = async () => {
     try {
-      await PermissionsAndroid.request(
+      const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.CALL_PHONE,
         {
           title: "Phone State Permission",
@@ -130,7 +171,26 @@ export const Permission = ({ navigation }) => {
           buttonPositive: "OK"
         }
       );
-      setPermitionSim(true)
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setPermitionSim(true);
+        setErrorSim(false)
+      }
+      else {
+        setPermitionSim(false);
+      }
+      if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        setPermitionSim(false);
+        // Guide user to the app settings
+        Alert.alert(
+          'Permission Required',
+          'Phone state permission is required for this feature. Please enable it in the app settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+      }
     } catch (err) {
       setPermitionSim(false)
     }
@@ -138,8 +198,26 @@ export const Permission = ({ navigation }) => {
 
   async function requestSmsPermissions() {
     try {
-      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS,)
-      setSmsPermitionAllow(true)
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS,)
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        setSmsPermitionAllow(true)
+        setErrorPhone(false)
+      }
+      else {
+        setSmsPermitionAllow(false)
+      }
+      if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        setSmsPermitionAllow(false);
+        Alert.alert(
+          'Permission Required',
+          'SMS permission is required for this feature. Please enable it in the app settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+          { cancelable: false }
+        );
+      }
     } catch (err) {
       setSmsPermitionAllow(false)
     }
@@ -193,7 +271,35 @@ export const Permission = ({ navigation }) => {
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
-      const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+      let g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+      if (Platform.Version <= 33) {
+        g1 = true
+      }
+      if (!g5) {
+        setErrorSim(true)
+      }
+      else {
+        setErrorSim(false)
+      }
+
+      if (!g4) {
+        setErrorContact(true)
+      }
+      else {
+        setErrorContact(false)
+      }
+      if (!g2) {
+        setErrorPhone(true)
+      }
+      else {
+        setErrorPhone(false)
+      }
+      if (!g1) {
+        setErrorNotification(true)
+      }
+      else {
+        setErrorNotification(false)
+      }
 
       if (g1 && g2 && g4 && g5 && per) {
         await AsyncStorage.setItem('permition', 'yes')
@@ -207,7 +313,6 @@ export const Permission = ({ navigation }) => {
   }
 
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
-    {/* <ModalCom ponent message={'Вам следует выбрать Приложением SMS по-умолчанию или Активировать чтение пуш-уведомлений'} modalVisible={errorText} accept={() => setErrorText(false)} /> */}
     <StatusBar
       animated={true}
       barStyle="dark-content"
@@ -220,10 +325,12 @@ export const Permission = ({ navigation }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
         {/* <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" /> */}
-        <Switch value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
-        <Switch value={notificatonPermition} onSwitch={() => requestNotificationPermition()} text="Доступ к отправки пуш уведомлений" />
-        <Switch value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
-        <Switch value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
+        <Switch error={errorSim} value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
+        {Platform.Version >= 33 &&
+          <Switch error={errorNotfication} value={notificatonPermition} onSwitch={() => requestNotificationPermition()} text="Доступ к отправки пуш уведомлений" />
+        }
+        <Switch error={errorContact} value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
+        <Switch error={errorPhone} value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
       </View>
     </ScrollView>

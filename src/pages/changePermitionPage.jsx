@@ -1,17 +1,15 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View, AppState } from "react-native"
+import { ScrollView, StatusBar, StyleSheet, Text, View, AppState, Platform } from "react-native"
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
-import { ModalComponent } from "../components/Modal";
 import { Button2 } from "../components/button2";
 
 
 export const ChangePermitionPage = ({ navigation }) => {
 
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
-  const [errorText, setErrorText] = useState(false)
 
   const CheckAllNotificationGetPermitiopn = async () => {
     const status = await RNAndroidNotificationListener.getPermissionStatus()
@@ -57,7 +55,9 @@ export const ChangePermitionPage = ({ navigation }) => {
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={{ gap: 20 }}>
         <Switch value={true} text="Доступ к информации о сим картах" />
-        <Switch value={true} text="Доступ к отправки пуш уведомлений" />
+        {Platform.Version >= 33 &&
+          <Switch value={true} text="Доступ к отправки пуш уведомлений" />
+        }
         <Switch value={true} text="Разрешить приложению LightPay доступ к контактам?" />
         <Switch value={true} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />

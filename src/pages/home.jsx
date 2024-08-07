@@ -8,15 +8,11 @@ import { QrSvg } from "../../assets/svg";
 import { useDispatch, useSelector } from "react-redux";
 import { LoginAction } from "../store/action/action";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ModalComponent } from "../components/Modal";
 
 export const Home = ({ navigation }) => {
   const [value, setValue] = useState("")
   const login = useSelector((st) => st.login)
   const dispatch = useDispatch()
-  const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.4
-
 
   const Login = () => {
     if (value) {
@@ -44,7 +40,6 @@ export const Home = ({ navigation }) => {
       barStyle="dark-content"
       backgroundColor="white" />
     <ScrollView showsVerticalScrollIndicator={false}>
-      <ModalComponent modalVisible={version && version != curentVersion} message={"Обновите приложение скачивая её из админки"} showButton={false} />
       <View style={[Styles.home, { height: windowHeight - 140 }]}>
         <AppInfo />
         <View>

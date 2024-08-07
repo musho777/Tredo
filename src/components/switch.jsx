@@ -3,7 +3,7 @@ import ToggleSwitch from "toggle-switch-react-native"
 import { MsgSvg } from "../../assets/svg"
 import { useEffect, useState } from "react"
 
-export const Switch = ({ text, onSwitch, value = false }) => {
+export const Switch = ({ error, text, onSwitch, value = false }) => {
   const [isEnabled, setIsEnabled] = useState(value);
   const toggleSwitch = () => {
     { onSwitch && onSwitch() }
@@ -18,7 +18,7 @@ export const Switch = ({ text, onSwitch, value = false }) => {
   return <View style={styles.block}>
     <View style={styles.continer}>
       <MsgSvg />
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, error && { color: 'red' }]}>{text}</Text>
     </View>
     <ToggleSwitch
       isOn={value}
