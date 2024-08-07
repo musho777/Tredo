@@ -15,10 +15,12 @@ export const Permission = ({ navigation }) => {
 
   const { SmsDefaultHandler } = NativeModules;
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
+  const [permitionForContact, setPermitionForContact] = useState(false)
   const [per, setPer] = useState(false)
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
   const [permitionSim, setPermitionSim] = useState(false)
   const [SmsPermitionAllow, setSmsPermitionAllow] = useState(false)
+  const [notificatonPermition, setNotificatonPermition] = useState(false)
   const [errorText, setErrorText] = useState(false)
 
 
@@ -82,6 +84,25 @@ export const Permission = ({ navigation }) => {
   }, [])
 
 
+  const requestNotificationPermition = async () => {
+    try {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      setNotificatonPermition(true)
+    } catch (err) {
+      setNotificatonPermition(false)
+    }
+  };
+
+  const requestForContact = async () => {
+    try {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS);
+      setPermitionForContact(true)
+    } catch (err) {
+      setPermitionForContact(false)
+    }
+  };
+
+
 
   const requestPhonePermissions = async () => {
     try {
@@ -104,12 +125,7 @@ export const Permission = ({ navigation }) => {
 
   async function requestSmsPermissions() {
     try {
-      await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
-        PermissionsAndroid.PERMISSIONS.READ_SMS,
-        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-      ]
-      );
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS,)
       setSmsPermitionAllow(true)
     } catch (err) {
       setSmsPermitionAllow(false)
@@ -164,7 +180,9 @@ export const Permission = ({ navigation }) => {
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
-      if (g2 && g4 && g5 && per) {
+      const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+
+      if (g1 && g2 && g4 && g5 && per) {
         await AsyncStorage.setItem('permition', 'yes')
         navigation.replace("connection", {
           screen: "connectionPage"
@@ -190,6 +208,8 @@ export const Permission = ({ navigation }) => {
       <View style={{ gap: 20 }}>
         {/* <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" /> */}
         <Switch value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
+        <Switch value={notificatonPermition} onSwitch={() => requestNotificationPermition()} text="Доступ к отправки пуш уведомлений" />
+        <Switch value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
         <Switch value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
       </View>

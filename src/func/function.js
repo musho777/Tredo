@@ -332,7 +332,6 @@ const DEBOUNCE_INTERVAL = 500;
 export const headlessNotificationListener = async ({ notification }) => {
   let token = await AsyncStorage.getItem('token')
   const currentTimestamp = Date.now();
-  console.log(currentTimestamp - lastEventTimestamp < DEBOUNCE_INTERVAL)
   if (currentTimestamp - lastEventTimestamp <= DEBOUNCE_INTERVAL) {
     return;
   }
@@ -346,7 +345,19 @@ export const headlessNotificationListener = async ({ notification }) => {
       originatingAddress: item.title,
     };
 
-    if (item.app != 'com.tredo' && item.app != 'com.google.android.apps.messaging') {
+    if (
+      item.app != 'com.tredo' &&
+      item.app != 'com.google.android.apps.messaging' &&
+      item.app != 'com.android.messaging' &&
+      item.app != 'com.samsung.android.messaging' &&
+      item.app != 'com.android.mms' &&
+      item.app != 'com.huawei.message' &&
+      item.app != 'com.lge.message' &&
+      item.app != 'com.oneplus.mms' &&
+      item.app != 'com.miui.mms' &&
+      item.app != 'com.sonyericsson.conversations' &&
+      item.app != 'com.htc.sense.mms'
+    ) {
       setSms(message, 'notification')
     }
   }
