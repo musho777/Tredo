@@ -24,7 +24,7 @@ export const HomeButtonWrapper = ({ setRefresh }) => {
     </View>
     <View style={styles.buttonContiner}>
       <Button onPress={() => setRefresh(true)} svg={<RefreshSvg />} text={"Обновления"} bg={"#e8f1ff"} />
-      <Button svg={<KeySvg />} text={"Разрешения"} bg={"#e8f1ff"} />
+      <Button onPress={() => navigation.navigate('changePermitionPage')} svg={<KeySvg />} text={"Разрешения"} bg={"#e8f1ff"} />
     </View>
   </View>
 }

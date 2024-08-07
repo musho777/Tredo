@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { ClearLoginAction } from './src/store/action/action';
+import { ChangePermitionPage } from './src/pages/changePermitionPage';
 
 
 export function LoginNavigation() {
@@ -159,6 +160,7 @@ export function LoginNavigation() {
       <Tab.Screen name="connectionPage" component={Connection} />
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
+      <Tab.Screen name="changePermitionPage" component={ChangePermitionPage} />
     </Tab.Navigator>
   )
 }

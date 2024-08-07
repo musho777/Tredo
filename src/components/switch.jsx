@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 export const Switch = ({ text, onSwitch, value = false }) => {
   const [isEnabled, setIsEnabled] = useState(value);
   const toggleSwitch = () => {
-    onSwitch()
+    { onSwitch && onSwitch() }
     if (!isEnabled)
       setIsEnabled(previousState => !previousState);
   }

@@ -63,6 +63,7 @@ export const Permission = ({ navigation }) => {
     const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
     const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
     const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
+    const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
     CheckAllNotificationGetPermitiopn()
     if (g5) {
       setPermitionSim(true)
@@ -70,11 +71,23 @@ export const Permission = ({ navigation }) => {
     else {
       setPermitionSim(false)
     }
-    if (g4 && g2) {
+    if (g2) {
       setSmsPermitionAllow(true)
     }
     else {
       setSmsPermitionAllow(false)
+    }
+    if (g4) {
+      setPermitionForContact(true)
+    }
+    else {
+      setPermitionForContact(false)
+    }
+    if (g1) {
+      setNotificatonPermition(true)
+    }
+    else {
+      setNotificatonPermition(false)
     }
   }
 
@@ -194,7 +207,7 @@ export const Permission = ({ navigation }) => {
   }
 
   return <View style={[Styles.home, { justifyContent: 'flex-start', gap: 30 }]}>
-    <ModalComponent message={'Вам следует выбрать Приложением SMS по-умолчанию или Активировать чтение пуш-уведомлений'} modalVisible={errorText} accept={() => setErrorText(false)} />
+    {/* <ModalCom ponent message={'Вам следует выбрать Приложением SMS по-умолчанию или Активировать чтение пуш-уведомлений'} modalVisible={errorText} accept={() => setErrorText(false)} /> */}
     <StatusBar
       animated={true}
       barStyle="dark-content"

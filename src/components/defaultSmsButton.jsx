@@ -11,7 +11,6 @@ export const DefaultSmsButton = () => {
   useEffect(() => {
     const listener = addSmsPermissionListener((message) => {
       if (message == 'Success requesting ROLE_SMS!') {
-        console.log("yess")
         setCheck(true)
       }
       else {

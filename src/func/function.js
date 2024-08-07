@@ -54,7 +54,6 @@ const handleButtonClick = (message) => {
 
 
 export const handleSirenaNotification = (message) => {
-  console.log(message, 'message')
   PushNotification.localNotification({
     channelId: "s-channel",
     title: "iron",
