@@ -5,7 +5,7 @@ import { SmsPage } from './src/pages/SmsPage';
 import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
-import { DeviceEventEmitter, PermissionsAndroid } from 'react-native';
+import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import { createTables, GetAllDontSendSms, isOnline, setSms } from './src/func/function';
 import BackgroundTimer from 'react-native-background-timer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -116,7 +116,6 @@ export function LoginNavigation() {
     const { delay } = taskDataArguments;
     let intervalId;
     let subscriber
-    // await AsyncStorage.removeItem('isListenerRegistered')
     let isListenerRegistered = await AsyncStorage.getItem('isListenerRegistered')
     if (!isListenerRegistered) {
       await AsyncStorage.setItem('isListenerRegistered', 'true')

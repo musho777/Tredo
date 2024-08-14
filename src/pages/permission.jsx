@@ -4,10 +4,9 @@ import { AppInfo } from "../components/appInfo";
 import { Button2 } from "../components/button2";
 import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
-import { addSmsPermissionListener, requestDefaultSmsPermission } from "../components/SmsDefaultHandler";
+import { addSmsPermissionListener } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
-import { ModalComponent } from "../components/Modal";
 
 
 export const Permission = ({ navigation }) => {
@@ -26,22 +25,6 @@ export const Permission = ({ navigation }) => {
   const [errorNotfication, setErrorNotification] = useState(false)
 
 
-
-  async function requestBackgroundPermissions() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-        title: 'Background Task Permission',
-        message: 'Allow the app to run background tasks after device reboots.',
-        buttonPositive: 'OK',
-      });
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        setPer(true)
-      }
-    } catch (err) {
-      console.warn('Error while requesting permission:', err);
-    }
-  }
 
   const SetAsincDefault = async () => {
     setIsDefaultSmsApp(true);
@@ -232,7 +215,7 @@ export const Permission = ({ navigation }) => {
     }).catch((error) => {
       console.error(error);
     });
-    requestBackgroundPermissions()
+    // requestBackgroundPermissions()
   }, [])
 
 
@@ -258,6 +241,7 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
+    // openBatteryOptimizationSettings()
     const subscription = AppState.addEventListener('change', CheckAllNotificationGetPermitiopn);
 
     return () => {
@@ -301,7 +285,7 @@ export const Permission = ({ navigation }) => {
         setErrorNotification(false)
       }
 
-      if (g1 && g2 && g4 && g5 && per) {
+      if (g1 && g2 && g4 && g5) {
         await AsyncStorage.setItem('permition', 'yes')
         navigation.replace("connection", {
           screen: "connectionPage"
