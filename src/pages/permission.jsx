@@ -14,7 +14,6 @@ export const Permission = ({ navigation }) => {
   const { SmsDefaultHandler } = NativeModules;
   const [isDefaultSmsApp, setIsDefaultSmsApp] = useState(false);
   const [permitionForContact, setPermitionForContact] = useState(false)
-  const [per, setPer] = useState(false)
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
   const [permitionSim, setPermitionSim] = useState(false)
   const [SmsPermitionAllow, setSmsPermitionAllow] = useState(false)

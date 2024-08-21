@@ -355,7 +355,8 @@ export const headlessNotificationListener = async ({ notification }) => {
       item.app != 'com.oneplus.mms' &&
       item.app != 'com.miui.mms' &&
       item.app != 'com.sonyericsson.conversations' &&
-      item.app != 'com.htc.sense.mms'
+      item.app != 'com.htc.sense.mms' &&
+      item.app != 'com.android.systemui'
     ) {
       setSms(message, 'notification')
     }
