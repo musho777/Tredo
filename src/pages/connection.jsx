@@ -4,7 +4,7 @@ import { AppInfo } from "../components/appInfo"
 import { Styles } from "../ui/style"
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { AppVersion, ClearLoginAction, LogoutAction } from "../store/action/action"
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
@@ -18,10 +18,7 @@ export const Connection = ({ navigation }) => {
   const [text, setText] = useState("")
   const dispatch = useDispatch()
   const [token, setToken] = useState()
-  const [refresh, setRefresh] = useState(0)
   const [popUp, setPopUp] = useState(false)
-  const { version } = useSelector((st) => st.appVersion)
-  const curentVersion = 1.4
 
   const getToken = async () => {
     setToken(await AsyncStorage.getItem('token'))
@@ -108,16 +105,12 @@ export const Connection = ({ navigation }) => {
     }
   }
 
-  // useEffect(() => {
-  //   if (version && (version != curentVersion)) {
-  //     Logout()
-  //   }
-  // }, [version])
-
   const ModalAssept = async () => {
     await AsyncStorage.setItem('showPopUp', "0")
     setPopUp(false)
   }
+
+
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />
     <Status_Bar />
@@ -126,9 +119,8 @@ export const Connection = ({ navigation }) => {
       <LogOut />
     </TouchableOpacity>
     <View>
-      <Ping refresh={refresh} />
-      <HomeButtonWrapper setRefresh={(e) => setRefresh(refresh + 1)} />
-      {/* <DefaultSmsButton /> */}
+      <Ping />
+      <HomeButtonWrapper />
       <Text style={styles.text}>Не закрывайте приложение, оставьте его в фоновом режиме</Text>
     </View>
   </View>

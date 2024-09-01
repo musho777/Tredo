@@ -1,12 +1,12 @@
 import { StyleSheet, View } from "react-native"
 import { Button } from "./button"
 import { useNavigation } from "@react-navigation/native"
-import { KeySvg, MessageSvg, NotificationSvg, RefreshSvg } from "../../assets/svg"
+import { AppsSvg, KeySvg, MessageSvg, NotificationSvg, RefreshSvg } from "../../assets/svg"
 import { useDispatch } from "react-redux"
 import { ClearAllSms } from "../store/action/action"
 import { getPaginatedUsers, getTotalSmsUserCount } from "../func/function"
 
-export const HomeButtonWrapper = ({ setRefresh }) => {
+export const HomeButtonWrapper = () => {
   const navigation = useNavigation()
   const dispatch = useDispatch()
 
@@ -23,7 +23,7 @@ export const HomeButtonWrapper = ({ setRefresh }) => {
       <Button onPress={() => HendelClikc('notification')} svg={<NotificationSvg />} text={"Уведомления"} />
     </View>
     <View style={styles.buttonContiner}>
-      <Button onPress={() => setRefresh(true)} svg={<RefreshSvg />} text={"Обновления"} bg={"#e8f1ff"} />
+      <Button onPress={() => navigation.navigate('AppsPage')} svg={<AppsSvg />} text={"Приложения"} bg={"#e8f1ff"} />
       <Button onPress={() => navigation.navigate('changePermitionPage')} svg={<KeySvg />} text={"Разрешения"} bg={"#e8f1ff"} />
     </View>
   </View>

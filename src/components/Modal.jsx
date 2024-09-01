@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-export const ModalComponent = ({ modalVisible, message, accept, showButton = true }) => {
+export const ModalComponent = ({ showCancelButton = false, reject = () => { }, modalVisible, message, accept, showButton = true, buttonText = 'Понятно' }) => {
   return <View style={styles.centeredView}>
     <Modal
       animationType="slide"
@@ -11,13 +11,22 @@ export const ModalComponent = ({ modalVisible, message, accept, showButton = tru
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{message}</Text>
-          {showButton && <TouchableOpacity
-            style={[styles.button, styles.buttonClose]}
-            onPress={() => {
-              accept()
-            }}>
-            <Text style={styles.textStyle}>Понятно</Text>
-          </TouchableOpacity>}
+          <View style={{ gap: 10 }}>
+            {showButton && <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                accept()
+              }}>
+              <Text style={styles.textStyle}>{buttonText}</Text>
+            </TouchableOpacity>}
+            {showCancelButton && <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => {
+                reject()
+              }}>
+              <Text style={styles.textStyle}>Вернуться в меню</Text>
+            </TouchableOpacity>}
+          </View>
         </View>
       </View>
     </Modal>

@@ -250,6 +250,7 @@ export const Permission = ({ navigation }) => {
 
 
   const GoNextPage = async () => {
+    let data = []
     try {
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
@@ -286,6 +287,7 @@ export const Permission = ({ navigation }) => {
 
       if (g1 && g2 && g4 && g5) {
         await AsyncStorage.setItem('permition', 'yes')
+        await AsyncStorage.setItem('notData', JSON.stringify(data))
         navigation.replace("connection", {
           screen: "connectionPage"
         })

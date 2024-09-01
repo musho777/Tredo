@@ -11,4 +11,9 @@ export const Styles = StyleSheet.create({
     paddingHorizontal: 30,
     position: 'relative',
   },
+  body: {
+    backgroundColor: "#eef4ff",
+    height: "90%",
+    paddingHorizontal: 30,
+  },
 });

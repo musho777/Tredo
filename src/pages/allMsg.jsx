@@ -5,6 +5,7 @@ import { ClearSvg, SearchSvg } from "../../assets/svg";
 import { useDispatch, useSelector } from "react-redux";
 import { ClearSinglPage } from "../store/action/action";
 import { getSmsByUserId } from "../func/function";
+import { Styles } from "../ui/style";
 
 
 export const AllMsg = ({ route, navigation }) => {
@@ -69,7 +70,7 @@ export const AllMsg = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
     </View>
-    <FlatList style={styles.body}
+    <FlatList style={Styles.body}
       data={sms}
       renderItem={renderItem}
       onEndReached={() => setPage(page + 1)}>
@@ -121,11 +122,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderBottomColor: '#c3c3c3',
     borderBottomWidth: 2,
-  },
-  body: {
-    backgroundColor: "#eef4ff",
-    height: "90%",
-    paddingHorizontal: 30,
   },
   AllSms: {
     color: '#236fe1',

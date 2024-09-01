@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { ClearLoginAction } from './src/store/action/action';
 import { ChangePermitionPage } from './src/pages/changePermitionPage';
+import { AppsPage } from './src/pages/AppsPage';
 
 
 export function LoginNavigation() {
@@ -157,6 +158,7 @@ export function LoginNavigation() {
         headerShown: false
       })}>
       <Tab.Screen name="connectionPage" component={Connection} />
+      <Tab.Screen name="AppsPage" component={AppsPage} />
       <Tab.Screen name="SmsPage" component={SmsPage} />
       <Tab.Screen name="AllMsg" component={AllMsg} />
       <Tab.Screen name="changePermitionPage" component={ChangePermitionPage} />

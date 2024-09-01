@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native'
 import DeviceInfo from 'react-native-device-info';
 
-export const Ping = ({ refresh }) => {
+export const Ping = () => {
 
   const [systemVersion, setSystemVersion] = useState('')
   const [pingResult, setPingTime] = useState(null);
@@ -21,12 +21,6 @@ export const Ping = ({ refresh }) => {
     setSystemVersion(DeviceInfo.getSystemVersion());
     fetchPingTime()
   }, []);
-
-  useEffect(() => {
-    if (refresh) {
-      fetchPingTime()
-    }
-  }, [refresh])
 
   return <View style={{ alignItems: 'center' }}>
     <Image style={styles.image} source={require('../../assets/image/radio.png')} />

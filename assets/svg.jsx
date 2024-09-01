@@ -243,3 +243,23 @@ export const LogOut = () => {
     />
   </Svg>
 }
+
+export const AppsSvg = () => {
+  return <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0,0,256,256"
+    width="24px"
+    height="24px"
+  >
+    <Path
+      d="M21 6.5a2.5 2.5 0 10-5 0v6a2.5 2.5 0 105 0v-6zm6 6a2.5 2.5 0 01-2.5 2.5H22v-2.5a2.5 2.5 0 115 0zM24.5 21a2.5 2.5 0 100-5h-6a2.5 2.5 0 100 5h6zm-6 6a2.5 2.5 0 01-2.5-2.5V22h2.5a2.5 2.5 0 110 5zM10 24.5a2.5 2.5 0 105 0v-6a2.5 2.5 0 10-5 0v6zm-6-6A2.5 2.5 0 016.5 16H9v2.5a2.5 2.5 0 11-5 0zM6.5 10a2.5 2.5 0 100 5h6a2.5 2.5 0 100-5h-6zm6-6A2.5 2.5 0 0115 6.5V9h-2.5a2.5 2.5 0 110-5z"
+      transform="scale(8)"
+      fill="#006bf7"
+      strokeMiterlimit={10}
+      fontFamily="none"
+      fontWeight="none"
+      fontSize="none"
+      textAnchor="none"
+    />
+  </Svg>
+}
