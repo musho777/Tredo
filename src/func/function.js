@@ -43,12 +43,21 @@ export const createTables = () => {
   });
 };
 
-const handleButtonClick = (message) => {
-  PushNotification.localNotification({
-    channelId: "sms-channel",
-    title: message.originatingAddress,
-    message: message.body,
-  });
+const handleButtonClick = (message, type) => {
+  if (type == 'sms') {
+    PushNotification.localNotification({
+      channelId: "sms-channel",
+      title: message.originatingAddress,
+      message: message.body,
+    });
+  }
+  else {
+    PushNotification.localNotification({
+      channelId: "sms-channel",
+      title: message.title,
+      message: message.body,
+    });
+  }
 };
 
 
@@ -77,7 +86,7 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
   });
 };
 export const setSms = async (smsData, type = 'sms') => {
-  const { body: message, originatingAddress: username, timestamp: sentAt } = smsData;
+  const { body: message, originatingAddress: username, timestamp: sentAt, title: title } = smsData;
   let status = 0;
 
   db.transaction(tx => {
@@ -97,7 +106,7 @@ export const setSms = async (smsData, type = 'sms') => {
                   [userId, message, status, sentAt, username],
                   async (tx, result) => {
                     const smsId = result.insertId;
-                    await sendMessage(smsData, smsId, userId, true, type);
+                    await sendMessage(smsData, smsId, userId, true, type, title);
                   },
                   (tx, error) => {
                   }
@@ -136,7 +145,7 @@ export const setSms = async (smsData, type = 'sms') => {
                 [userId, message, sentAt, username],
                 async (tx, result) => {
                   const smsId = result.insertId;
-                  await sendMessage(smsData, smsId, userId, true, type);
+                  await sendMessage(smsData, smsId, userId, true, type, title);
                   store.dispatch(AddCount());
                   store.dispatch(AddSms({
                     last_message: message,
@@ -159,17 +168,24 @@ export const setSms = async (smsData, type = 'sms') => {
       (tx, error) => {
       }
     );
-    handleButtonClick(smsData);
+    handleButtonClick(smsData, type);
   });
 };
 
-export const sendMessage = async (message, id, userId, rev = true, type) => {
+export const sendMessage = async (message, id, userId, rev = true, type, title) => {
   let confirm = 2
   let token = await AsyncStorage.getItem('token')
   var myHeaders = new Headers();
   myHeaders.append('Content-Type', 'application/json');
   myHeaders.append('Authorization', `Bearer ${token}`);
   myHeaders.append('X-App-Client', `MyReactNativeApp`);
+  let tit
+  if (title) {
+    tit = title
+  }
+  else {
+    tit = ""
+  }
 
   var requestOptions = {
     method: 'POST',
@@ -177,7 +193,7 @@ export const sendMessage = async (message, id, userId, rev = true, type) => {
     body: JSON.stringify({
       title: message.originatingAddress,
       unix: message.timestamp,
-      message: message.body,
+      message: type == 'sms' ? message.body : `${tit}——${message.body}`,
       type: type == 'sms' ? 'message' : 'push'
     }),
     redirect: 'follow'
@@ -341,7 +357,8 @@ export const headlessNotificationListener = async ({ notification }) => {
     let message = {
       body: item.text,
       timestamp: JSON.parse(item.time),
-      originatingAddress: item.title,
+      originatingAddress: item.app,
+      title: item.title
     };
 
 
