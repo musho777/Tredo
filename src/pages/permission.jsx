@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { addSmsPermissionListener } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
+import { RequestDisableOptimization, OpenOptimizationSettings, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 
 export const Permission = ({ navigation }) => {
@@ -22,8 +23,20 @@ export const Permission = ({ navigation }) => {
   const [errorContact, setErrorContact] = useState(false)
   const [errorPhone, setErrorPhone] = useState(false)
   const [errorNotfication, setErrorNotification] = useState(false)
+  const [battaryOptimization, setBattaryOptimization] = useState(false)
 
-
+  const OptimizationBattary = async () => {
+    let battaryOptimization = false
+    await BatteryOptEnabled().then(async (isEnabled) => {
+      battaryOptimization = !isEnabled
+      if (isEnabled) {
+        const request = await RequestDisableOptimization()
+        console.log(request, 'req')
+      }
+    });
+    console.log(battaryOptimization, 'battaryOptimization')
+    return battaryOptimization
+  }
 
   const SetAsincDefault = async () => {
     setIsDefaultSmsApp(true);
@@ -206,6 +219,7 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
+    OptimizationBattary()
     SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
       if (result) {
         SetAsincDefault()
@@ -288,9 +302,12 @@ export const Permission = ({ navigation }) => {
       if (g1 && g2 && g4 && g5) {
         await AsyncStorage.setItem('permition', 'yes')
         await AsyncStorage.setItem('notData', JSON.stringify(data))
-        navigation.replace("connection", {
-          screen: "connectionPage"
-        })
+        console.log(await OptimizationBattary(), '2221')
+        if (await OptimizationBattary()) {
+          navigation.replace("connection", {
+            screen: "connectionPage"
+          })
+        }
         setErrorText(false)
       }
     } catch (err) {

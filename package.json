@@ -31,6 +31,7 @@
     "react-native-background-actions": "^4.0.0",
     "react-native-background-timer": "^2.4.1",
     "react-native-badge": "^1.0.0",
+    "react-native-battery-optimization-check": "^1.0.8",
     "react-native-callkeep": "^4.3.13",
     "react-native-camera": "^4.2.1",
     "react-native-default-preference": "^1.4.4",

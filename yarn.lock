@@ -1662,6 +1662,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@brandonhenao/react-native-disable-battery-optimizations-android@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@brandonhenao/react-native-disable-battery-optimizations-android@npm:1.1.0"
+  peerDependencies:
+    react-native: ^0.41.2
+  checksum: a7e3885ec21ca77dfbc5a6be0f15a8c28a4990d3bfb9b7c3efa8bcf099589627b5230973fe4ad044c197861e47749fefbf811bdd0dda6af5a0a702d72c806c6d
+  languageName: node
+  linkType: hard
+
 "@config-plugins/react-native-callkeep@npm:^8.0.0":
   version: 8.0.0
   resolution: "@config-plugins/react-native-callkeep@npm:8.0.0"
@@ -3486,6 +3495,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
+    "@brandonhenao/react-native-disable-battery-optimizations-android": ^1.1.0
     "@config-plugins/react-native-callkeep": ^8.0.0
     "@pusher/pusher-websocket-react-native": ^1.3.1
     "@react-native-async-storage/async-storage": ^1.23.1
@@ -3517,6 +3527,7 @@ __metadata:
     react-native-background-actions: ^4.0.0
     react-native-background-timer: ^2.4.1
     react-native-badge: ^1.0.0
+    react-native-battery-optimization-check: ^1.0.8
     react-native-callkeep: ^4.3.13
     react-native-camera: ^4.2.1
     react-native-default-preference: ^1.4.4
@@ -10076,6 +10087,16 @@ __metadata:
   version: 1.0.0
   resolution: "react-native-badge@npm:1.0.0"
   checksum: 0cea889a6577d368241cf45bd430b3656d79c63b4daacae80e9ad8e854f6eda30a665cc217daba62aeb78856229cea42a408c0cdd8d83a4a6477e2648aa0220e
+  languageName: node
+  linkType: hard
+
+"react-native-battery-optimization-check@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "react-native-battery-optimization-check@npm:1.0.8"
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.63.3"
+  checksum: 95f6a20bfffe3b92c124d9094cd899910a8389ca71c70a0ff2abacac71b87302941a0b043e6e90bdb7b923341bdf4dde063848eb397a7af2bfc374d816e12830
   languageName: node
   linkType: hard
 

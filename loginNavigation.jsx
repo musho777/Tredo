@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ClearLoginAction } from './src/store/action/action';
 import { ChangePermitionPage } from './src/pages/changePermitionPage';
 import { AppsPage } from './src/pages/AppsPage';
-
+// import { RequestDisableOptimization, OpenOptimizationSettings, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 export function LoginNavigation() {
   const Tab = createBottomTabNavigator();
@@ -43,7 +43,10 @@ export function LoginNavigation() {
     },
   );
 
+
+
   useEffect(() => {
+
     PushNotification.removeAllDeliveredNotifications();
     PushNotification.configure({
       onNotification: function (notification) { },
@@ -80,6 +83,7 @@ export function LoginNavigation() {
   };
 
   useEffect(() => {
+    requestSmsPermission();
     startBackgroundTask()
     stopTask()
     createTables()
@@ -108,10 +112,6 @@ export function LoginNavigation() {
     }
   };
 
-  useEffect(() => {
-    requestSmsPermission();
-  }, []);
-
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
@@ -137,7 +137,7 @@ export function LoginNavigation() {
       intervalId = BackgroundTimer.setInterval(() => {
         isOnline()
         GetAllDontSendSms()
-      }, 30000);
+      }, 20000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
