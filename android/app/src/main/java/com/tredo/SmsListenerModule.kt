@@ -86,7 +86,7 @@ class SmsListenerModule(reactContext: ReactApplicationContext) : ReactContextBas
         registerSMSReceiver()
     }
   
-  @ReactMethod
+@ReactMethod
 fun getAllSMS(promise: Promise) {
     try {
         val smsList: WritableArray = Arguments.createArray()
@@ -96,14 +96,14 @@ fun getAllSMS(promise: Promise) {
         val currentTime = System.currentTimeMillis()
         val twentyMinutesAgo = currentTime - (20 * 60 * 1000) // 20 minutes in milliseconds
 
-        // Define the selection (filter) to get SMS from the last 20 minutes
-        val selection = "${Telephony.Sms.DATE} > ?"
+        // Define the selection (filter) to get SMS from the last 20 minutes, but now include both sent and received messages
+        val selection = "(${Telephony.Sms.DATE} > ?)"
         val selectionArgs = arrayOf(twentyMinutesAgo.toString())
 
         // Query for SMS
         val cursor: Cursor? = contentResolver.query(
             Telephony.Sms.CONTENT_URI,
-            arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE),
+            arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE, Telephony.Sms.TYPE),
             selection, // Use the filter to get SMS from the last 20 minutes
             selectionArgs, // Pass the timestamp for 20 minutes ago
             Telephony.Sms.DEFAULT_SORT_ORDER
@@ -114,11 +114,19 @@ fun getAllSMS(promise: Promise) {
                 val messageBody = it.getString(it.getColumnIndex(Telephony.Sms.BODY))
                 val senderPhoneNumber = it.getString(it.getColumnIndex(Telephony.Sms.ADDRESS))
                 val timestamp = it.getLong(it.getColumnIndex(Telephony.Sms.DATE))
+                val smsType = it.getInt(it.getColumnIndex(Telephony.Sms.TYPE))
 
                 val smsMap: WritableMap = Arguments.createMap()
                 smsMap.putString("body", messageBody)
                 smsMap.putString("originatingAddress", senderPhoneNumber)
                 smsMap.putDouble("timestamp", timestamp.toDouble())
+
+                // Optional: You can add more data based on the message type (sent or received)
+                if (smsType == Telephony.Sms.MESSAGE_TYPE_SENT) {
+                    smsMap.putString("type", "sent")
+                } else if (smsType == Telephony.Sms.MESSAGE_TYPE_INBOX) {
+                    smsMap.putString("type", "received")
+                }
 
                 smsList.pushMap(smsMap)
             }
@@ -130,7 +138,6 @@ fun getAllSMS(promise: Promise) {
         promise.reject("ERROR", e)
     }
 }
-
 
 
 @ReactMethod
@@ -211,7 +218,7 @@ fun getLast(promise: Promise) {
 fun getPhoneNumber(promise: Promise) {
     try {
         // Check for the READ_PHONE_STATE permission
-        if (ContextCompat.checkSelfPermission(reactContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(reactContext, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             promise.reject("PERMISSION_DENIED", "Permission to access phone state is denied")
             return
         }

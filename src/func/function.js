@@ -652,7 +652,7 @@ export const GetAllSms = async () => {
   SmsListenerModule.getAllSMS()
     .then(smsList => {
       smsList?.map((elm, i) => {
-        if (elm.originatingAddress != number)
+        if (elm.type == 'received')
           setSms(elm, 'sms')
       })
     })
