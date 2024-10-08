@@ -59,6 +59,7 @@ export const Connection = ({ navigation }) => {
   useEffect(() => {
     if (token) {
       dispatch(AppVersion(token))
+      SetDeviceInfo()
     }
   }, [token])
 
@@ -110,12 +111,6 @@ export const Connection = ({ navigation }) => {
     setPopUp(false)
   }
 
-
-  useEffect(() => {
-    if (token) {
-      SetDeviceInfo()
-    }
-  }, [token])
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />

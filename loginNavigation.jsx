@@ -88,25 +88,15 @@ export function LoginNavigation() {
     } catch (e) { }
   };
 
-  // const stopTask = async () => {
-  //   await BackgroundService.stop()
-  //   setTimeout(() => {
-  //     startBackgroundTask();
-  //   }, 1000)
-  // };
-
   useEffect(() => {
     requestSmsPermission();
-    // startBackgroundTask()
-    // startBackgroundTask();
-    // stopTask()
     createTables()
   }, [])
 
   useEffect(() => {
-    startBackgroundTask(); // Start task with react-native-background-actions
+    startBackgroundTask();
     return () => {
-      BackgroundService.stop(); // Clean up background service when the app is destroyed
+      BackgroundService.stop();
     };
   }, []);
 
@@ -136,29 +126,20 @@ export function LoginNavigation() {
 
   const YourTask = async (taskDataArguments) => {
     const { delay } = taskDataArguments;
-    let intervalId;
     let subscriber
-    let isListenerRegistered = await AsyncStorage.getItem('isListenerRegistered')
-    if (!isListenerRegistered) {
-      await AsyncStorage.setItem('isListenerRegistered', 'true')
-      subscriber = DeviceEventEmitter.addListener(
-        'onSMSReceived',
-        message => {
-          const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
-          let data = {
-            body: messageBody,
-            originatingAddress: senderPhoneNumber,
-            timestamp: timestamp
-          }
-          setSms(data)
-        },
-      );
-    }
+    subscriber = DeviceEventEmitter.addListener('onSMSReceived',
+      message => {
+        const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
+        console.log(messageBody, 'messageBody')
+        let data = {
+          body: messageBody,
+          originatingAddress: senderPhoneNumber,
+          timestamp: timestamp
+        }
+        setSms(data)
+      },
+    );
     try {
-      // intervalId = BackgroundTimer.setInterval(() => {
-      //   isOnline()
-      //   GetAllDontSendSms()
-      // }, 20000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
@@ -166,8 +147,6 @@ export function LoginNavigation() {
     }
     finally {
       DeviceEventEmitter.removeAllListeners('onSMSReceived');
-      await AsyncStorage.removeItem('isListenerRegistered')
-      // BackgroundTimer.clearInterval(intervalId);
     };
   }
 
