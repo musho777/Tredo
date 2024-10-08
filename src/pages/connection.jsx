@@ -9,7 +9,7 @@ import { AppVersion, ClearLoginAction, LogoutAction } from "../store/action/acti
 import { Ping } from "../components/ping"
 import { HomeButtonWrapper } from "../components/homeButtonWrapper"
 import { Status_Bar } from "../components/statusBar"
-import { handleSirenaNotification } from "../func/function"
+import { handleSirenaNotification, SetDeviceInfo } from "../func/function"
 import Pusher from 'pusher-js/react-native';
 import { ModalComponent } from "../components/Modal"
 
@@ -110,6 +110,12 @@ export const Connection = ({ navigation }) => {
     setPopUp(false)
   }
 
+
+  useEffect(() => {
+    if (token) {
+      SetDeviceInfo()
+    }
+  }, [token])
 
   return <View style={[Styles.home, { paddingHorizontal: 20 }]}>
     <ModalComponent modalVisible={popUp} accept={() => ModalAssept()} message={text} />

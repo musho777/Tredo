@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "116418941034",
+    "project_id": "iron-79640",
+    "storage_bucket": "iron-79640.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116418941034:android:35de57fe9eed07f6663a13",
+        "android_client_info": {
+          "package_name": "com.tredo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBIqxntT94FomnCCpOzl3kN3JtYgQMqfk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

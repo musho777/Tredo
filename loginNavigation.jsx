@@ -6,14 +6,14 @@ import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
-import { createTables, GetAllDontSendSms, isOnline, setSms } from './src/func/function';
-import BackgroundTimer from 'react-native-background-timer';
+import { createTables, SetDeviceInfo, setSms } from './src/func/function';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { ClearLoginAction } from './src/store/action/action';
 import { ChangePermitionPage } from './src/pages/changePermitionPage';
 import { AppsPage } from './src/pages/AppsPage';
+import messaging from '@react-native-firebase/messaging';
 // import { RequestDisableOptimization, OpenOptimizationSettings, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 export function LoginNavigation() {
@@ -44,9 +44,22 @@ export function LoginNavigation() {
   );
 
 
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    } else {
+      Alert.alert('Permission denied for push notifications.');
+    }
+  }
+
 
   useEffect(() => {
-
+    requestUserPermission()
     PushNotification.removeAllDeliveredNotifications();
     PushNotification.configure({
       onNotification: function (notification) { },
@@ -75,19 +88,27 @@ export function LoginNavigation() {
     } catch (e) { }
   };
 
-  const stopTask = async () => {
-    await BackgroundService.stop()
-    setTimeout(() => {
-      startBackgroundTask();
-    }, 1000)
-  };
+  // const stopTask = async () => {
+  //   await BackgroundService.stop()
+  //   setTimeout(() => {
+  //     startBackgroundTask();
+  //   }, 1000)
+  // };
 
   useEffect(() => {
     requestSmsPermission();
-    startBackgroundTask()
-    stopTask()
+    // startBackgroundTask()
+    // startBackgroundTask();
+    // stopTask()
     createTables()
   }, [])
+
+  useEffect(() => {
+    startBackgroundTask(); // Start task with react-native-background-actions
+    return () => {
+      BackgroundService.stop(); // Clean up background service when the app is destroyed
+    };
+  }, []);
 
 
   const Logout = async () => {
@@ -134,10 +155,10 @@ export function LoginNavigation() {
       );
     }
     try {
-      intervalId = BackgroundTimer.setInterval(() => {
-        isOnline()
-        GetAllDontSendSms()
-      }, 20000);
+      // intervalId = BackgroundTimer.setInterval(() => {
+      //   isOnline()
+      //   GetAllDontSendSms()
+      // }, 20000);
       while (BackgroundService.isRunning()) {
         await new Promise(resolve => setTimeout(resolve, delay));
       }
@@ -146,9 +167,19 @@ export function LoginNavigation() {
     finally {
       DeviceEventEmitter.removeAllListeners('onSMSReceived');
       await AsyncStorage.removeItem('isListenerRegistered')
-      BackgroundTimer.clearInterval(intervalId);
+      // BackgroundTimer.clearInterval(intervalId);
     };
   }
+
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      SetDeviceInfo()
+    });
+    return unsubscribe;
+  }, []);
+
+
 
   return (
     <Tab.Navigator

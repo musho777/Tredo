@@ -191,3 +191,30 @@ export const AppVersion = (token) => {
       });
   }
 }
+
+
+
+export const DeviceInfoAction = (token, data) => {
+  var myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
+  myHeaders.append('Authorization', `Bearer ${token}`);
+  myHeaders.append('X-App-Client', `MyReactNativeApp`);
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    redirect: 'follow',
+    body: JSON.stringify(data),
+  };
+
+  return (dispatch) => {
+    // dispatch(StartLogOut())
+    fetch(`https://iron-pay.com/api/device_info_data`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log("02")
+      })
+      .catch(error => {
+      });
+  }
+}

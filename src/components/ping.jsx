@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native'
 import DeviceInfo from 'react-native-device-info';
 
-export const Ping = () => {
+export const Ping = ({ systemVersion }) => {
 
-  const [systemVersion, setSystemVersion] = useState('')
   const [pingResult, setPingTime] = useState(null);
 
   const fetchPingTime = async () => {
@@ -18,7 +17,6 @@ export const Ping = () => {
   };
 
   useEffect(() => {
-    setSystemVersion(DeviceInfo.getSystemVersion());
     fetchPingTime()
   }, []);
 
@@ -27,7 +25,7 @@ export const Ping = () => {
     <View style={styles.textWrapper}>
       <Text style={styles.text1}>Устройство подключено</Text>
       <Text style={styles.text2}>Пинг: {pingResult} мс</Text>
-      <Text style={styles.text2}>Версия: Release {systemVersion}</Text>
+      <Text style={styles.text2}>Версия: Android {DeviceInfo.getSystemVersion()}</Text>
     </View>
   </View>
 }

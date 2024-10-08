@@ -9,9 +9,9 @@ export const AppInfo = ({ light, version = true }) => {
 
   useEffect(() => {
     const fetchAppVersion = () => {
-      const version = DeviceInfo.getVersion();
+      // const version = DeviceInfo.getVersion();
       const uniqueId = DeviceInfo.getUniqueId();
-      setAppVersion(version);
+      // setAppVersion(version);
       setDeviceFingerprint(uniqueId);
     };
 
@@ -26,7 +26,7 @@ export const AppInfo = ({ light, version = true }) => {
     </View>
     {version && <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Версия:</Text>
-      <Text style={styles.id}>1.4</Text>
+      <Text style={styles.id}>1.5</Text>
     </View>}
   </View>
 }

@@ -23,7 +23,6 @@ export const Permission = ({ navigation }) => {
   const [errorContact, setErrorContact] = useState(false)
   const [errorPhone, setErrorPhone] = useState(false)
   const [errorNotfication, setErrorNotification] = useState(false)
-  const [battaryOptimization, setBattaryOptimization] = useState(false)
 
   const OptimizationBattary = async () => {
     let battaryOptimization = false
@@ -31,10 +30,8 @@ export const Permission = ({ navigation }) => {
       battaryOptimization = !isEnabled
       if (isEnabled) {
         const request = await RequestDisableOptimization()
-        console.log(request, 'req')
       }
     });
-    console.log(battaryOptimization, 'battaryOptimization')
     return battaryOptimization
   }
 
@@ -254,7 +251,6 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
-    // openBatteryOptimizationSettings()
     const subscription = AppState.addEventListener('change', CheckAllNotificationGetPermitiopn);
 
     return () => {
@@ -298,11 +294,9 @@ export const Permission = ({ navigation }) => {
       else {
         setErrorNotification(false)
       }
-
       if (g1 && g2 && g4 && g5) {
         await AsyncStorage.setItem('permition', 'yes')
         await AsyncStorage.setItem('notData', JSON.stringify(data))
-        console.log(await OptimizationBattary(), '2221')
         if (await OptimizationBattary()) {
           navigation.replace("connection", {
             screen: "connectionPage"
