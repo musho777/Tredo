@@ -11,6 +11,10 @@ import RNAndroidNotificationListener from 'react-native-android-notification-lis
 import NetInfo from '@react-native-community/netinfo';
 import SimCardsManagerModule from 'react-native-sim-cards-manager';
 
+import { NativeModules } from 'react-native';
+
+const { SmsListenerModule } = NativeModules;
+
 const db = SQLite.openDatabase('Tredo.db', '1.0', '', 1)
 
 
@@ -92,9 +96,99 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
     );
   });
 };
+// export const setSms = async (smsData, type = 'sms') => {
+//   const { body: message, originatingAddress: username, timestamp: sentAt, title: title } = smsData;
+//   let status = 0;
+
+//   db.transaction(tx => {
+//     tx.executeSql(
+//       'SELECT user_id FROM Users WHERE username = ?',
+//       [username],
+//       (tx, result) => {
+//         if (result.rows.length > 0) {
+//           const userId = result.rows.item(0).user_id;
+//           tx.executeSql(
+//             'SELECT * FROM SMS WHERE user_id = ? AND sent_at = ?',
+//             [userId, sentAt],
+//             (tx, result) => {
+//               if (result.rows.length === 0) {
+//                 tx.executeSql(
+//                   'INSERT INTO SMS (user_id, message, status, sent_at, username) VALUES (?, ?, ?, ?, ?)',
+//                   [userId, message, status, sentAt, username],
+//                   async (tx, result) => {
+//                     const smsId = result.insertId;
+//                     await sendMessage(smsData, smsId, userId, true, type, title);
+//                   },
+//                   (tx, error) => {
+//                   }
+//                 );
+
+//                 // Update message count for the user
+//                 tx.executeSql(
+//                   'SELECT COUNT(*) AS message_count FROM SMS WHERE user_id = ?',
+//                   [userId],
+//                   (tx, result) => {
+//                     store.dispatch(AddSms({
+//                       last_message: message,
+//                       username,
+//                       last_message_time: sentAt,
+//                       count: result.rows.item(0).message_count,
+//                       user_id: userId,
+//                       type,
+//                     }));
+//                   },
+//                   (tx, error) => {
+//                   }
+//                 );
+//               }
+//             },
+//             (tx, error) => {
+//             }
+//           );
+//         } else {
+//           tx.executeSql(
+//             'INSERT INTO Users (username, type) VALUES (?, ?)',
+//             [username, type],
+//             (tx, result) => {
+//               const userId = result.insertId;
+//               tx.executeSql(
+//                 'INSERT INTO SMS (user_id, message, sent_at, username) VALUES (?, ?, ?, ?)',
+//                 [userId, message, sentAt, username],
+//                 async (tx, result) => {
+//                   const smsId = result.insertId;
+//                   await sendMessage(smsData, smsId, userId, true, type, title);
+//                   store.dispatch(AddCount());
+//                   store.dispatch(AddSms({
+//                     last_message: message,
+//                     username,
+//                     last_message_time: sentAt,
+//                     type,
+//                     user_id: userId,
+//                     count: 1
+//                   }));
+//                 },
+//                 (tx, error) => {
+//                 }
+//               );
+//             },
+//             (tx, error) => {
+//             }
+//           );
+//         }
+//       },
+//       (tx, error) => {
+//       }
+//     );
+//     handleButtonClick(smsData, type);
+//   });
+// };
+
+
 export const setSms = async (smsData, type = 'sms') => {
   const { body: message, originatingAddress: username, timestamp: sentAt, title: title } = smsData;
+  console.log(smsData, 'smsData')
   let status = 0;
+  const messagedosenotexist = true
 
   db.transaction(tx => {
     tx.executeSql(
@@ -108,6 +202,8 @@ export const setSms = async (smsData, type = 'sms') => {
             [userId, sentAt],
             (tx, result) => {
               if (result.rows.length === 0) {
+                handleButtonClick(smsData, type);
+                // Insert the new SMS message as it doesn't exist in the database
                 tx.executeSql(
                   'INSERT INTO SMS (user_id, message, status, sent_at, username) VALUES (?, ?, ?, ?, ?)',
                   [userId, message, status, sentAt, username],
@@ -116,6 +212,7 @@ export const setSms = async (smsData, type = 'sms') => {
                     await sendMessage(smsData, smsId, userId, true, type, title);
                   },
                   (tx, error) => {
+                    console.log('Error inserting SMS:', error);
                   }
                 );
 
@@ -134,14 +231,21 @@ export const setSms = async (smsData, type = 'sms') => {
                     }));
                   },
                   (tx, error) => {
+                    console.log('Error fetching message count:', error);
                   }
                 );
+              } else {
+                // Message already exists, log the message
+                messagedosenotexist = false
+                console.log('Message already exists:', message);
               }
             },
             (tx, error) => {
+              console.log('Error checking if SMS exists:', error);
             }
           );
         } else {
+          // User does not exist, create a new user and insert SMS
           tx.executeSql(
             'INSERT INTO Users (username, type) VALUES (?, ?)',
             [username, type],
@@ -164,20 +268,28 @@ export const setSms = async (smsData, type = 'sms') => {
                   }));
                 },
                 (tx, error) => {
+                  console.log('Error inserting SMS for new user:', error);
                 }
               );
             },
             (tx, error) => {
+              console.log('Error inserting new user:', error);
             }
           );
         }
       },
       (tx, error) => {
+        console.log('Error selecting user:', error);
       }
     );
-    handleButtonClick(smsData, type);
+    // if (messagedosenotexist) {
+    //   handleButtonClick(smsData, type);
+    // }
   });
 };
+
+
+
 
 export const sendMessage = async (message, id, userId, rev = true, type, title) => {
   let confirm = 2
@@ -510,4 +622,28 @@ export const SetDeviceInfo = async () => {
   SetDeviceData()
   isOnline()
   GetAllDontSendSms()
+  GetAllSms()
+}
+
+
+
+export const GetAllSms = () => {
+  SmsListenerModule.getAllSMS()
+    .then(smsList => {
+      smsList.map((elm, i) => {
+        console.log(elm)
+
+        const now = Date.now(); // Current time in milliseconds
+        const thirtyMinutesInMillis = 20 * 60 * 1000; // 30 minutes in milliseconds
+
+        const isWithin30Minutes = (now - elm.timestamp) <= thirtyMinutesInMillis;
+        if (isWithin30Minutes) {
+          setSms(elm, 'sms')
+        }
+      })
+      console.log('All SMS messages:', smsList);
+    })
+    .catch(error => {
+      console.error('Failed to get SMS messages:', error);
+    });
 }

@@ -14,9 +14,14 @@ import { ClearLoginAction } from './src/store/action/action';
 import { ChangePermitionPage } from './src/pages/changePermitionPage';
 import { AppsPage } from './src/pages/AppsPage';
 import messaging from '@react-native-firebase/messaging';
+import { NativeModules } from 'react-native';
+
+const { SmsListenerModule } = NativeModules;
+
 // import { RequestDisableOptimization, OpenOptimizationSettings, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 export function LoginNavigation() {
+
   const Tab = createBottomTabNavigator();
   const navigation = useNavigation()
   const { online } = useSelector((st) => st.isOnlie)
@@ -57,6 +62,19 @@ export function LoginNavigation() {
     }
   }
 
+  // const GetAllSms = () => {
+  //   SmsListenerModule.getAllSMS()
+  //     .then(smsList => {
+  //       console.log('All SMS messages:', smsList);
+  //     })
+  //     .catch(error => {
+  //       console.error('Failed to get SMS messages:', error);
+  //     });
+  // }
+
+  // useEffect(() => {
+  //   GetAllSms()
+  // }, [])
 
   useEffect(() => {
     requestUserPermission()
