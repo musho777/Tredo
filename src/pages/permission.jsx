@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import { addSmsPermissionListener } from "../components/SmsDefaultHandler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
-import { RequestDisableOptimization, OpenOptimizationSettings, BatteryOptEnabled } from "react-native-battery-optimization-check";
-
+import { RequestDisableOptimization, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 export const Permission = ({ navigation }) => {
 
@@ -23,16 +22,31 @@ export const Permission = ({ navigation }) => {
   const [errorContact, setErrorContact] = useState(false)
   const [errorPhone, setErrorPhone] = useState(false)
   const [errorNotfication, setErrorNotification] = useState(false)
+  const [optimzationPermiton, setOptimziationPermition] = useState(false)
+  const [errorOptimzation, setErrorOptimzation] = useState(false)
 
   const OptimizationBattary = async () => {
-    let battaryOptimization = false
     await BatteryOptEnabled().then(async (isEnabled) => {
-      battaryOptimization = !isEnabled
+      setOptimziationPermition(!isEnabled)
       if (isEnabled) {
-        const request = await RequestDisableOptimization()
+        try {
+          const result = await RequestDisableOptimization()
+        }
+        catch {
+
+        }
+        // await RequestDisableOptimization()
       }
     });
-    return battaryOptimization
+  }
+
+  const ChackBattaryOptimzation = async () => {
+    await BatteryOptEnabled().then(async (isEnabled) => {
+      setOptimziationPermition(!isEnabled)
+      if (!isEnabled) {
+        setErrorOptimzation(false)
+      }
+    });
   }
 
   const SetAsincDefault = async () => {
@@ -40,7 +54,17 @@ export const Permission = ({ navigation }) => {
     await AsyncStorage.setItem("defaultapp", 'yes')
   }
 
+
   useEffect(() => {
+    const intervalId = setInterval(() => {
+      ChackBattaryOptimzation()
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    checkPermition()
     const listener = addSmsPermissionListener((message) => {
       if (message == 'Success requesting ROLE_SMS!') {
         SetAsincDefault()
@@ -60,6 +84,7 @@ export const Permission = ({ navigation }) => {
     const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
     const g1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
     CheckAllNotificationGetPermitiopn()
+    ChackBattaryOptimzation()
     if (g5) {
       setPermitionSim(true)
     }
@@ -86,10 +111,6 @@ export const Permission = ({ navigation }) => {
     }
   }
 
-
-  useEffect(() => {
-    checkPermition()
-  }, [])
 
 
   const requestNotificationPermition = async () => {
@@ -216,7 +237,7 @@ export const Permission = ({ navigation }) => {
   }
 
   useEffect(() => {
-    OptimizationBattary()
+
     SmsDefaultHandler?.isDefaultSmsApp().then((result) => {
       if (result) {
         SetAsincDefault()
@@ -262,6 +283,7 @@ export const Permission = ({ navigation }) => {
   const GoNextPage = async () => {
     let data = []
     try {
+      ChackBattaryOptimzation()
       const g2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
       const g4 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
       const g5 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
@@ -294,14 +316,18 @@ export const Permission = ({ navigation }) => {
       else {
         setErrorNotification(false)
       }
-      if (g1 && g2 && g4 && g5) {
+      if (!optimzationPermiton) {
+        setErrorOptimzation(true)
+      }
+      else {
+        setErrorOptimzation(false)
+      }
+      if (g1 && g2 && g4 && g5 && optimzationPermiton) {
         await AsyncStorage.setItem('permition', 'yes')
         await AsyncStorage.setItem('notData', JSON.stringify(data))
-        if (await OptimizationBattary()) {
-          navigation.replace("connection", {
-            screen: "connectionPage"
-          })
-        }
+        navigation.replace("connection", {
+          screen: "connectionPage"
+        })
         setErrorText(false)
       }
     } catch (err) {
@@ -328,6 +354,9 @@ export const Permission = ({ navigation }) => {
         <Switch error={errorContact} value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
         <Switch error={errorPhone} value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
+
+
+        <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
       </View>
     </ScrollView>
     <View>

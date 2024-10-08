@@ -385,7 +385,6 @@ export const isOnline = async () => {
 
 
 const GetAllApp = async () => {
-  // let item = InstalledApps.getApps();
   let notData = await AsyncStorage.getItem('notData')
   let app = JSON.parse(notData)
   const item = InstalledApps.getApps().filter(elm =>
@@ -406,7 +405,6 @@ const GetAllApp = async () => {
   item.map((elm, i) => {
     let status = 0
     if (app.findIndex((el) => el == elm.packageName) >= 0) {
-      console.log(")000----00-0-")
       status = 1
     }
     data.push({ name: elm.packageName, value: 1, label: elm.label })
