@@ -1,15 +1,48 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View, AppState, Platform } from "react-native"
+import { ScrollView, StatusBar, StyleSheet, View, AppState, Platform } from "react-native"
 import { Styles } from "../ui/style";
 import { AppInfo } from "../components/appInfo";
 import { Switch } from "../components/switch";
 import { useEffect, useState } from "react";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 import { Button2 } from "../components/button2";
+import { RequestDisableOptimization, BatteryOptEnabled } from "react-native-battery-optimization-check";
 
 
 export const ChangePermitionPage = ({ navigation }) => {
 
   const [permitionforNotifcation, setPermitionForNotifcation] = useState(false)
+  const [errorOptimzation, setErrorOptimzation] = useState(false)
+  const [optimzationPermiton, setOptimziationPermition] = useState(true)
+
+  const OptimizationBattary = async () => {
+    await BatteryOptEnabled().then(async (isEnabled) => {
+      setOptimziationPermition(!isEnabled)
+      if (isEnabled) {
+        try {
+          const result = await RequestDisableOptimization()
+        }
+        catch {
+
+        }
+        // await RequestDisableOptimization()
+      }
+    });
+  }
+
+  const ChackBattaryOptimzation = async () => {
+    await BatteryOptEnabled().then(async (isEnabled) => {
+      setOptimziationPermition(!isEnabled)
+      if (!isEnabled) {
+        setErrorOptimzation(false)
+      }
+    });
+  }
+
+
+
+  useEffect(() => {
+    ChackBattaryOptimzation()
+  }, []);
 
   const CheckAllNotificationGetPermitiopn = async () => {
     const status = await RNAndroidNotificationListener.getPermissionStatus()
@@ -61,6 +94,7 @@ export const ChangePermitionPage = ({ navigation }) => {
         <Switch value={true} text="Разрешить приложению LightPay доступ к контактам?" />
         <Switch value={true} text="Доступ к информации о состоянии телефона" />
         <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
+        <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
       </View>
     </ScrollView>
     <View>

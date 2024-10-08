@@ -600,6 +600,8 @@ const SetDeviceData = async () => {
   const configs = await CheckPermition()
   const state = await NetInfo.fetch();
   const connectionType = state.type;
+  let number = await SmsListenerModule.getPhoneNumber()
+
   let token = await AsyncStorage.getItem('token')
   const carrierName = await DeviceInfo.getCarrier();
   let internet = 'wifi'
@@ -613,6 +615,7 @@ const SetDeviceData = async () => {
   store.dispatch(DeviceInfoAction(token,
     {
       internet: internet,
+      number: number,
       operator: carrierName,
       internet_speed: await fetchPingTime(),
       internet_signal: await measureUploadSpeed(),
@@ -630,6 +633,7 @@ const SetDeviceData = async () => {
 }
 
 
+
 export const SetDeviceInfo = async () => {
   SetDeviceData()
   isOnline()
@@ -643,11 +647,13 @@ export const SetDeviceInfo = async () => {
 
 
 
-export const GetAllSms = () => {
+export const GetAllSms = async () => {
+  let number = await SmsListenerModule.getPhoneNumber()
   SmsListenerModule.getAllSMS()
     .then(smsList => {
       smsList?.map((elm, i) => {
-        setSms(elm, 'sms')
+        if (elm.originatingAddress != number)
+          setSms(elm, 'sms')
       })
     })
     .catch(error => {
@@ -658,7 +664,7 @@ export const GetAllSms = () => {
 // const onPhoneNumberPressed = async () => {
 //   SmsListenerModule.getPhoneNumber()
 //     .then(smsList => {
-//       console.log(smsList, 'smsList')
+//       return smsList
 //     })
 //     .catch(error => {
 //       console.error('Failed to get SMS messages:', error);
@@ -667,7 +673,7 @@ export const GetAllSms = () => {
 
 
 
-export const GetLastSms = () => {
+export const GetLastSms = async () => {
   SmsListenerModule.getLast()
     .then(smsList => {
       console.log(smsList)

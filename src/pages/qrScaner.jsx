@@ -31,7 +31,7 @@ const ScanScreen = ({ navigation }) => {
         if (result.status) {
           await AsyncStorage.setItem('token', result?.token)
           await AsyncStorage.setItem('id', JSON.stringify(result.user.id))
-          navigation.navigate('permission')
+          navigation.replace('permission')
           dispatch(SuccessIsOnline())
         }
       })
