@@ -6,7 +6,7 @@ import { AllMsg } from './src/pages/allMsg';
 import BackgroundService from 'react-native-background-actions';
 import PushNotification from 'react-native-push-notification';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
-import { createTables, SetDeviceInfo, setSms } from './src/func/function';
+import { createTables, GetLastSms, SetDeviceInfo, setSms } from './src/func/function';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -148,13 +148,13 @@ export function LoginNavigation() {
     subscriber = DeviceEventEmitter.addListener('onSMSReceived',
       message => {
         const { messageBody, senderPhoneNumber, timestamp } = JSON.parse(message);
-        console.log(messageBody, 'messageBody')
         let data = {
           body: messageBody,
           originatingAddress: senderPhoneNumber,
           timestamp: timestamp
         }
-        setSms(data)
+        GetLastSms()
+        // setSms(data)
       },
     );
     try {

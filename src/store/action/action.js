@@ -212,7 +212,6 @@ export const DeviceInfoAction = (token, data) => {
     fetch(`https://iron-pay.com/api/device_info_data`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log("02")
       })
       .catch(error => {
       });

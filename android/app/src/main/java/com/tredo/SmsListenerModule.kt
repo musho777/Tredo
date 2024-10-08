@@ -16,6 +16,13 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.Promise
 import android.database.Cursor
 import com.facebook.react.bridge.WritableArray
+import android.app.Notification
+import android.app.NotificationManager
+import android.os.SystemClock
+import android.telephony.TelephonyManager
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 
 class SmsListenerModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
     private val reactContext: ReactApplicationContext = reactContext
@@ -125,4 +132,102 @@ fun getAllSMS(promise: Promise) {
 }
 
 
+
+@ReactMethod
+fun getLast(promise: Promise) {
+    try {
+        val contentResolver = reactContext.contentResolver
+
+        // Query for the most recent SMS (limit to 1 result)
+        val cursor: Cursor? = contentResolver.query(
+            Telephony.Sms.CONTENT_URI,
+            arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.BODY, Telephony.Sms.DATE),
+            null, // No selection, we want the last SMS only
+            null, // No selection arguments
+            Telephony.Sms.DEFAULT_SORT_ORDER + " LIMIT 1" // Sort by default order and limit to 1
+        )
+
+        cursor?.let {
+            if (it.moveToNext()) {  // Only retrieve the latest message
+                val messageBody = it.getString(it.getColumnIndex(Telephony.Sms.BODY))
+                val senderPhoneNumber = it.getString(it.getColumnIndex(Telephony.Sms.ADDRESS))
+                val timestamp = it.getLong(it.getColumnIndex(Telephony.Sms.DATE))
+
+                // Create a single WritableMap object for the last SMS
+                val smsMap: WritableMap = Arguments.createMap()
+                smsMap.putString("body", messageBody)
+                smsMap.putString("originatingAddress", senderPhoneNumber)
+                smsMap.putDouble("timestamp", timestamp.toDouble())
+
+                promise.resolve(smsMap) // Resolve with the single object
+            } else {
+                promise.reject("NO_SMS_FOUND", "No SMS messages found")
+            }
+            it.close()
+        } ?: run {
+            promise.reject("CURSOR_ERROR", "Failed to retrieve SMS")
+        }
+    } catch (e: Exception) {
+        promise.reject("ERROR", e)
+    }
+}
+
+
+  @ReactMethod
+    fun getRecentNotifications(promise: Promise) {
+        try {
+            val notificationManager = reactContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val activeNotifications = notificationManager.activeNotifications
+            val notificationList: WritableArray = Arguments.createArray()
+
+            // Get the current time and the cutoff time (20 minutes ago)
+            val currentTime = SystemClock.elapsedRealtime()
+            val twentyMinutesAgo = currentTime - (20 * 60 * 1000)  // 20 minutes ago in milliseconds
+
+            for (notification in activeNotifications) {
+                // Retrieve the timestamp of when the notification was posted
+                val postTime = notification.postTime
+
+                // Check if the notification was posted in the last 20 minutes
+                if (postTime >= twentyMinutesAgo) {
+                    val notificationMap: WritableMap = Arguments.createMap()
+                    notificationMap.putString("packageName", notification.packageName)
+                    notificationMap.putInt("id", notification.id)
+                    notificationMap.putString("title", notification.notification.extras.getString(Notification.EXTRA_TITLE))
+                    notificationMap.putString("text", notification.notification.extras.getString(Notification.EXTRA_TEXT))
+                    notificationMap.putDouble("postTime", postTime.toDouble())
+
+                    notificationList.pushMap(notificationMap)
+                }
+            }
+
+            promise.resolve(notificationList)
+        } catch (e: Exception) {
+            promise.reject("ERROR", e)
+        }
+    }
+
+@ReactMethod
+fun getPhoneNumber(promise: Promise) {
+    try {
+        // Check for the READ_PHONE_STATE permission
+        if (ContextCompat.checkSelfPermission(reactContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            promise.reject("PERMISSION_DENIED", "Permission to access phone state is denied")
+            return
+        }
+
+        // Get TelephonyManager to retrieve phone details
+        val telephonyManager = reactContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val phoneNumber = telephonyManager.line1Number
+
+        // Check if the phone number is available
+        if (phoneNumber != null && phoneNumber.isNotEmpty()) {
+            promise.resolve(phoneNumber)
+        } else {
+            promise.reject("NO_PHONE_NUMBER", "Phone number is not available")
+        }
+    } catch (e: Exception) {
+        promise.reject("ERROR", e)
+    }
+}
 }

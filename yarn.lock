@@ -4574,6 +4574,8 @@ __metadata:
     react-native-safe-area-context: ^4.10.5
     react-native-screens: ^3.32.0
     react-native-sim-cards-manager: ^1.0.24
+    react-native-sim-data: ^3.0.0
+    react-native-sms-retriever: ^1.1.1
     react-native-sound: ^0.11.2
     react-native-speed-meter: ^1.0.4
     react-native-speedometer: ^1.0.5
@@ -11834,6 +11836,25 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 0a9aaa07717a272fa162fc8b8e08fbec6116768272af096d930ad75af560a7645efb986b585442d9ddc988fce936f4a8acb443fd8c011e2de082ce46b73bc461
+  languageName: node
+  linkType: hard
+
+"react-native-sim-data@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "react-native-sim-data@npm:3.0.0"
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-native": "*"
+    react: "*"
+    react-native: "*"
+  checksum: aa119a46b82b04d0e326e9c1f87273841ebc3fb23bf90ddf0716fe1b2ae48acce93d66dc9a94b01d94f443e0fc700d2e1060157c02dc548c5d44cfe575b52223
+  languageName: node
+  linkType: hard
+
+"react-native-sms-retriever@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "react-native-sms-retriever@npm:1.1.1"
+  checksum: 22782e50dc1bbf56e5b91b8beb38d1201133bc06723c1f2088e451cd9712fef2a244748da1c5bcb650ff0fce301a06de9b69cb83115fc2515c88da708e0430ef
   languageName: node
   linkType: hard
 

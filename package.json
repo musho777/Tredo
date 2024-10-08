@@ -55,6 +55,8 @@
     "react-native-safe-area-context": "^4.10.5",
     "react-native-screens": "^3.32.0",
     "react-native-sim-cards-manager": "^1.0.24",
+    "react-native-sim-data": "^3.0.0",
+    "react-native-sms-retriever": "^1.1.1",
     "react-native-sound": "^0.11.2",
     "react-native-speed-meter": "^1.0.4",
     "react-native-speedometer": "^1.0.5",

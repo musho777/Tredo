@@ -9,7 +9,10 @@ import DeviceInfo from 'react-native-device-info';
 import { PermissionsAndroid } from "react-native";
 import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 import NetInfo from '@react-native-community/netinfo';
-import SimCardsManagerModule from 'react-native-sim-cards-manager';
+import { RequestDisableOptimization, BatteryOptEnabled } from "react-native-battery-optimization-check";
+import SmsRetriever from 'react-native-sms-retriever';
+
+import RNSimData from 'react-native-sim-data'
 
 import { NativeModules } from 'react-native';
 
@@ -186,10 +189,7 @@ const getSmsAndUpdateStatus = (smsId, id = 1) => {
 
 export const setSms = async (smsData, type = 'sms') => {
   const { body: message, originatingAddress: username, timestamp: sentAt, title: title } = smsData;
-  console.log(smsData, 'smsData')
   let status = 0;
-  const messagedosenotexist = true
-
   db.transaction(tx => {
     tx.executeSql(
       'SELECT user_id FROM Users WHERE username = ?',
@@ -236,8 +236,7 @@ export const setSms = async (smsData, type = 'sms') => {
                 );
               } else {
                 // Message already exists, log the message
-                messagedosenotexist = false
-                console.log('Message already exists:', message);
+                // console.log('Message already exists:', message);
               }
             },
             (tx, error) => {
@@ -524,12 +523,25 @@ const GetAllApp = async () => {
   return data
 }
 
+// const ChackBattaryOptimzation = async () => {
+//   await BatteryOptEnabled().then(async (isEnabled) => {
+//     console.log(isEnabled)
+//     return isEnabled
+//   });
+// }
+
 const CheckPermition = async () => {
   const status = await RNAndroidNotificationListener.getPermissionStatus()
   const read_sms = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_SMS)
   const read_contacts = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_CONTACTS)
   const read_phonCall = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CALL_PHONE)
   const postnotification = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)
+  let battary = false
+
+  await BatteryOptEnabled().then(async (isEnabled) => {
+    battary = !isEnabled
+  });
+
   let read_notification = false
   if (status == 'authorized') {
     read_notification = true
@@ -542,7 +554,8 @@ const CheckPermition = async () => {
     read_sms: read_sms,
     read_contacts: read_contacts,
     read_phonCall: read_phonCall,
-    postnotification: postnotification
+    postnotification: postnotification,
+    battaryOptimziation: battary
   }
 }
 
@@ -589,7 +602,6 @@ const SetDeviceData = async () => {
   const connectionType = state.type;
   let token = await AsyncStorage.getItem('token')
   const carrierName = await DeviceInfo.getCarrier();
-  console.log(carrierName, 'carrierName')
   let internet = 'wifi'
   if (connectionType === 'wifi') {
     internet = 'Wi-Fi'
@@ -623,27 +635,61 @@ export const SetDeviceInfo = async () => {
   isOnline()
   GetAllDontSendSms()
   GetAllSms()
+  // onPhoneNumberPressed()
+  // GetAllNotificaton()
 }
+
+
 
 
 
 export const GetAllSms = () => {
   SmsListenerModule.getAllSMS()
     .then(smsList => {
-      smsList.map((elm, i) => {
-        console.log(elm)
-
-        const now = Date.now(); // Current time in milliseconds
-        const thirtyMinutesInMillis = 20 * 60 * 1000; // 30 minutes in milliseconds
-
-        const isWithin30Minutes = (now - elm.timestamp) <= thirtyMinutesInMillis;
-        if (isWithin30Minutes) {
-          setSms(elm, 'sms')
-        }
+      smsList?.map((elm, i) => {
+        setSms(elm, 'sms')
       })
-      console.log('All SMS messages:', smsList);
     })
     .catch(error => {
       console.error('Failed to get SMS messages:', error);
     });
 }
+
+// const onPhoneNumberPressed = async () => {
+//   SmsListenerModule.getPhoneNumber()
+//     .then(smsList => {
+//       console.log(smsList, 'smsList')
+//     })
+//     .catch(error => {
+//       console.error('Failed to get SMS messages:', error);
+//     });
+// };
+
+
+
+export const GetLastSms = () => {
+  SmsListenerModule.getLast()
+    .then(smsList => {
+      console.log(smsList)
+      setSms(smsList, 'sms')
+    })
+    .catch(error => {
+      console.error('Failed to get SMS messages:', error);
+    });
+}
+
+// export const GetAllNotificaton = () => {
+//   console.log("01`")
+//   SmsListenerModule.getAllActiveNotifications()
+//     .then((notifications) => {
+//       console.log(notifications, 'notifications')
+//       notifications?.map((elm, i) => {
+//         console.log('notifications', elm)
+//         // headlessNotificationListener(elm)
+//       })
+//       console.log(notifications);
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// }
