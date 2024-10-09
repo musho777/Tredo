@@ -15,6 +15,17 @@ const ScanScreen = ({ navigation }) => {
   const [permision, setPermision] = useState(true);
   const [r, setR] = useState(false)
   const dispatch = useDispatch()
+  const [qr, setQr] = useState(true)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!qr) {
+        setQr(true);
+      }
+    }, 1500);
+
+    return () => clearInterval(intervalId);
+  }, [qr]);
 
   const onSuccess = async e => {
     const headers = {
@@ -26,23 +37,26 @@ const ScanScreen = ({ navigation }) => {
       headers: headers,
       redirect: 'follow'
     };
-    await fetch(`${e?.data}`, requestOptions)
-      .then(response => response.json())
-      .then(async result => {
-        if (result.status) {
-          await AsyncStorage.setItem('token', result?.token)
-          await AsyncStorage.setItem('id', JSON.stringify(result.user.id))
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'permission' }],
-            })
-          );
-          dispatch(SuccessIsOnline())
-        }
-      })
-      .catch(error => {
-      });
+    if (qr) {
+      setQr(false)
+      await fetch(`${e?.data}`, requestOptions)
+        .then(response => response.json())
+        .then(async result => {
+          if (result.status) {
+            await AsyncStorage.setItem('token', result?.token)
+            await AsyncStorage.setItem('id', JSON.stringify(result.user.id))
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'permission' }],
+              })
+            );
+            dispatch(SuccessIsOnline())
+          }
+        })
+        .catch(error => {
+        });
+    }
   };
 
   useEffect(() => {
