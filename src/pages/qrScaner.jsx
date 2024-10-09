@@ -9,6 +9,7 @@ import {
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { useDispatch } from 'react-redux';
 import { SuccessIsOnline } from '../store/action/successAction';
+import { CommonActions } from '@react-navigation/native';
 
 const ScanScreen = ({ navigation }) => {
   const [permision, setPermision] = useState(true);
@@ -31,7 +32,12 @@ const ScanScreen = ({ navigation }) => {
         if (result.status) {
           await AsyncStorage.setItem('token', result?.token)
           await AsyncStorage.setItem('id', JSON.stringify(result.user.id))
-          navigation.replace('permission')
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'permission' }],
+            })
+          );
           dispatch(SuccessIsOnline())
         }
       })
