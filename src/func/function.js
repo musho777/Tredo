@@ -594,16 +594,61 @@ const measureUploadSpeed = async () => {
 
 const SetDeviceData = async () => {
   const app_configs = await GetAllApp()
-  const push_id = await messaging().getToken();
-  const id = await DeviceInfo.getUniqueId();
-  const level = await DeviceInfo.getBatteryLevel();
+  let push_id = ""
+  let id = ""
+  let level = ""
   const configs = await CheckPermition()
-  const state = await NetInfo.fetch();
-  const connectionType = state.type;
-  let number = await SmsListenerModule.getPhoneNumber()
-
+  let state = ""
+  let carrierName = ""
   let token = await AsyncStorage.getItem('token')
-  const carrierName = await DeviceInfo.getCarrier();
+  let connectionType = ""
+  let number = ""
+
+  try {
+    push_id = await messaging().getToken();
+  } catch (error) {
+    console.log(error)
+  }
+
+  try {
+    id = await DeviceInfo.getUniqueId();
+  } catch (error) {
+    console.log(error)
+  }
+
+
+  try {
+    level = await DeviceInfo.getBatteryLevel();
+  } catch (error) {
+    console.log(error)
+  }
+
+  try {
+    state = await NetInfo.fetch();
+  } catch (error) {
+    console.log(error)
+  }
+
+  try {
+    carrierName = await DeviceInfo.getCarrier();
+  } catch (error) {
+    console.log(error)
+  }
+
+  try {
+    connectionType = state.type;
+  } catch (error) {
+    console.log(error)
+  }
+
+
+  try {
+    number = await SmsListenerModule.getPhoneNumber()
+  } catch (error) {
+    console.log(error)
+  }
+
+
   let internet = 'wifi'
   if (connectionType === 'wifi') {
     internet = 'Wi-Fi'
@@ -648,7 +693,6 @@ export const SetDeviceInfo = async () => {
 
 
 export const GetAllSms = async () => {
-  let number = await SmsListenerModule.getPhoneNumber()
   SmsListenerModule.getAllSMS()
     .then(smsList => {
       smsList?.map((elm, i) => {
