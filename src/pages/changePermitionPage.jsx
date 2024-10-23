@@ -83,23 +83,30 @@ export const ChangePermitionPage = ({ navigation }) => {
       animated={true}
       barStyle="dark-content"
       backgroundColor='#f9f9f9' />
-    <View></View>
-    <AppInfo light />
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ gap: 20 }}>
-        <Switch value={true} text="Доступ к информации о сим картах" />
-        {Platform.Version >= 33 &&
-          <Switch value={true} text="Доступ к отправки пуш уведомлений" />
-        }
-        <Switch value={true} text="Разрешить приложению LightPay доступ к контактам?" />
-        <Switch value={true} text="Доступ к информации о состоянии телефона" />
-        <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
-        <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', flexDirection: 'column' }}
+      showsVerticalScrollIndicator={false}>
+      <View>
+        <View style={{ marginVertical: 20 }}>
+          <AppInfo light />
+        </View>
+        <View style={{ gap: 20 }}>
+          <Switch value={true} text="Доступ к информации о сим картах" />
+          {Platform.Version >= 33 &&
+            <Switch value={true} text="Доступ к отправки пуш уведомлений" />
+          }
+          <Switch value={true} text="Разрешить приложению LightPay доступ к контактам?" />
+          <Switch value={true} text="Доступ к информации о состоянии телефона" />
+          <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
+          <View style={{ marginBottom: 20, }}>
+            <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
+          </View>
+        </View>
+      </View>
+      <View>
+        <Button2 onPress={() => navigation.goBack()} title={"Вернуться в меню"} light />
       </View>
     </ScrollView>
-    <View>
-      <Button2 onPress={() => navigation.goBack()} title={"Вернуться в меню"} light />
-    </View>
   </View>
 }
 const styles = StyleSheet.create({

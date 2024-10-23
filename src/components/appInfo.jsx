@@ -3,15 +3,12 @@ import { StyleSheet, Text, View } from "react-native"
 import DeviceInfo from "react-native-device-info";
 
 export const AppInfo = ({ light, version = true }) => {
-  const [appVersion, setAppVersion] = useState('');
   const [deviceFingerprint, setDeviceFingerprint] = useState('');
 
 
   useEffect(() => {
     const fetchAppVersion = () => {
-      // const version = DeviceInfo.getVersion();
       const uniqueId = DeviceInfo.getUniqueId();
-      // setAppVersion(version);
       setDeviceFingerprint(uniqueId);
     };
 
@@ -21,8 +18,7 @@ export const AppInfo = ({ light, version = true }) => {
   return <View style={styles.appInfo}>
     <Text style={[styles.appName, light && { color: '#0068fa' }]}>LightPay</Text>
     <View style={styles.fingerprint}>
-      <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Fingerprint:</Text>
-      <Text style={styles.id}>{deviceFingerprint}</Text>
+      <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Fingerprint: <Text style={styles.id}>{deviceFingerprint}</Text></Text>
     </View>
     {version && <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
       <Text style={[styles.fingerprintText, light && { color: '#345591' }]}>Версия:</Text>
@@ -43,7 +39,7 @@ const styles = StyleSheet.create({
   fingerprint: {
     flexDirection: 'column',
     alignItems: 'center',
-    marginVertical: 20,
+    marginVertical: 10,
     gap: 4
   },
   fingerprintText: {

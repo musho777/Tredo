@@ -339,35 +339,45 @@ export const Permission = ({ navigation }) => {
       animated={true}
       barStyle="dark-content"
       backgroundColor='#f9f9f9' />
-    <AppInfo light />
-    <View >
-      <Text style={styles.text}>Предоставьте приложению</Text>
-      <Text style={[styles.text, { marginTop: -3 }]}>необходимые разрешения:</Text>
-    </View>
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={{ gap: 20 }}>
-        {/* <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" /> */}
-        <Switch error={errorSim} value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
-        {Platform.Version >= 33 &&
-          <Switch error={errorNotfication} value={notificatonPermition} onSwitch={() => requestNotificationPermition()} text="Доступ к отправки пуш уведомлений" />
-        }
-        <Switch error={errorContact} value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
-        <Switch error={errorPhone} value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
-        <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', flexDirection: 'column' }}
+      showsVerticalScrollIndicator={true}>
+      <View>
+        <AppInfo light />
+        <Text style={styles.text}>Предоставьте приложению необходимые разрешения:</Text>
+        <View style={{ gap: 20 }}>
+          {/* <Switch value={isDefaultSmsApp} onSwitch={() => requestDefaultSmsPermission()} text="Сделать приложением SMS по-умолчанию" /> */}
+          <Switch error={errorSim} value={permitionSim} onSwitch={() => requestPhonePermissions()} text="Доступ к информации о сим картах" />
+          {Platform.Version >= 33 &&
+            <Switch error={errorNotfication} value={notificatonPermition} onSwitch={() => requestNotificationPermition()} text="Доступ к отправки пуш уведомлений" />
+          }
+          <Switch error={errorContact} value={permitionForContact} onSwitch={() => requestForContact()} text="Разрешить приложению LightPay доступ к контактам?" />
+          <Switch error={errorPhone} value={SmsPermitionAllow} onSwitch={() => requestSmsPermissions()} text="Доступ к информации о состоянии телефона" />
+          <Switch value={permitionforNotifcation} onSwitch={() => getNotficiactionPermition()} text="Активировать чтение пуш-уведомлений" />
 
 
-        <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
+
+
+
+
+          <View style={{ marginBottom: 20 }}>
+            <Switch error={errorOptimzation} value={optimzationPermiton} onSwitch={() => OptimizationBattary()} text="Прекратить оптимизацию расхода заряда?" />
+          </View>
+          {/* last item 20 pixel fonr button  */}
+
+        </View>
       </View>
-    </ScrollView>
-    <View>
       <Button2 onPress={() => GoNextPage()} title={"Далее"} light />
-    </View>
+    </ScrollView>
   </View>
 }
 const styles = StyleSheet.create({
   text: {
     color: '#2f508e',
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'RobotoCondensed-SemiBold',
-  }
+    marginTop: 10,
+    marginBottom: 20,
+    flex: 1,
+  },
 });
